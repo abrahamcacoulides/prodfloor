@@ -1,0 +1,102 @@
+{% load staticfiles %}
+{% load prodfloor_extras %}
+<!doctype html>
+<meta http-equiv="refresh" content="300" >
+<html>
+<head>
+<meta charset="utf-8">
+<title>Motion Production</title>
+<style type="text/css">
+</style>
+</head>
+
+<body><!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scal e=1">
+<!-- Bootstrap -->
+<link rel="stylesheet" type="text/css" href="{% static 'prodfloor/bootstrap.css' %}"/>
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="text-center" style="font-size: 60px">
+        <center>Production Floor (Test)</center>
+        <hr>
+      </div>
+<div class="container" style="width:100%">
+<div class="row">
+  <div class="col-sm-2">
+    <h1><center>JOB #&nbsp;</center></h1>
+      {% for job in job_list %}
+          <hr>
+          <div class="text-center"><h2>{{ job.job_num }}</h2></div>
+
+      {% endfor %}
+</div>
+  <div class="col-sm-2">
+    <h1><center>TECHNICIAN</center></h1>
+    {% for job in job_list %}
+          <hr>
+          <div class="text-center"><h2>{{ job.Tech_name }}</h2></div>
+
+      {% endfor %}
+    </div>
+<div class="col-sm-2">
+  <h1><center>STAGE</center></h1>
+  {% for job in job_list %}
+          <hr>
+          <div class="text-center"><h2>{{ job.status }}</h2></div>
+
+      {% endfor %}
+</div>
+<div class="col-sm-4">
+  <h1><center>STATUS</center></h1>
+    {% for job in job_list %}
+        <hr>
+    <div class="progress" style="height: 32px">
+      <div class="{% if job.status == 'Beginning' %}progress-bar progress-bar-begin progress-bar-striped active{% endif %}{% if job.status == 'Program' %}progress-bar progress-bar-program progress-bar-striped active{% endif %}{% if job.status == 'Logic' %}progress-bar progress-bar-logic progress-bar-striped active{% endif %}{% if job.status == 'Ending' %}progress-bar progress-bar-ending progress-bar-striped active{% endif %}{% if job.status == 'Complete' %}progress-bar progress-bar-complete{% endif %}{% if job.status == 'Stopped' %}progress-bar progress-bar-stop progress-bar-striped active{% endif %}" role="progressbar" aria-valuenow="{% getpercentage job.current_index job.stage_len %}" aria-valuemin="0" aria-valuemax="100" style="width:{% getpercentage job.current_index job.stage_len %}%"></div>
+      &nbsp;</div>
+    {% endfor %}
+</div>
+<div class="col-sm-2" >
+  <h1><center>!</center></h1>
+    <div class="text-center" >
+    <hr style="padding-bottom: 0px;margin-bottom: 5px">
+        <div class="text-center"><div class="material-icons" style="font-size: 4.5em;">android</div>
+    </div>
+    <hr style="padding-bottom: 0px;margin-bottom: 5px;margin-top: 0px">
+    <div class="text-center">
+        <div class="material-icons" style="font-size:4.5em;">weekend</div>
+        <div class="material-icons" style="font-size:4.5em;">card_membership</div>
+    </div>
+        <hr style="padding-bottom: 0px;margin-bottom: 5px;margin-top: 0px">
+</div>
+</div>
+<hr>
+<footer class="text-center">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <p>Copyright © MyWebsite. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="{% static 'prodfloor/jquery-1.11.3.min.js' %}"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="{% static 'prodfloor/bootstrap.js' %}"></script>
+</body>
+</html>
+
+</body>
+</html>

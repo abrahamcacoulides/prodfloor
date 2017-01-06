@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+<head>
+    <title>{% block title %}Details for Job#{{ job.job_num }}{% endblock %}</title>
+</head>
+{% block content %}
+<H1>{{ job.job_num }}</H1>
+<H1>{{ job.Tech_name }}</H1>
+<H1>{{ user }}</H1>
+{% endblock %}
