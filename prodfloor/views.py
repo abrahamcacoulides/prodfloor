@@ -15,6 +15,21 @@ def prodfloor_view(request):
     context = {'job_list': job_list}
     return render(request, 'prodfloor/prodfloor.html', context)
 
+def M2000View(request):
+    job_list = Info.objects.filter(job_type='2000').exclude(status='Complete').order_by('ship_date')
+    context = {'job_list': job_list}
+    return render(request, 'prodfloor/prodfloor.html', context)
+
+def M4000View(request):
+    job_list = Info.objects.filter(job_type='4000').exclude(status='Complete').order_by('ship_date')
+    context = {'job_list': job_list}
+    return render(request, 'prodfloor/prodfloor.html', context)
+
+def ELEMView(request):
+    job_list = Info.objects.filter(job_type='ELEM').exclude(status='Complete').order_by('ship_date')
+    context = {'job_list': job_list}
+    return render(request, 'prodfloor/prodfloor.html', context)
+
 def detail(request, info_job_num):
     try:
         job = Info.objects.get(job_num=info_job_num)
@@ -65,7 +80,7 @@ def Start(request):
         index_num = job.current_index
         current_step = index_num + 1
         job.save()
-        #del request.session['pp_jobinfo']
+        del request.session['pp_jobinfo']
         return render(request, 'prodfloor/newjob.html', {'job_num': job_num, 'job': job, 'steps': steps_length,
                                                          'current_step_text': list_of_steps[index_num],
                                                          'current_step': current_step})
@@ -205,7 +220,7 @@ def Middle(request,action):
                         elif number == 5:
                             job.prev_stage = 'Complete'
                             job.save()
-                            return redirect(r'http://127.0.0.1:8000/prodfloor')#como redirigir a index?
+                            return redirect(r'http://127.0.0.1:8000/prodfloor')
                 status = job.status
                 list_of_steps = dict_of_steps[status]
                 job.stage_len = len(list_of_steps)
@@ -251,6 +266,9 @@ def Middle(request,action):
                 pass
         else:
             raise Http404("This is not the droid you're looking for")
+    else:
+        raise Http404("This is not the droid you're looking for")
+
 
 def done(request):
     return render(request, 'prodfloor/newjob.html')

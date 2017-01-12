@@ -5,6 +5,9 @@ from prodfloor.views import JobInfo, Stop, ResumeView
 from . import views
 
 urlpatterns = [
+    url(r'^live/M2000/', views.M2000View, name='m2000live'),
+    url(r'^live/ELEM/', views.ELEMView, name='elemive'),
+    url(r'^live/M4000/', views.M4000View, name='m4000live'),
     url(r'^live/', views.prodfloor_view, name='prodfloor'),
     url(r'^(?P<info_job_num>[0-9]{10})/$', views.detail, name='detail'),
     url(r'^stop',login_required(Stop.as_view(Stop.form_list))),

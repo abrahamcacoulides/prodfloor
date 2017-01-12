@@ -34,12 +34,12 @@
     </li>
         {% if original.status != 'Complete' %}
             <li>
-                <a href="/prodfloor/continue/{{ original.job_num }}" class="historylink">Continue With Job</a>
+                <a href="/prodfloor/continue/{{ original.job_num }}" class="historylink">{% trans "Continue With Job" %}</a>
             </li>
         {% else %}
             <span style="background: green">
                 <li>
-                <a><span>Job Complete</span></a>
+                <a><span>{% trans "Job Complete" %}</span></a>
                 </li>
             </span>
         {% endif %}

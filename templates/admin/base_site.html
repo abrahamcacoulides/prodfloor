@@ -1,9 +1,10 @@
 {% extends "admin/base.html" %}
 
-{% block title %}ProdFloor{% endblock %}#Title on the explorer tab
+{% block title %}ProdFloor{% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">ProdFloor</a></h1>#title on the page header
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
 {% endblock %}
+{% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
 
 {% block nav-global %}{% endblock %}

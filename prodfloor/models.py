@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
 class Info(models.Model):
     Tech_name = models.CharField(max_length=50)
@@ -15,7 +16,8 @@ class Info(models.Model):
         return self.job_num
 
     class Meta:
-        verbose_name_plural = 'My Jobs'
+        verbose_name = _('Job')
+        verbose_name_plural = _('My Jobs')
 
 
 class Features(models.Model):
@@ -45,4 +47,4 @@ class Stops(models.Model):
     stop_end_time = models.DateTimeField('"Stop" finish date')
 
     class Meta:
-        verbose_name_plural = 'Stops per Job'
+        verbose_name_plural = _('Stops per Job')

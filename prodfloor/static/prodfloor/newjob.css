@@ -94,7 +94,7 @@ ul li a span{
 /* About Section */
 .text_column {
 	width: 100%;
-	text-align: justify;
+	text-align: center;
 	font-weight: lighter;
 	line-height: 25px;
 	float: left;
@@ -103,6 +103,7 @@ ul li a span{
 	color: #A3A3A3;
 }
 .about {
+	text-align: center;
 	padding-left: 25px;
 	padding-right: 25px;
 	padding-top: 35px;
