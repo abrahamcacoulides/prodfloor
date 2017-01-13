@@ -27,12 +27,12 @@
     <nav>
       <ul>
           {% if job.status != 'Stopped' %}
-              <li><a href="http://127.0.0.1:8000/prodfloor/end/back" enable=False>BACK</a></li>
-              <li><a href="http://127.0.0.1:8000/prodfloor/end/next">NEXT</a></li>
-              <li> <a href="http://127.0.0.1:8000/prodfloor/end/stop">STOP</a></li>
+              <li><a href="/prodfloor/end/back" enable=False>BACK</a></li>
+              <li><a href="/prodfloor/end/next">NEXT</a></li>
+              <li> <a href="/prodfloor/end/stop">STOP</a></li>
           {% else %}
-              <li><a href="http://127.0.0.1:8000/prodfloor/end/next">RESUME</a></li>
-              <li> <a href="http://127.0.0.1:8000/prodfloor/end/stop"><span>STOPPED!</span></a></li>
+              <li><a href="/end/next">RESUME</a></li>
+              <li> <a href="/end/stop"><span>STOPPED!</span></a></li>
           {% endif %}
       </ul>
     </nav>

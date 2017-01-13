@@ -5,8 +5,7 @@ from formtools.wizard.views import SessionWizardView
 from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution
 from prodfloor.models import Info,Features,Times, Stops
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-import datetime
+from django.utils import timezone
 
 from .models import Info
 
@@ -193,29 +192,31 @@ def Middle(request,action):
                                   5: 'Complete'}
                 for number, stage in dict_of_stages.items():
                     if stage == status:
+                        time = timezone.now()
                         if status != 'Complete':
                             job.status=dict_of_stages[number+1]
                             job.save()
+
                         if number==1:
                             job.prev_stage = 'Beginning'
-                            times.end_time_1 = datetime.datetime.now()
-                            times.start_time_2 = datetime.datetime.now()
+                            times.end_time_1 = time
+                            times.start_time_2 = time
                             job.save()
                             times.save()
                         elif number==2:
                             job.prev_stage = 'Program'
-                            times.end_time_2 = datetime.datetime.now()
-                            times.start_time_3 = datetime.datetime.now()
+                            times.end_time_2 = time
+                            times.start_time_3 = time
                             job.save()
                             times.save()
                         elif number==3:
                             job.prev_stage = 'Logic'
-                            times.end_time_3 = datetime.datetime.now()
-                            times.start_time_4 = datetime.datetime.now()
+                            times.end_time_3 = time
+                            times.start_time_4 = time
                             times.save()
                         elif number==4:
                             job.prev_stage = 'Ending'
-                            times.end_time_4 = datetime.datetime.now()
+                            times.end_time_4 = time
                             times.save()
                         elif number == 5:
                             job.prev_stage = 'Complete'
@@ -313,7 +314,8 @@ class JobInfo(SessionWizardView):
             job_features_new_row=Features(info_id=ID,features=obj)
             job_features_new_row.save()
         self.request.session['temp_job_num']=job_num
-        start_time=Times(info_id=ID,start_time_1=datetime.datetime.now(),end_time_1=datetime.datetime.now(),start_time_2=datetime.datetime.now(),end_time_2=datetime.datetime.now(),start_time_3=datetime.datetime.now(),end_time_3=datetime.datetime.now(),start_time_4=datetime.datetime.now(),end_time_4=datetime.datetime.now())
+        creation_time = timezone.now()
+        start_time=Times(info_id=ID,start_time_1=creation_time,end_time_1=creation_time,start_time_2=creation_time,end_time_2=creation_time,start_time_3=creation_time,end_time_3=creation_time,start_time_4=creation_time,end_time_4=creation_time)
         start_time.save()
         return HttpResponseRedirect("http://127.0.0.1:8000/prodfloor/end/")
 
@@ -345,7 +347,8 @@ class Stop(SessionWizardView):
             ID = job.id
             self.get_all_cleaned_data()
             stop_reason=self.cleaned_data['reason_for_stop']
-            stop = Stops(info_id=ID,reason=stop_reason,solution='Not available yet',stop_start_time=datetime.datetime.now(),stop_end_time=datetime.datetime.now())
+            time = timezone.now()
+            stop = Stops(info_id=ID,reason=stop_reason,solution='Not available yet',stop_start_time=time,stop_end_time= time)
             job.save()
             stop.save()
             return HttpResponseRedirect("http://127.0.0.1:8000/prodfloor/continue/"+job_num)
@@ -382,7 +385,7 @@ class ResumeView(SessionWizardView):
             solution=self.cleaned_data['solution']
             stop = Stops.objects.get(info_id=ID,solution='Not available yet')
             stop.solution = solution
-            stop.stop_end_time = datetime.datetime.now()
+            stop.stop_end_time = timezone.now()
             job.save()
             stop.save()
             return HttpResponseRedirect("http://127.0.0.1:8000/prodfloor/continue/" + job_num)
