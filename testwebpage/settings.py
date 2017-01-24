@@ -25,7 +25,7 @@ SECRET_KEY = 'fp#!j2v0gjvc1%wkc&4xl1r9%*^=&m88o8jbr=lp%%uqtti+#%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['prodfloor.com']
 
 
 # Application definition

@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load prodfloor_extras %}
 <!doctype html>
 <html lang="en-US">
 <head>
@@ -26,13 +27,9 @@
     </a>
     <nav>
       <ul>
-          {% if job.status != 'Stopped' %}
-              <li><a href="/prodfloor/end/back" enable=False>BACK</a></li>
-              <li><a href="/prodfloor/end/next">NEXT</a></li>
-              <li> <a href="/prodfloor/end/stop">STOP</a></li>
-          {% else %}
-              <li><a href="/prodfloor/end/next">RESUME</a></li>
-          {% endif %}
+        <li><a href="back">BACK</a></li>
+        <li><a href="next">NEXT</a></li>
+        <li> <a href="stop">STOP</a></li>
       </ul>
     </nav>
   </header>
@@ -45,9 +42,9 @@
   <!-- About Section -->
   <section class="about" id="about">
       {% if last %}
-      <script>confirm('{{ message }}');</script>
+       <script>confirm('{{ message }}');</script>
       {% endif %}
-      <center><H2>{{ current_step_text }}</H2></center>
+      <H2>{{ current_step_text }}</H2>
   </section>
   <!-- Copyrights Section -->
   <div class="copyright">&copy;2015 - <strong>MCE info</strong></div>

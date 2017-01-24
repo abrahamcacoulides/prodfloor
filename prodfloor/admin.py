@@ -4,11 +4,13 @@ from .models import Info, Times, Features, Stops
 
 class FeaturesInline(admin.StackedInline):
     verbose_name_plural = 'Features'
+    verbose_name = 'Feature'
     model = Features
     extra = 0
 
 class TimesInline(admin.StackedInline):
     verbose_name_plural = 'Times'
+    verbose_name = 'Time'
     model = Times
     extra = 0
 
@@ -25,10 +27,10 @@ class StopsInfo(Info):
 
 class InfoAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['Tech_name','job_num','ship_date']}),
+        (None, {'fields': ['Tech_name','po','job_num','label','job_type','ship_date']}),
     ]
     inlines = [FeaturesInline,TimesInline]
-    list_display = ('job_num','Tech_name','ship_date', 'status')
+    list_display = ('job_num','label','Tech_name','po','job_type','ship_date', 'status')
 
     def get_queryset(self, request):
         name=request.user.first_name + ' ' + request.user.last_name
@@ -37,20 +39,17 @@ class InfoAdmin(admin.ModelAdmin):
 
 class JobsInLine(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['Tech_name', 'job_num', 'ship_date', 'status', 'job_type']}),
+        (None, {'fields': ['Tech_name','po', 'job_num','label', 'job_type', 'ship_date', 'status']}),
     ]
     inlines = [FeaturesInline, TimesInline]
-    list_display = ('job_num', 'Tech_name', 'ship_date', 'status', 'job_type')
+    list_display = ('Tech_name','job_num','label','po', 'job_type', 'ship_date', 'status')
 
 
 class StopsAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['info','reason','solution', 'stop_start_time', 'stop_end_time']}),
+        (None, {'fields': ['info','reason','reason_description','solution', 'stop_start_time', 'stop_end_time']}),
     ]
     list_display = ('info','reason','solution', 'stop_start_time', 'stop_end_time')
-
-    #def get_queryset(self, request):
-        #return self.model.objects.filter(reason!=)
 
 
 admin.site.register(MyJob,JobsInLine)

@@ -32,16 +32,22 @@
         {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
         <a href="{% add_preserved_filters history_url %}" class="historylink">{% trans "History" %}</a>
     </li>
-        {% if original.status != 'Complete' %}
-            <li>
+        {% if original.status != 'Complete' and original.job_num != null%}
+            {% if request.user.is_superuser %}
+                <li>
+                <a href="/prodfloor/reassignjob/{{ original.job_num }}" class="historylink">{% trans "Reassign Job" %}</a>
+            </li>
+            {% else %}
+                <li>
                 <a href="/prodfloor/continue/{{ original.job_num }}" class="historylink">{% trans "Continue With Job" %}</a>
             </li>
-        {% else %}
-            <span style="background: green">
-                <li>
+            {% endif %}
+            {% elif original.job_num != null %}
+            <li>
+            <span style="background: green"><li>
                 <a><span>{% trans "Job Complete" %}</span></a>
                 </li>
-            </span>
+        {% else %}
         {% endif %}
     {% if has_absolute_url %}<li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif %}
     {% endblock %}

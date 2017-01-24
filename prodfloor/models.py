@@ -5,9 +5,20 @@ from django.utils.translation import ugettext_lazy as _
 class Info(models.Model):
     Tech_name = models.CharField(max_length=50)
     job_num = models.CharField(max_length=10)
+    po = models.CharField(max_length=7)
     ship_date = models.DateTimeField('Shipping Date')
-    status = models.CharField(max_length=50, choices=[('Beginning', 'Beginning'), ('Program', 'Program'), ('Logic', 'Logic'), ('Ending', 'Ending'), ('Complete', 'Complete'),('Stopped', 'Stopped')])
-    prev_stage = models.CharField(max_length=50, choices=[('Beginning', 'Beginning'), ('Program', 'Program'), ('Logic', 'Logic'), ('Ending', 'Ending'), ('Complete', 'Complete')])
+    status = models.CharField(max_length=50, choices=[('Beginning', 'Beginning'),
+                                                      ('Program', 'Program'),
+                                                      ('Logic', 'Logic'),
+                                                      ('Ending', 'Ending'),
+                                                      ('Complete', 'Complete'),
+                                                      ('Stopped', 'Stopped')])
+    prev_stage = models.CharField(max_length=50, choices=[('Beginning', 'Beginning'),
+                                                          ('Program', 'Program'),
+                                                          ('Logic', 'Logic'),
+                                                          ('Ending', 'Ending'),
+                                                          ('Complete', 'Complete')])
+    label = models.CharField(max_length=1)
     current_index = models.IntegerField()
     job_type = models.CharField(max_length=50, choices=[('2000', 'M2000'), ('4000', 'M4000'), ('ELEM', 'Element')])
     stage_len = models.IntegerField()
@@ -22,7 +33,13 @@ class Info(models.Model):
 
 class Features(models.Model):
     info=models.ForeignKey(Info)
-    features = models.CharField(max_length=200, choices=[('COP','Car Operating Panel'),('HAPS','HAPS battery'),('SHC','Serial Hall Calls')])
+    features = models.CharField(max_length=200, choices=[('COP','Car Operating Panel'),
+                                                         ('SHC','Serial Hall Calls'),
+                                                         ('HAPS','HAPS battery'),
+                                                         ('OVL','Overlay'),
+                                                         ('GROUP','Group'),
+                                                         ('mView','mView'),
+                                                         ('iMon','iMonitor')])
 
 class Times(models.Model):
     info = models.ForeignKey(Info)
@@ -41,7 +58,15 @@ class Times(models.Model):
 
 class Stops(models.Model):
     info = models.ForeignKey(Info)
-    reason = models.CharField(max_length=200)
+    reason = models.CharField(max_length=200,choices=[('Job reassignment', 'Job reassignment'),
+                                                      ('Shift ended','Shift ended'),
+                                                      ('Reason 1', 'Reason 1'),
+                                                      ('Reason 2', 'Reason 2'),
+                                                      ('Reason 3', 'Reason 3'),
+                                                      ('Reason 4', 'Reason 4'),
+                                                      ('Reason 5', 'Reason 5'),
+                                                      ('Reason 6', 'Reason 6')])
+    reason_description = models.CharField(max_length=200)
     solution = models.CharField(max_length=200)
     stop_start_time = models.DateTimeField('"Stop" start date')
     stop_end_time = models.DateTimeField('"Stop" finish date')
