@@ -145,7 +145,8 @@ def Continue(request,jobnum):
                             stop_shiftend.solution = solution
                             stop_shiftend.stop_end_time = timezone.now()
                             stop_shiftend.save()
-                            if any(object.reason != 'Shift ended' for object in stop):
+                            stop_1 = Stops.objects.filter(info_id=job.id, solution='Not available yet').exclude(reason='Job reassignment')
+                            if any(object.reason != 'Shift ended' for object in stop_1):
                                 index_num = 0
                                 current_step = index_num+1
                                 status = 'Stopped'
@@ -191,7 +192,8 @@ def Continue(request,jobnum):
                     stop_shiftend.solution = 'Shift restart/Reassigned.'
                     stop_shiftend.stop_end_time = timezone.now()
                     stop_shiftend.save()
-                    if any(object.reason != 'Shift ended' for object in stop):
+                    stop_2 = Stops.objects.filter(info_id=job.id, solution='Not available yet').exclude(reason='Job reassignment').exclude(reason='Shift ended')
+                    if any(object.reason != 'Shift ended' for object in stop_2):
                         index_num = 0
                         current_step = index_num + 1
                         status= 'Stopped'
@@ -233,7 +235,7 @@ def Continue(request,jobnum):
 @login_required()
 def EndShift(request):
     tech_name = request.user.first_name + ' ' + request.user.last_name
-    jobs = Info.objects.filter(tech_name= tech_name).exclude(status='Complete').exclude(status='Stopped')
+    jobs = Info.objects.filter(Tech_name= tech_name).exclude(status='Complete').exclude(status='Stopped')
     for obj in jobs:
         if obj.status != 'Stopped':
             obj.prev_stage = obj.status
@@ -246,6 +248,8 @@ def EndShift(request):
         stop.save()
         obj.save()
     logout(request)
+    messages.success(request, 'You succesfully ended your shift.')
+    return HttpResponseRedirect('/admin/')
 
 
 @login_required()

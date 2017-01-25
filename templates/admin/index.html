@@ -55,8 +55,8 @@
     <div class="module" id="recent-actions-module">
         <h2>{% trans 'Available actions' %}</h2>
         <ul class="actionlist">
-        <li class="addlink"><a href="/prodfloor/first/">{% trans 'New Job' %}</a>
-        </li>
+        <li class="addlink"><a href="/prodfloor/first/">{% trans 'New Job' %}</a></li>
+        <li class="deletelink"><a href="/prodfloor/endshift/">{% trans 'End Shift' %}</a></li>
         </ul>
         {% if request.user.is_superuser %}
         <h2>{% trans 'Available views' %}</h2>

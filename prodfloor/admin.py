@@ -27,10 +27,11 @@ class StopsInfo(Info):
 
 class InfoAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['Tech_name','po','job_num','label','job_type','ship_date']}),
+        (None, {'fields': ['po','job_num','label','job_type','ship_date']}),
     ]
     inlines = [FeaturesInline,TimesInline]
-    list_display = ('job_num','label','Tech_name','po','job_type','ship_date', 'status')
+    list_display = ('job_num','label','po','job_type','ship_date', 'status')
+    list_filter = ['status']
 
     def get_queryset(self, request):
         name=request.user.first_name + ' ' + request.user.last_name
@@ -50,7 +51,6 @@ class StopsAdmin(admin.ModelAdmin):
         (None, {'fields': ['info','reason','reason_description','solution', 'stop_start_time', 'stop_end_time']}),
     ]
     list_display = ('info','reason','solution', 'stop_start_time', 'stop_end_time')
-
 
 admin.site.register(MyJob,JobsInLine)
 admin.site.register(Stops,StopsAdmin)
