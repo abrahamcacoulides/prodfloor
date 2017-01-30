@@ -38,7 +38,7 @@
     <h1><center>JOB #&nbsp;</center></h1>
       {% for job in job_list %}
           <hr>
-          <div class="text-center"><h2>{{ job.po }}<span style="font-size:25px">({{ job.label }})</span></h2></div>
+          <div class="text-center"><h2>{% getfivedigits job.job_num %}<span style="font-size:25px">({{ job.label }})</span></h2></div>
 
       {% endfor %}
 </div>
@@ -63,7 +63,7 @@
     {% for job in job_list %}
         <hr>
     <div class="progress" style="height: 32px">
-      <div class="{% if job.status == 'Beginning' %}progress-bar progress-bar-begin progress-bar-striped active{% endif %}{% if job.status == 'Program' %}progress-bar progress-bar-program progress-bar-striped active{% endif %}{% if job.status == 'Logic' %}progress-bar progress-bar-logic progress-bar-striped active{% endif %}{% if job.status == 'Ending' %}progress-bar progress-bar-ending progress-bar-striped active{% endif %}{% if job.status == 'Complete' %}progress-bar progress-bar-complete{% endif %}{% if job.status == 'Stopped' %}progress-bar progress-bar-stop progress-bar-striped active{% endif %}" role="progressbar" aria-valuenow="{% getpercentage job.current_index job.stage_len %}" aria-valuemin="0" aria-valuemax="100" style="width:{% getpercentage job.current_index job.stage_len %}%"></div>
+      <div class="{% getcolor job %}" role="progressbar" aria-valuenow="{% getpercentage job.current_index job.stage_len %}" aria-valuemin="0" aria-valuemax="100" style="width:{% getpercentage job.current_index job.stage_len %}%"></div>
       &nbsp;</div>
     {% endfor %}
 </div>

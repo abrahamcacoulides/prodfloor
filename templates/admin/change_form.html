@@ -35,11 +35,11 @@
         {% if original.status != 'Complete' and original.job_num != null%}
             {% if request.user.is_superuser %}
                 <li>
-                <a href="/prodfloor/reassignjob/{{ original.job_num }}" class="historylink">{% trans "Reassign Job" %}</a>
+                <a href="/prodfloor/reassignjob/{{ original.job_num }}/{{ original.po }}" class="historylink">{% trans "Reassign Job" %}</a>
             </li>
             {% else %}
                 <li>
-                <a href="/prodfloor/continue/{{ original.job_num }}" class="historylink">{% trans "Continue With Job" %}</a>
+                <a href="/prodfloor/continue/{{ original.job_num }}/{{ original.po }}" class="historylink">{% trans "Continue With Job" %}</a>
             </li>
             {% endif %}
             {% elif original.job_num != null %}

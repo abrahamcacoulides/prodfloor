@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 features=(('COP','Car Operating Panel'),('SHC','Serial Hall Calls'),('HAPS','HAPS battery'),('OVL','Overlay'),('GROUP','Group'),('mView','mView'),('iMon','iMonitor'))
+stations = (('1', 'S1'), ('2', 'S2'), ('3', 'S3'),('4', 'S4'),('5', 'S5'),('6', 'S6'),('7', 'S7'),('8', 'S8'),('9', 'S9'),('10', 'S10'),('11', 'S11'),('12', 'S12'),('13', 'ELEM1'),('14', 'ELEM2'))
 def getTechs():
     all_techs = User.objects.all()
     techs_list_notup = []
@@ -26,6 +27,7 @@ class Maininfo(forms.Form):
                                                           ('G', 'G'),
                                                           ('H', 'H')))
     job_type = forms.ChoiceField(label='Job type', choices=(('2000', 'M2000'), ('4000', 'M4000'), ('ELEM', 'Element')))
+    station = forms.ChoiceField(label='Station', choices=stations)
     ship_date=forms.DateField(label='Shipping date',widget = forms.SelectDateWidget, input_formats=['%Y-%m-%d'], initial= initial)
 
 
@@ -44,4 +46,5 @@ class ResumeSolution(forms.Form):
 class ReassignJob(forms.Form):
     getTechs()
     new_tech = forms.ChoiceField(label='Would be assigned to:', choices=techs_tuple)
+    station = forms.ChoiceField(label='Station', choices=stations)
     reason_description = forms.CharField(required=True, widget=forms.Textarea)

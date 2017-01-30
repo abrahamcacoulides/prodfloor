@@ -27,10 +27,10 @@ class StopsInfo(Info):
 
 class InfoAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['po','job_num','label','job_type','ship_date']}),
+        (None, {'fields': ['po','job_num','label','station','job_type','ship_date']}),
     ]
     inlines = [FeaturesInline,TimesInline]
-    list_display = ('job_num','label','po','job_type','ship_date', 'status')
+    list_display = ('job_num','label','station','po','job_type','ship_date', 'status')
     list_filter = ['status']
 
     def get_queryset(self, request):
@@ -40,17 +40,17 @@ class InfoAdmin(admin.ModelAdmin):
 
 class JobsInLine(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['Tech_name','po', 'job_num','label', 'job_type', 'ship_date', 'status']}),
+        (None, {'fields': ['Tech_name','po', 'job_num','label','station', 'job_type', 'ship_date', 'status']}),
     ]
     inlines = [FeaturesInline, TimesInline]
-    list_display = ('Tech_name','job_num','label','po', 'job_type', 'ship_date', 'status')
+    list_display = ('Tech_name','job_num','label','station','po', 'job_type', 'ship_date', 'status')
 
 
 class StopsAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['info','reason','reason_description','solution', 'stop_start_time', 'stop_end_time']}),
+        (None, {'fields': ['info','po','reason','reason_description','solution', 'stop_start_time', 'stop_end_time']}),
     ]
-    list_display = ('info','reason','solution', 'stop_start_time', 'stop_end_time')
+    list_display = ('info','po','reason','solution', 'stop_start_time', 'stop_end_time')
 
 admin.site.register(MyJob,JobsInLine)
 admin.site.register(Stops,StopsAdmin)

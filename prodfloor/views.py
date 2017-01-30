@@ -7,6 +7,7 @@ from prodfloor.models import Info,Features,Times, Stops
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
+from prodfloor.dicts import dict_elem,dict_m2000,dict_m4000
 
 def prodfloor_view(request):
     job_list = Info.objects.order_by('job_num')
@@ -33,42 +34,21 @@ def detail(request, info_job_num):#TODO is this view really needed? right now is
         job = Info.objects.get(job_num=info_job_num)
     except Info.DoesNotExist:
         raise Http404("Job doesnt exist")
-    return render(request, 'prodfloor/detail.html', {'job': job})#
+    return render(request, 'prodfloor/detail.html', {'job': job})
 
 @login_required()
 def Start(request):
     if 'pp_jobinfo' in request.session:
-        dict_of_steps = {'Beginning':['Documentacion Inicial',
-                                      'Inspeccion Visual',
-                                      'Preparacion de Labview',
-                                      'Chequeo preliminar de voltajes iniciales'],
-                         'Program':['Programacion de Flasheo',
-                                    'Programacion del Firmware',
-                                    'Programacion del Solid State Starter',
-                                    'Programacion de paramtros F1',
-                                    'Programacion tarjeta CE Electronics'],
-                         'Logic':['Board power test SAFL & SAFS',
-                                  'Motor Starter Test',
-                                  'Valve control and limits',
-                                  'Safety and inspection',
-                                  'Door locks and hoistway access',
-                                  'Landing system',
-                                  'Door Interface',
-                                  'COP parte 1',
-                                  'Fire Service Phase I',
-                                  'Fire Service Phase II',
-                                  'Movement Indication',
-                                  'Calls',
-                                  'Programmable Input/Outputs'],
-                         'Ending':['Inspeccion Final',
-                                   'Passcode',
-                                   'Papeleria Final',
-                                   'Respaldo Electronico de la papeleria',
-                                   'Desconnecion de Arneces',
-                                   'Carro a estacion final'],
-                         'Complete':['Fin de pruebas']}#TODO how to change the dictionary depending on the features of the job? should it be stored in the DB or can it be done per session?
+        dict_of_steps = {}#TODO how to change the dictionary depending on the features of the job? should it be stored in the DB or can it be done per session?
         job_num = request.session['temp_job_num']
-        job = Info.objects.get(job_num=job_num,Tech_name=request.user.first_name + ' ' + request.user.last_name)
+        po = request.session['temp_po']
+        job = Info.objects.get(job_num=job_num,po=po,Tech_name=request.user.first_name + ' ' + request.user.last_name)
+        if job.job_type == '2000':
+            dict_of_steps = dict_m2000
+        elif job.job_type == '4000':
+            dict_of_steps = dict_m4000
+        elif job.job_type == 'ELEM':
+            dict_of_steps = dict_elem
         status = job.status
         list_of_steps = dict_of_steps[status]
         job.stage_len = len(list_of_steps)
@@ -86,42 +66,19 @@ def Start(request):
         raise Http404("This is not the droid you're looking for")
 
 @login_required()
-def Continue(request,jobnum):
+def Continue(request,jobnum,po):
     if request.user.is_authenticated() and request.user.is_active:
         request.session['temp_job_num']=jobnum
-        dict_of_steps = {
-            'Beginning' : ['Documentacion Inicial',
-                          'Inspeccion Visual',
-                          'Preparacion de Labview',
-                          'Chequeo preliminar de voltajes iniciales'],
-            'Program' : ['Programacion de Flasheo',
-                        'Programacion del Firmware',
-                        'Programacion del Solid State Starter',
-                        'Programacion de paramtros F1',
-                        'Programacion tarjeta CE Electronics'],
-            'Logic' : ['Board power test SAFL & SAFS',
-                      'Motor Starter Test',
-                      'Valve control and limits',
-                      'Safety and inspection',
-                      'Door locks and hoistway access',
-                      'Landing system',
-                      'Door Interface',
-                      'COP parte 1',
-                      'Fire Service Phase I',
-                      'Fire Service Phase II',
-                      'Movement Indication',
-                      'Calls',
-                      'Programmable Input/Outputs'],
-            'Ending' : ['Inspeccion Final',
-                       'Passcode',
-                       'Papeleria Final',
-                       'Respaldo Electronico de la papeleria',
-                       'Desconnecion de Arneces',
-                       'Carro a estacion final'],
-            'Complete' : ['Fin de pruebas'],
-            'Stopped' : ["Detenido"]}#TODO how to change the dictionary depending on the features of the job? should it be stored in the DB or can it be done per session?
+        request.session['temp_po'] = po
+        dict_of_steps = {}#TODO how to change the dictionary depending on the features of the job? should it be stored in the DB or can it be done per session?
         job_num=jobnum
-        job = Info.objects.get(job_num=job_num)
+        job = Info.objects.get(job_num=job_num,po=po)
+        if job.job_type == '2000':
+            dict_of_steps = dict_m2000
+        elif job.job_type == '4000':
+            dict_of_steps = dict_m4000
+        elif job.job_type == 'ELEM':
+            dict_of_steps = dict_elem
         status = job.status
         list_of_steps = dict_of_steps[status]
         index_num = job.current_index
@@ -241,10 +198,11 @@ def EndShift(request):
             obj.prev_stage = obj.status
         obj.status = 'Stopped'
         ID = obj.id
+        po = obj.po
         stop_reason = 'Shift ended'
         time = timezone.now()
         description = 'The user ' + tech_name + ' ended his shift'
-        stop =  Stops(info_id=ID,reason=stop_reason,solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description)
+        stop =  Stops(info_id=ID,reason=stop_reason,solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
         stop.save()
         obj.save()
     logout(request)
@@ -255,39 +213,16 @@ def EndShift(request):
 @login_required()
 def Middle(request,action,index):
     if request.user.is_authenticated() and request.user.is_active:
-        dict_of_steps = {
-            'Beginning': ['Documentacion Inicial',
-                                       'Inspeccion Visual',
-                                       'Preparacion de Labview',
-                                       'Chequeo preliminar de voltajes iniciales'],
-                         'Program': ['Programacion de Flasheo',
-                                     'Programacion del Firmware',
-                                     'Programacion del Solid State Starter',
-                                     'Programacion de paramtros F1',
-                                     'Programacion tarjeta CE Electronics'],
-                         'Logic': ['Board power test SAFL & SAFS',
-                                   'Motor Starter Test',
-                                   'Valve control and limits',
-                                   'Safety and inspection',
-                                   'Door locks and hoistway access',
-                                   'Landing system',
-                                   'Door Interface',
-                                   'COP parte 1',
-                                   'Fire Service Phase I',
-                                   'Fire Service Phase II',
-                                   'Movement Indication',
-                                   'Calls',
-                                   'Programmable Input/Outputs'],
-                         'Ending': ['Inspeccion Final',
-                                    'Passcode',
-                                    'Papeleria Final',
-                                    'Respaldo Electronico de la papeleria',
-                                    'Desconnecion de Arneces',
-                                    'Carro a estacion final'],
-                         'Complete': ['Fin de pruebas'],
-                        'Stopped': ['Detenido']}#TODO how to change the dictionary depending on the features of the job? should it be stored in the DB or can it be done per session?
+        dict_of_steps = {}#TODO how to change the dictionary depending on the features of the job? should it be stored in the DB or can it be done per session?
         job_num = request.session['temp_job_num']
-        job = Info.objects.get(job_num=job_num)
+        po = request.session['temp_po']
+        job = Info.objects.get(job_num=job_num,po=po)
+        if job.job_type == '2000':
+            dict_of_steps = dict_m2000
+        elif job.job_type == '4000':
+            dict_of_steps = dict_m4000
+        elif job.job_type == 'ELEM':
+            dict_of_steps = dict_elem
         status = job.status
         list_of_steps = dict_of_steps[status]
         steps_length = job.stage_len
@@ -409,18 +344,21 @@ class Reassign(SessionWizardView):
     def done(self, form_list, **kwargs):
         self.get_all_cleaned_data()
         self.jobnum = kwargs.get('jobnum', None)
+        po = kwargs.get('po', None)
         time = timezone.now()
-        job_num_info = Info.objects.get(job_num=self.jobnum)
+        job_num_info = Info.objects.get(job_num=self.jobnum, po=po)
         reason = 'Job reassignment'
         new_tech = self.cleaned_data['new_tech']
+        station = self.cleaned_data['station']
         description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech
         ID = job_num_info.id
         job_num_info.Tech_name = new_tech
+        job_num_info.station = station
         if job_num_info.status != 'Stopped':
             job_num_info.prev_stage = job_num_info.status
         job_num_info.status = 'Stopped'
         job_num_info.save()
-        job_num_stop = Stops(info_id=ID,reason=reason,solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description)
+        job_num_stop = Stops(info_id=ID,reason=reason,solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description, po=po)
         job_num_stop.save()
         messages.success(self.request,'The Job ' + job_num_info.job_num + ' has been properly reassigned.')
         return HttpResponseRedirect("/admin/prodfloor/myjob/"+str(job_num_info.id)+"/change/")
@@ -433,8 +371,7 @@ def first(request):
     for object in job:
         c+=1
     if c>0:
-        messages.warning(request,
-                         'You already have one active Job. In order to create a new one stop or finish the active one.')
+        messages.warning(request,'You already have one active Job. In order to create a new one stop or finish the active one.')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         return HttpResponseRedirect("/prodfloor/job/")
@@ -462,29 +399,34 @@ class JobInfo(SessionWizardView):
                     self.cleaned_data.update(form_obj.cleaned_data)
 
     def done(self, form_list, **kwargs):
+        previous_jobs = Info.objects.all()
+        self.get_all_cleaned_data()
         if self.request.user.is_authenticated() and self.request.user.is_active:
             self.request.session['pp_jobinfo'] = True
-        user_id = self.request.user.id
         user_name = self.request.user.first_name
         user_lastname = self.request.user.last_name
-        self.get_all_cleaned_data()
-        job_num=self.cleaned_data['job_num']
-        Tech_name=user_name + ' ' + user_lastname
-        ship_date=self.cleaned_data['ship_date']
+        job_num = self.cleaned_data['job_num']
+        Tech_name = user_name + ' ' + user_lastname
+        ship_date = self.cleaned_data['ship_date']
         job_type = self.cleaned_data['job_type']
         PO = self.cleaned_data['po']
         label = self.cleaned_data['label']
-        status='Beginning'
-        job_info_new_row=Info(job_num=job_num,Tech_name=Tech_name,status=status,ship_date=ship_date,current_index=0,job_type=job_type,stage_len=99,po=PO,label=label)
+        station = self.cleaned_data['station']
+        status = 'Beginning'
+        if any(self.cleaned_data['po'] in obj.po for obj in previous_jobs ):
+            messages.warning(self.request,'The Job# ' + job_num + ' with PO# '+ PO + ' has already been created. If needed, request the administrator for a reassignment.')
+            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+        job_info_new_row=Info(job_num=job_num,Tech_name=Tech_name,status=status,ship_date=ship_date,current_index=0,job_type=job_type,stage_len=99,po=PO,label=label,station=station)
         job_info_new_row.save()
         ID=job_info_new_row.id
         features=self.cleaned_data['features_selection']
         for obj in features:
             job_features_new_row=Features(info_id=ID,features=obj)
             job_features_new_row.save()
-        self.request.session['temp_job_num']=job_num
+        self.request.session['temp_job_num']= job_num
+        self.request.session['temp_po'] = PO
         creation_time = timezone.now()
-        start_time=Times(info_id=ID,start_time_1=creation_time,end_time_1=creation_time,start_time_2=creation_time,end_time_2=creation_time,start_time_3=creation_time,end_time_3=creation_time,start_time_4=creation_time,end_time_4=creation_time)
+        start_time=Times(info_id=ID,start_time_1=creation_time,end_time_1=creation_time,start_time_2=creation_time,end_time_2=creation_time,start_time_3=creation_time,end_time_3=creation_time,start_time_4=creation_time,end_time_4=creation_time, po=PO)
         start_time.save()
         return HttpResponseRedirect("/prodfloor/start/")
 
@@ -512,19 +454,20 @@ class Stop(SessionWizardView):
     def done(self, form_list, **kwargs):
         if self.request.user.is_authenticated() and self.request.user.is_active:
             job_num = self.request.session['temp_job_num']
-            job = Info.objects.get(job_num=job_num)
+            po = self.request.session['temp_po']
+            job = Info.objects.get(job_num=job_num,po=po)
             ID = job.id
             self.get_all_cleaned_data()
             stop_reason=self.cleaned_data['reason_for_stop']
             description = self.cleaned_data['reason_description']
             time = timezone.now()
-            stop = Stops(info_id=ID,reason=stop_reason,solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description)
+            stop = Stops(info_id=ID,reason=stop_reason,solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
             if job.status != 'Stopped':
                 job.prev_stage = job.status
             job.status = 'Stopped'
             job.save()
             stop.save()
-            return HttpResponseRedirect("/prodfloor/continue/"+job_num)
+            return HttpResponseRedirect("/prodfloor/continue/"+job_num+"/" + po)
 
 
 class ResumeView(SessionWizardView):
@@ -550,15 +493,16 @@ class ResumeView(SessionWizardView):
     def done(self, form_list, **kwargs):
         if self.request.user.is_authenticated() and self.request.user.is_active:
             job_num = self.request.session['temp_job_num']
-            job = Info.objects.get(job_num=job_num)
+            po = self.request.session['temp_po']
+            job = Info.objects.get(job_num=job_num,po=po)
             job.status = job.prev_stage
             job.prev_stage = 'Stopped'
             ID = job.id
             self.get_all_cleaned_data()
             solution=self.cleaned_data['solution']
-            stop = Stops.objects.get(info_id=ID,solution='Not available yet')
+            stop = Stops.objects.get(info_id=ID,solution='Not available yet',po=po)
             stop.solution = solution
             stop.stop_end_time = timezone.now()
             job.save()
             stop.save()
-            return HttpResponseRedirect("/prodfloor/continue/" + job_num)
+            return HttpResponseRedirect("/prodfloor/continue/" + job_num + "/" + po)
