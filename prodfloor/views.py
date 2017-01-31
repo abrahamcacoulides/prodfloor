@@ -39,7 +39,7 @@ def detail(request, info_job_num):#TODO is this view really needed? right now is
 @login_required()
 def Start(request):
     if 'pp_jobinfo' in request.session:
-        dict_of_steps = {}#TODO how to change the dictionary depending on the features of the job? should it be stored in the DB or can it be done per session?
+        dict_of_steps = {}
         job_num = request.session['temp_job_num']
         po = request.session['temp_po']
         job = Info.objects.get(job_num=job_num,po=po,Tech_name=request.user.first_name + ' ' + request.user.last_name)
@@ -70,7 +70,7 @@ def Continue(request,jobnum,po):
     if request.user.is_authenticated() and request.user.is_active:
         request.session['temp_job_num']=jobnum
         request.session['temp_po'] = po
-        dict_of_steps = {}#TODO how to change the dictionary depending on the features of the job? should it be stored in the DB or can it be done per session?
+        dict_of_steps = {}
         job_num=jobnum
         job = Info.objects.get(job_num=job_num,po=po)
         if job.job_type == '2000':
@@ -213,7 +213,7 @@ def EndShift(request):
 @login_required()
 def Middle(request,action,index):
     if request.user.is_authenticated() and request.user.is_active:
-        dict_of_steps = {}#TODO how to change the dictionary depending on the features of the job? should it be stored in the DB or can it be done per session?
+        dict_of_steps = {}
         job_num = request.session['temp_job_num']
         po = request.session['temp_po']
         job = Info.objects.get(job_num=job_num,po=po)
