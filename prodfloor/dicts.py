@@ -5,7 +5,7 @@ dict_m2000 = {'Beginning':['Documentacion Inicial',
                          'Program':['Programacion de Flasheo',
                                     'Conexion de arneces simulador del carro y arneceses cartop',#if cartop
                                     'Programacion del Firmware',
-                                    'Conexion de arneces del simulador',#if cartop
+                                    'Conexion de arneces del simulador',#if !cartop
                                     'Programacion del Solid State Starter',
                                     'Programacion de parametros F1',
                                     'Programacion tarjeta CE Electronics'],
@@ -15,12 +15,17 @@ dict_m2000 = {'Beginning':['Documentacion Inicial',
                                   'Safety and inspection',
                                   'Door locks and hoistway access',
                                   'Landing system',
-                                  'Door Interface',
-                                  'COP parte 1',
-                                  'Fire Service Phase I',
-                                  'Fire Service Phase II',
-                                  'Movement Indication',
-                                  'Calls',
+                                  'Door Interface (Pag CT1, CT2)',#if DCC
+                                  'COP parte 1 (Pag CPI)',#if DCC
+                                  'Door Interface (Pag 11, 11X)',#if !DCC
+                                  'COP parte 1 (Pag 12)',#if !DCC
+                                  'Fire Service Phase I (Pag 13)',
+                                  'Fire Service Phase II (Pag 12)',#if !CPI
+                                  'Movement Indication (Pag 14)',#if !CPI
+                                  'Fire Service Phase II (Pag CPI)',#if CPI
+                                  'Movement Indication (Pag CPI)',#if CPI
+                                  'Car Calls (Pag CPI)',#if CPI
+                                  'Calls (Pag 16)',
                                   'Serial Hall Calls'#if serial hall calls
                                   'Programmable Input/Outputs'],
                          'Ending':['Inspeccion Final',
@@ -51,14 +56,19 @@ dict_m4000 = {'Beginning':['Documentacion Inicial',
                                   'Emergency Brake',
                                   'Safety and inspection',
                                   'Door locks and hoistway access',
-                                  'Landing system',
-                                  'Door Interface',
-                                  'COP parte 1',
-                                  'Fire Service Phase I',
-                                  'Fire Service Phase II',
-                                  'Movement Indication',
-                                  'Calls',
-                                  'Serial Hall Calls'#if serial hall calls
+                                  'Landing System',
+                                  'Door Interface (Pag CT1, CT2)',#if DCC
+                                  'COP parte 1 (Pag CPI)',#if DCC
+                                  'Door Interface (Pag 11, 11X)',#if !DCC
+                                  'COP parte 1 (Pag 12)',#if !DCC
+                                  'Fire Service Phase I (Pag 13)',
+                                  'Fire Service Phase II (Pag 12)',#if !CPI
+                                  'Movement Indication (Pag 14)',#if !CPI
+                                  'Fire Service Phase II (Pag CPI)',#if CPI
+                                  'Movement Indication (Pag CPI)',#if CPI
+                                  'Car Calls (Pag CPI)',#if CPI
+                                  'Calls (Pag 16)',
+                                  'Serial Hall Calls (Pag SH)',#if serial hall calls
                                   'Programmable Input/Outputs',
                                   'Additional Manual Test\n(Overspeeds and Limits)',
                                   'MBRAKE\nCalibracion Final',
@@ -150,4 +160,6 @@ features_list = [('COP','Car Operating Panel'),
                  ('OVL','Overlay'),
                  ('GROUP','Group'),
                  ('mView','mView'),
-                 ('iMon','iMonitor')]
+                 ('iMon','iMonitor'),
+                 ('DCC','Door Control in Cartop'),
+                 ('CPI','CPI Board Included')]

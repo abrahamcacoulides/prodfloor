@@ -1,5 +1,5 @@
 from django import template
-from prodfloor.models import Stops, Times
+from prodfloor.models import Stops, Times, Features
 from django.utils import timezone
 from prodfloor.dicts import times_elem,times_m2000,times_m4000
 
@@ -20,6 +20,7 @@ def getcolor(A,*args, **kwargs):
     po = A.po
     stop = Stops.objects.filter(info_id=ID,po=po)
     times = Times.objects.get(info_id=ID,po=po)
+    features_objects = Features.objects.filter(info_id=ID,info__po=po)
     time_elapsed_shift_end = 0
     if any(obj.reason == 'Shift ended' for obj in stop):
         for ea in stop.filter(reason='Shift ended'):
@@ -79,10 +80,31 @@ def getcolor(A,*args, **kwargs):
             pass
         if A.job_type == '2000':
             ETC = sum(times_m2000.values())
+            if any(feature.features == 'COP' for feature in features_objects):
+                pass
+            else:
+                ETC -= 25
+            if any(feature.features == 'SHC' for feature in features_objects):
+                pass
+            else:
+                ETC -= 10
         elif A.job_type == '4000':
             ETC = sum(times_m4000.values())
+            if any(feature.features == 'COP' for feature in features_objects):
+                pass
+            else:
+                ETC = ETC - 10
+            if any(feature.features == 'SHC' for feature in features_objects):
+                pass
+            else:
+                ETC = ETC - 20
         elif A.job_type == 'ELEM':
             ETC = sum(times_elem.values())
+            if any(feature.features == 'HAPS' for feature in features_objects):
+                pass
+            else:
+                ETC = ETC - 15
+
         now = timezone.now()
         elapsed_time = now - start
         elapsed_time_minutes = (elapsed_time.total_seconds()/60)

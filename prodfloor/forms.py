@@ -2,7 +2,7 @@ from django import forms
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-features=(('COP','Car Operating Panel'),('SHC','Serial Hall Calls'),('HAPS','HAPS battery'),('OVL','Overlay'),('GROUP','Group'),('mView','mView'),('iMon','iMonitor'))
+features=(('COP','Car Operating Panel'),('SHC','Serial Hall Calls'),('HAPS','HAPS Battery'),('DCC','Door Control in Cartop'),('CPI','CPI Board Included'),('OVL','Overlay'),('GROUP','Group'),('mView','mView'),('iMon','iMonitor'))
 stations = (('1', 'S1'), ('2', 'S2'), ('3', 'S3'),('4', 'S4'),('5', 'S5'),('6', 'S6'),('7', 'S7'),('8', 'S8'),('9', 'S9'),('10', 'S10'),('11', 'S11'),('12', 'S12'),('13', 'ELEM1'),('14', 'ELEM2'))
 def getTechs():
     all_techs = User.objects.all()

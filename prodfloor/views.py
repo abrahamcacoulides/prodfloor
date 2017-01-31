@@ -217,12 +217,86 @@ def Middle(request,action,index):
         job_num = request.session['temp_job_num']
         po = request.session['temp_po']
         job = Info.objects.get(job_num=job_num,po=po)
+        features_objects = Features.objects.filter(info_id=job.id,info__po=po)
         if job.job_type == '2000':
             dict_of_steps = dict_m2000
+            if any(feature.features == 'COP' for feature in features_objects):
+                if 'Conexion de arneces del simulador' in dict_of_steps['Program']:
+                    index = dict_of_steps['Program'].index('Conexion de arneces del simulador')
+                    dict_of_steps['Program'].pop(index)
+            else:
+                if 'Conexion de arneces simulador del carro y arneceses cartop' in dict_of_steps['Program']:
+                    index = dict_of_steps['Program'].index('Conexion de arneces simulador del carro y arneceses cartop')
+                    dict_of_steps['Program'].pop(index)
+            if any(feature.features == 'SHC' for feature in features_objects):
+                pass
+            else:
+                if 'Serial Hall Calls (Pag SH)' in dict_of_steps['Logic']:
+                    index = dict_of_steps['Logic'].index('Serial Hall Calls (Pag SH)')
+                    dict_of_steps['Logic'].pop(index)
+            if any(feature.features == 'DCC' for feature in features_objects):
+                if 'Door Interface (Pag 11, 11X)' in dict_of_steps['Logic']:
+                    index = dict_of_steps['Logic'].index('Door Interface (Pag 11, 11X)')
+                    dict_of_steps['Logic'].pop(index)
+            else:
+                if 'Door Interface (Pag CT1, CT2)' in dict_of_steps['Logic']:
+                    index = dict_of_steps['Logic'].index('Door Interface (Pag CT1, CT2)')
+                    dict_of_steps['Logic'].pop(index)
+                    dict_of_steps['Logic'].pop(index)
+            if any(feature.features == 'CPI' for feature in features_objects):
+                if 'Fire Service Phase II (Pag 12)' in dict_of_steps['Logic']:
+                    index = dict_of_steps['Logic'].index('Fire Service Phase II (Pag 12)')
+                    dict_of_steps['Logic'].pop(index)
+                    dict_of_steps['Logic'].pop(index)
+            else:
+                if 'Fire Service Phase II (Pag CPI)' in dict_of_steps['Logic']:
+                    index = dict_of_steps['Logic'].index('Fire Service Phase II (Pag CPI)')
+                    dict_of_steps['Logic'].pop(index)
+                    dict_of_steps['Logic'].pop(index)
+                    dict_of_steps['Logic'].pop(index)
         elif job.job_type == '4000':
             dict_of_steps = dict_m4000
+            if any(feature.features == 'COP' for feature in features_objects):
+                if 'Conexion de arneces del simulador' in dict_of_steps['Program']:
+                    index = dict_of_steps['Program'].index('Conexion de arneces del simulador')
+                    dict_of_steps['Program'].pop(index)
+            else:
+                if 'Conexion de arneces simulador del carro y arneceses cartop' in dict_of_steps['Program']:
+                    index = dict_of_steps['Program'].index('Conexion de arneces simulador del carro y arneceses cartop')
+                    dict_of_steps['Program'].pop(index)
+            if any(feature.features == 'SHC' for feature in features_objects):
+                pass
+            else:
+                if 'Serial Hall Calls (Pag SH)' in dict_of_steps['Logic']:
+                    index = dict_of_steps['Logic'].index('Serial Hall Calls (Pag SH)')
+                    dict_of_steps['Logic'].pop(index)
+            if any(feature.features == 'DCC' for feature in features_objects):
+                if 'Door Interface (Pag 11, 11X)' in dict_of_steps['Logic']:
+                    index = dict_of_steps['Logic'].index('Door Interface (Pag 11, 11X)')
+                    dict_of_steps['Logic'].pop(index)
+            else:
+                if 'Door Interface (Pag CT1, CT2)' in dict_of_steps['Logic']:
+                    index = dict_of_steps['Logic'].index('Door Interface (Pag CT1, CT2)')
+                    dict_of_steps['Logic'].pop(index)
+                    dict_of_steps['Logic'].pop(index)
+            if any(feature.features == 'CPI' for feature in features_objects):
+                if 'Fire Service Phase II (Pag 12)' in dict_of_steps['Logic']:
+                    index = dict_of_steps['Logic'].index('Fire Service Phase II (Pag 12)')
+                    dict_of_steps['Logic'].pop(index)
+                    dict_of_steps['Logic'].pop(index)
+            else:
+                if 'Fire Service Phase II (Pag CPI)' in dict_of_steps['Logic']:
+                    index = dict_of_steps['Logic'].index('Fire Service Phase II (Pag CPI)')
+                    dict_of_steps['Logic'].pop(index)
+                    dict_of_steps['Logic'].pop(index)
+                    dict_of_steps['Logic'].pop(index)
         elif job.job_type == 'ELEM':
             dict_of_steps = dict_elem
+            if any(feature.features == 'HAPS' for feature in features_objects):
+                pass
+            else:
+                if dict_of_steps['Program'][0] == 'Flashear HAPS':
+                    dict_of_steps['Program'].pop(0)
         status = job.status
         list_of_steps = dict_of_steps[status]
         steps_length = job.stage_len
