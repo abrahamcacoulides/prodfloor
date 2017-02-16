@@ -1,9 +1,35 @@
 from django import template
 from prodfloor.models import Stops, Times, Features
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from prodfloor.dicts import times_elem,times_m2000,times_m4000
 
 register = template.Library()
+
+app_list_2 = [{'app_url': '/admin/prodfloor/',
+               'has_module_perms': True,
+               'models':[{'perms': {'add': True, 'change': True, 'delete': True},
+                          'add_url': '/admin/prodfloor/tier1/add/',
+                          'admin_url': '/admin/prodfloor/tier1/',
+                          'name': _('First Level Causes'),
+                          'object_name': 'Tier1'},
+                         {'perms': {'add': True,
+                                    'change': True,
+                                    'delete': True},
+                          'add_url': '/admin/prodfloor/tier2/add/',
+                          'admin_url': '/admin/prodfloor/tier2/',
+                          'name': _('Second Level Causes'),
+                          'object_name': 'Tier2'},
+                         {'perms': {'add': True,
+                                    'change': True,
+                                    'delete': True},
+                          'add_url': '/admin/prodfloor/tier3/add/',
+                          'admin_url': '/admin/prodfloor/tier3/',
+                          'name': _('Third Level Causes'),
+                          'object_name': 'Tier3'}],
+               'name':'Causes',
+               'app_label': 'causes'}]
+app_list_3 = []
 
 @register.simple_tag()
 def getpercentage(A, B, *args, **kwargs):
@@ -116,3 +142,39 @@ def getcolor(A,*args, **kwargs):
         else:
             return 'progress-bar progress-bar-vdelayed'
 
+
+@register.simple_tag()
+def print_app(A):
+    print(A)
+
+@register.simple_tag()
+def get_app(A):
+    print(A)
+    object_name=A[1]['models'][0]['object_name'] == 'Tier1'
+    for item in A:
+        if item['app_url'] == '/admin/prodfloor/':
+            for item1 in item['models']:
+                if item1['object_name'] == 'Tier1' or item1['object_name'] == 'Tier2' or item1['object_name'] == 'Tier3':
+                    app_list_2.append(item1)
+            pass
+    if object_name == 'Tier1' or object_name == 'Tier2' or object_name == 'Tier3':
+        app_list_2.append()
+    print(A[1]['models'][0]['object_name'])
+
+@register.simple_tag()
+def getstation(A,*args, **kwargs):
+    stations = {'1': 'S1',
+                '2': 'S2',
+                '3': 'S3',
+                '4': 'S4',
+                '5': 'S5',
+                '6': 'S6',
+                '7': 'S7',
+                '8': 'S8',
+                '9': 'S9',
+                '10': 'S10',
+                '11': 'S11',
+                '12': 'S12',
+                '13': 'ELEM1',
+                '14': 'ELEM2'}
+    return stations[A]

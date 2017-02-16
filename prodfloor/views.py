@@ -1,13 +1,15 @@
-from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.http import Http404, HttpResponseRedirect,HttpResponse
+from django.shortcuts import render, redirect, render_to_response
 from formtools.wizard.views import SessionWizardView
 from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob, getTechs
 from django.contrib.auth import logout
-from prodfloor.models import Info,Features,Times, Stops
+from prodfloor.models import Info,Features,Times, Stops,Tier3,Tier2,Tier1
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
 from prodfloor.dicts import dict_elem,dict_m2000,dict_m4000
+from django.core import serializers
+import json
 
 def prodfloor_view(request):
     job_list = Info.objects.order_by('job_num')
@@ -88,22 +90,51 @@ def Continue(request,jobnum,po):
         current_step = index_num + 1
         if  job.Tech_name == request.user.first_name + ' ' + request.user.last_name:
             if job.status == 'Stopped':
-                stop = Stops.objects.filter(info_id=job.id, solution='Not available yet')
-                if any(object.reason == 'Job reassignment' for object in stop):
-                    stop_reass = Stops.objects.get(info_id=job.id, solution='Not available yet',reason='Job reassignment')
-                    stop_reass.stop_end_time = timezone.now()
-                    stop_reass.solution = 'Job resumed.'
-                    stop_reass.save()
-                    if any(object.reason != 'Job reassignment' for object in stop):
-                        if any(object.reason == 'Shift ended' for object in stop):
-                            solution = "Shift restart/Reassigned"
-                            ID = job.id
-                            stop_shiftend = Stops.objects.get(info_id=ID, solution='Not available yet', reason='Shift ended')
-                            stop_shiftend.solution = solution
-                            stop_shiftend.stop_end_time = timezone.now()
-                            stop_shiftend.save()
-                            stop_1 = Stops.objects.filter(info_id=job.id, solution='Not available yet').exclude(reason='Job reassignment')
-                            if any(object.reason != 'Shift ended' for object in stop_1):
+                active_jobs = Info.objects.filter(Tech_name=request.user.first_name + ' ' + request.user.last_name).exclude(status='Complete').exclude(status='Stopped')
+                c = 0
+                for object in active_jobs:
+                    c += 1
+                if c > 0:
+                    messages.warning(request,
+                                     'You already have one active Job. In order to continue with this one stop or finish the active one.')
+                    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                else:
+                    stop = Stops.objects.filter(info_id=job.id, solution='Not available yet')
+                    if any(object.reason == 'Job reassignment' for object in stop):
+                        stop_reass = Stops.objects.get(info_id=job.id, solution='Not available yet',reason='Job reassignment')
+                        stop_reass.stop_end_time = timezone.now()
+                        stop_reass.solution = 'Job resumed.'
+                        stop_reass.save()
+                        if any(object.reason != 'Job reassignment' for object in stop):
+                            if any(object.reason == 'Shift ended' for object in stop):
+                                solution = "Shift restart/Reassigned"
+                                ID = job.id
+                                stop_shiftend = Stops.objects.get(info_id=ID, solution='Not available yet', reason='Shift ended')
+                                stop_shiftend.solution = solution
+                                stop_shiftend.stop_end_time = timezone.now()
+                                stop_shiftend.save()
+                                stop_1 = Stops.objects.filter(info_id=job.id, solution='Not available yet').exclude(reason='Job reassignment')
+                                if any(object.reason != 'Shift ended' for object in stop_1):
+                                    index_num = 0
+                                    current_step = index_num+1
+                                    status = 'Stopped'
+                                    list_of_steps = dict_of_steps[status]
+                                    steps_length = len(list_of_steps)
+                                    return render(request, 'prodfloor/newjob.html',
+                                                  {'job_num': job_num, 'job': job, 'steps': steps_length,
+                                                   'current_step_text': list_of_steps[index_num],
+                                                   'current_step': current_step})
+                                else:
+                                    job.status = job.prev_stage
+                                    job.prev_stage = 'Stopped'
+                                    list_of_steps = dict_of_steps[job.status]
+                                    job.stage_len = len(list_of_steps)
+                                    job.save()
+                                    steps_length = job.stage_len
+                                    index_num = job.current_index
+                                    current_step = index_num + 1
+                                    return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': list_of_steps[index_num], 'current_step': current_step})
+                            else:
                                 index_num = 0
                                 current_step = index_num+1
                                 status = 'Stopped'
@@ -113,73 +144,53 @@ def Continue(request,jobnum,po):
                                               {'job_num': job_num, 'job': job, 'steps': steps_length,
                                                'current_step_text': list_of_steps[index_num],
                                                'current_step': current_step})
-                            else:
-                                job.status = job.prev_stage
-                                job.prev_stage = 'Stopped'
-                                list_of_steps = dict_of_steps[job.status]
-                                job.stage_len = len(list_of_steps)
-                                job.save()
-                                steps_length = job.stage_len
-                                index_num = job.current_index
-                                current_step = index_num + 1
-                                return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': list_of_steps[index_num], 'current_step': current_step})
                         else:
-                            index_num = 0
+                            job.status = job.prev_stage
+                            job.prev_stage = 'Stopped'
+                            list_of_steps = dict_of_steps[job.status]
+                            job.stage_len = len(list_of_steps)
+                            job.save()
+                            steps_length = job.stage_len
+                            index_num = job.current_index
                             current_step = index_num+1
-                            status = 'Stopped'
+                            return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,
+                                           'current_step_text': list_of_steps[index_num], 'current_step': current_step})
+                    elif any(object.reason == 'Shift ended' for object in stop):
+                        stop_shiftend = Stops.objects.get(info_id=job.id, solution='Not available yet',reason='Shift ended')
+                        stop_shiftend.solution = 'Shift restart/Reassigned.'
+                        stop_shiftend.stop_end_time = timezone.now()
+                        stop_shiftend.save()
+                        stop_2 = Stops.objects.filter(info_id=job.id, solution='Not available yet').exclude(reason='Job reassignment').exclude(reason='Shift ended')
+                        if any(object.reason != 'Shift ended' for object in stop_2):
+                            index_num = 0
+                            current_step = index_num + 1
+                            status= 'Stopped'
                             list_of_steps = dict_of_steps[status]
                             steps_length = len(list_of_steps)
                             return render(request, 'prodfloor/newjob.html',
                                           {'job_num': job_num, 'job': job, 'steps': steps_length,
                                            'current_step_text': list_of_steps[index_num],
                                            'current_step': current_step})
+                        else:
+                            job.status = job.prev_stage
+                            job.prev_stage = 'Stopped'
+                            list_of_steps = dict_of_steps[job.status]
+                            job.stage_len = len(list_of_steps)
+                            job.save()
+                            steps_length = job.stage_len
+                            index_num = job.current_index
+                            current_step = index_num + 1
+                            return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': list_of_steps[index_num],'current_step': current_step})
                     else:
-                        job.status = job.prev_stage
-                        job.prev_stage = 'Stopped'
-                        list_of_steps = dict_of_steps[job.status]
-                        job.stage_len = len(list_of_steps)
-                        job.save()
-                        steps_length = job.stage_len
-                        index_num = job.current_index
-                        current_step = index_num+1
-                        return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,
-                                       'current_step_text': list_of_steps[index_num], 'current_step': current_step})
-                elif any(object.reason == 'Shift ended' for object in stop):
-                    stop_shiftend = Stops.objects.get(info_id=job.id, solution='Not available yet',reason='Shift ended')
-                    stop_shiftend.solution = 'Shift restart/Reassigned.'
-                    stop_shiftend.stop_end_time = timezone.now()
-                    stop_shiftend.save()
-                    stop_2 = Stops.objects.filter(info_id=job.id, solution='Not available yet').exclude(reason='Job reassignment').exclude(reason='Shift ended')
-                    if any(object.reason != 'Shift ended' for object in stop_2):
                         index_num = 0
                         current_step = index_num + 1
-                        status= 'Stopped'
+                        status = 'Stopped'
                         list_of_steps = dict_of_steps[status]
                         steps_length = len(list_of_steps)
                         return render(request, 'prodfloor/newjob.html',
                                       {'job_num': job_num, 'job': job, 'steps': steps_length,
                                        'current_step_text': list_of_steps[index_num],
                                        'current_step': current_step})
-                    else:
-                        job.status = job.prev_stage
-                        job.prev_stage = 'Stopped'
-                        list_of_steps = dict_of_steps[job.status]
-                        job.stage_len = len(list_of_steps)
-                        job.save()
-                        steps_length = job.stage_len
-                        index_num = job.current_index
-                        current_step = index_num + 1
-                        return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': list_of_steps[index_num],'current_step': current_step})
-                else:
-                    index_num = 0
-                    current_step = index_num + 1
-                    status = 'Stopped'
-                    list_of_steps = dict_of_steps[status]
-                    steps_length = len(list_of_steps)
-                    return render(request, 'prodfloor/newjob.html',
-                                  {'job_num': job_num, 'job': job, 'steps': steps_length,
-                                   'current_step_text': list_of_steps[index_num],
-                                   'current_step': current_step})
             else:
                 return render(request, 'prodfloor/newjob.html', {'job_num': job_num, 'job': job, 'steps': steps_length,
                                                          'current_step_text': list_of_steps[index_num],
@@ -202,7 +213,7 @@ def EndShift(request):
         stop_reason = 'Shift ended'
         time = timezone.now()
         description = 'The user ' + tech_name + ' ended his shift'
-        stop =  Stops(info_id=ID,reason=stop_reason,solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
+        stop =  Stops(info_id=ID,reason=stop_reason,solution='Not available yet',extra_cause_1='N/A',extra_cause_2='N/A',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
         stop.save()
         obj.save()
     logout(request)
@@ -397,7 +408,9 @@ class Reassign(SessionWizardView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     list = [ReassignJob]
-    #template_name = 'testwebpage/prodfloor/templates/formtools/wizard/reassign.html'
+
+    def get_template_names(self):
+        return ["prodfloor/wizard_form_reassign.html"]
 
     def get_all_cleaned_data(self):
         self.cleaned_data = {}
@@ -422,7 +435,8 @@ class Reassign(SessionWizardView):
         time = timezone.now()
         job_num_info = Info.objects.get(job_num=self.jobnum, po=po)
         reason = 'Job reassignment'
-        new_tech = self.cleaned_data['new_tech']
+        new_tech_obj = self.cleaned_data['new_tech']
+        new_tech = new_tech_obj.first_name + ' ' + new_tech_obj.last_name
         station = self.cleaned_data['station']
         description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech
         ID = job_num_info.id
@@ -432,7 +446,7 @@ class Reassign(SessionWizardView):
             job_num_info.prev_stage = job_num_info.status
         job_num_info.status = 'Stopped'
         job_num_info.save()
-        job_num_stop = Stops(info_id=ID,reason=reason,solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description, po=po)
+        job_num_stop = Stops(info_id=ID,reason=reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description, po=po)
         job_num_stop.save()
         messages.success(self.request,'The Job ' + job_num_info.job_num + ' has been properly reassigned.')
         return HttpResponseRedirect("/admin/prodfloor/myjob/"+str(job_num_info.id)+"/change/")
@@ -509,6 +523,10 @@ class Stop(SessionWizardView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     form_list=[StopReason]
+
+    def get_template_names(self):
+        return ["prodfloor/wizard_form_stop.html"]
+
     def get_all_cleaned_data(self):
         self.cleaned_data = {}
         for form_key in self.get_form_list():
@@ -535,7 +553,7 @@ class Stop(SessionWizardView):
             stop_reason=self.cleaned_data['reason_for_stop']
             description = self.cleaned_data['reason_description']
             time = timezone.now()
-            stop = Stops(info_id=ID,reason=stop_reason,solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
+            stop = Stops(info_id=ID,reason=stop_reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
             if job.status != 'Stopped':
                 job.prev_stage = job.status
             job.status = 'Stopped'
@@ -548,6 +566,22 @@ class ResumeView(SessionWizardView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     form_list=[ResumeSolution]
+
+    def get_template_names(self):
+        return ["prodfloor/wizard_form_resume.html"]
+
+    def get_form_initial(self, step):
+        initial = {}
+        po = self.request.session['temp_po']
+        job_num = self.request.session['temp_job_num']
+        job = Info.objects.get(job_num=job_num, po=po)
+        ID = job.id
+        stop = Stops.objects.get(info_id=ID, solution='Not available yet', po=po)
+        tier1 = stop.reason
+        reason_id = Tier1.objects.get(tier_one_cause=tier1)
+        initial.update({'tier1':tier1})
+        return self.initial_dict.get(step, initial)
+
     def get_all_cleaned_data(self):
         self.cleaned_data = {}
         for form_key in self.get_form_list():
@@ -574,9 +608,50 @@ class ResumeView(SessionWizardView):
             ID = job.id
             self.get_all_cleaned_data()
             solution=self.cleaned_data['solution']
+            cause_1 = self.cleaned_data['tier2']
+            cause_2 = self.cleaned_data['tier3']
             stop = Stops.objects.get(info_id=ID,solution='Not available yet',po=po)
             stop.solution = solution
+            stop.extra_cause_1 =cause_1
+            stop.extra_cause_2 = cause_2
             stop.stop_end_time = timezone.now()
             job.save()
             stop.save()
             return HttpResponseRedirect("/prodfloor/continue/" + job_num + "/" + po)
+
+def get_tier_2(request):
+    if request.method == 'POST':
+        tier1 = request.POST.get('tier1')
+        tier_two_causes={0:'------'}
+        tier2 = Tier2.objects.filter(tier_one__tier_one_cause=tier1)
+        if tier2.count()<=0:
+            tier_two_causes[0]='N/A'
+        else:
+            for obj in tier2:
+                tier_two_causes[obj.id]=obj.tier_two_cause
+        return HttpResponse(json.dumps(tier_two_causes),content_type="application/json")
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )
+
+def get_tier_3(request):
+    if request.method == 'POST':
+        tier1 = request.POST.get('tier1')
+        tier2 = request.POST.get('tier2')
+        tier_three_causes = {}
+        reason_id = Tier1.objects.get(tier_one_cause=tier1)
+        tier3 = Tier3.objects.filter(tier_two__tier_two_cause=tier2,tier_two__tier_one_id=reason_id.id)
+        if tier3.count()<=0:
+            tier_three_causes[0] = 'N/A'
+        else:
+            for obj in tier3:
+                tier_three_causes[obj.id]=obj.tier_three_cause
+
+        return HttpResponse(json.dumps(tier_three_causes),content_type="application/json")
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )

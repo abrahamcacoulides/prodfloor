@@ -67,18 +67,12 @@
       &nbsp;</div>
     {% endfor %}
 </div>
-<div class="col-sm-2" >
-  <h1><center>!</center></h1>
-    <div class="text-center" >
-    <hr style="padding-bottom: 0px;margin-bottom: 5px">
-        <div class="text-center"><div class="material-icons" style="font-size: 4.5em;">android</div>
-    </div>
-    <hr style="padding-bottom: 0px;margin-bottom: 5px;margin-top: 0px">
-    <div class="text-center">
-        <div class="material-icons" style="font-size:4.5em;">weekend</div>
-        <div class="material-icons" style="font-size:4.5em;">card_membership</div>
-    </div>
-        <hr style="padding-bottom: 0px;margin-bottom: 5px;margin-top: 0px">
+<div class="col-sm-1" >
+  <h1><center>STATN</center></h1>
+    {% for job in job_list %}
+        <hr>
+    <div class="text-center"><h2>{% getstation job.station %}</h2></div>
+    {% endfor %}
 </div>
 </div>
 <hr>
@@ -86,7 +80,7 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12">
-        <p>Copyright © Testeros. All rights reserved.</p>
+        <p>Copyright © MCE. All rights reserved.</p>
       </div>
     </div>
   </div>
@@ -95,6 +89,7 @@
 <script src="{% static 'prodfloor/jquery-1.11.3.min.js' %}"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed --> 
 <script src="{% static 'prodfloor/bootstrap.js' %}"></script>
+</div>
 </body>
 </html>
 

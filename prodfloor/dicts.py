@@ -26,7 +26,7 @@ dict_m2000 = {'Beginning':['Documentacion Inicial',
                                   'Movement Indication (Pag CPI)',#if CPI
                                   'Car Calls (Pag CPI)',#if CPI
                                   'Calls (Pag 16)',
-                                  'Serial Hall Calls'#if serial hall calls
+                                  'Serial Hall Calls',#if serial hall calls
                                   'Programmable Input/Outputs'],
                          'Ending':['Inspeccion Final',
                                    'Passcode',
@@ -105,6 +105,7 @@ dict_elem = {'Beginning':['Configuracion Inicial de PC',
                                    'Imprimir Papeleria Final',
                                    'Hacer Respaldo Electronico de Documentos al Servidor',
                                    'Carro a Estacion Final'],
+                         'Logic':[''],
                          'Complete':['Fin de pruebas'],
                          'Stopped': ['Detenido']}
 times_m2000 = {'Beginning':60,
@@ -121,12 +122,15 @@ times_elem = {'Beginning':40,
 
 stop_reasons = [('Job reassignment', 'Job reassignment'),
                 ('Shift ended','Shift ended'),
-                ('Reason 1', 'Reason 1'),
-                ('Reason 2', 'Reason 2'),
-                ('Reason 3', 'Reason 3'),
-                ('Reason 4', 'Reason 4'),
-                ('Reason 5', 'Reason 5'),
-                ('Reason 6', 'Reason 6')]
+                ('Error Funcional', 'Error Funcional'),
+                ('Tarjetas T', 'Tarjetas T'),
+                ('Material Faltante', 'Custom Software Faltante'),
+                ('Junta de supervisor', 'Junta de supervisor'),
+                ('Tecnico no asignado', 'Tecnico no asignado'),
+                ('Personal', 'Personal'),
+                ('Ingenieria', 'Ingenieria'),
+                ('Falla en equipo de computo', 'Falla en equipo de computo'),
+                ('Entrenamiento', 'Entrenamiento')]
 
 stations_dict = [('1', 'S1'),
                  ('2', 'S2'),
@@ -163,3 +167,15 @@ features_list = [('COP','Car Operating Panel'),
                  ('iMon','iMonitor'),
                  ('DCC','Door Control in Cartop'),
                  ('CPI','CPI Board Included')]
+
+long_ass_tier1_tupple = (('Error Funcional','Error Funcional'),
+                         ('Tarjetas T','Tarjetas T'),
+                         ('Material Faltante','Custom Software Faltante'),
+                         ('Junta de supervisor','Junta de supervisor'),
+                         ('Tecnico no asignado','Tecnico no asignado'),
+                         ('Personal','Personal'),
+                         ('Ingenieria', 'Ingenieria'),
+                         ('Falla en equipo de computo','Falla en equipo de computo'),
+                         ('Entrenamiento','Entrenamiento'))
+long_ass_tier2_tupple = ()
+long_ass_tier3_tupple = ()

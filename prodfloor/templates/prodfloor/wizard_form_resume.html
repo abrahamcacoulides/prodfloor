@@ -3,13 +3,13 @@
 {% load i18n %}
 {% load prodfloor_extras %}
 <head>
-    <title>{% block title %}{% trans "New Job Info" %}{% endblock %}</title>
+    <title>{% block title %}{% trans "Resume Job" %}{% endblock %}</title>
 </head>
 {% block head %}
 {{ wizard.form.media }}
 {% endblock %}
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'prodfloor:prodfloor' %}">{{ site_header|default:_('Job Information') }}</a></h1>
+<h1 id="site-name"><a href="{% url 'prodfloor:prodfloor' %}">{{ site_header|default:_('Resume Job') }}</a></h1>
 {% endblock %}
 {% block content %}
 {{ wizard.steps.step1 }} {{wizard.step}}of {{ wizard.steps.count }}
@@ -30,4 +30,6 @@
 {% endif %}
 <input type="submit" value="{% trans "submit" %}"/>
 </form>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="{% static 'prodfloor/ajax.js' %}"></script>
 {% endblock %}
