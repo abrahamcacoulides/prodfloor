@@ -1,6 +1,6 @@
 [
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 3,
     "fields": {
         "tier_two_cause": "Falla Chip",
@@ -8,7 +8,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 4,
     "fields": {
         "tier_two_cause": "Se\u00f1ales erroneas del simulador",
@@ -16,7 +16,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 5,
     "fields": {
         "tier_two_cause": "Mensaje de error en MPU desconocido",
@@ -24,7 +24,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 6,
     "fields": {
         "tier_two_cause": "No flashea tarjeta",
@@ -32,7 +32,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 7,
     "fields": {
         "tier_two_cause": "No calibra freno",
@@ -40,7 +40,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 8,
     "fields": {
         "tier_two_cause": "No calibra los pisos",
@@ -48,7 +48,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 9,
     "fields": {
         "tier_two_cause": "No calibra la corrida",
@@ -56,7 +56,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 10,
     "fields": {
         "tier_two_cause": "No funciona MPLAB software",
@@ -64,7 +64,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 11,
     "fields": {
         "tier_two_cause": "Falla en el flasheo del puerto xport",
@@ -72,7 +72,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 12,
     "fields": {
         "tier_two_cause": "Falla el ICD3(MPLAB fisico)",
@@ -80,7 +80,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 13,
     "fields": {
         "tier_two_cause": "N/A",
@@ -88,7 +88,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 14,
     "fields": {
         "tier_two_cause": "N/A",
@@ -96,7 +96,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 15,
     "fields": {
         "tier_two_cause": "N/A",
@@ -104,7 +104,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 16,
     "fields": {
         "tier_two_cause": "N/A",
@@ -112,7 +112,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 17,
     "fields": {
         "tier_two_cause": "Emergencia personal",
@@ -120,7 +120,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 18,
     "fields": {
         "tier_two_cause": "Enfermeria",
@@ -128,7 +128,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 19,
     "fields": {
         "tier_two_cause": "RH",
@@ -136,7 +136,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 20,
     "fields": {
         "tier_two_cause": "Cambio",
@@ -144,7 +144,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 21,
     "fields": {
         "tier_two_cause": "Paro por verificacion con cliente",
@@ -152,7 +152,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 22,
     "fields": {
         "tier_two_cause": "Comprobacion de funcionamiento",
@@ -160,7 +160,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 23,
     "fields": {
         "tier_two_cause": "Pruebas de nuevos dise\u00f1os",
@@ -168,7 +168,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 24,
     "fields": {
         "tier_two_cause": "Falla de mouse",
@@ -176,7 +176,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 25,
     "fields": {
         "tier_two_cause": "Falla de teclado",
@@ -184,7 +184,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 26,
     "fields": {
         "tier_two_cause": "Falla de CAN-USB",
@@ -192,7 +192,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 27,
     "fields": {
         "tier_two_cause": "Falla de monitor",
@@ -200,7 +200,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 28,
     "fields": {
         "tier_two_cause": "Falla de Tablet",
@@ -208,7 +208,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 29,
     "fields": {
         "tier_two_cause": "Falla de Labview",
@@ -216,7 +216,7 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 30,
     "fields": {
         "tier_two_cause": "Falla en el servidor",
@@ -224,12 +224,11 @@
     }
 },
 {
-    "model": "prodfloor.tier2",
+    "model": "stopscauses.tier2",
     "pk": 31,
     "fields": {
         "tier_two_cause": "N/A",
         "tier_one": 11
     }
-},
-{"model": "prodfloor.tier3", "pk": 54, "fields": {"tier_two": 4, "tier_three_cause": "Componentes Faltantes en Controlador"}}, {"model": "prodfloor.tier3", "pk": 55, "fields": {"tier_two": 4, "tier_three_cause": "Componentes da\u00f1ados f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 56, "fields": {"tier_two": 4, "tier_three_cause": "Componentes da\u00f1ados internamente"}}, {"model": "prodfloor.tier3", "pk": 57, "fields": {"tier_two": 4, "tier_three_cause": "Componentes, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 58, "fields": {"tier_two": 4, "tier_three_cause": "Componentes incorrectos"}}, {"model": "prodfloor.tier3", "pk": 59, "fields": {"tier_two": 4, "tier_three_cause": "Tarjetas da\u00f1adas f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 60, "fields": {"tier_two": 4, "tier_three_cause": "Tarjetas da\u00f1adas internamente"}}, {"model": "prodfloor.tier3", "pk": 61, "fields": {"tier_two": 4, "tier_three_cause": "Tarjetas, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 62, "fields": {"tier_two": 4, "tier_three_cause": "Tarjetas incorrectas"}}, {"model": "prodfloor.tier3", "pk": 63, "fields": {"tier_two": 4, "tier_three_cause": "Mecanico, mala instalaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 64, "fields": {"tier_two": 4, "tier_three_cause": "Etiquetado, falta etiqueta"}}, {"model": "prodfloor.tier3", "pk": 65, "fields": {"tier_two": 4, "tier_three_cause": "Etiquetado, mala etiqueta"}}, {"model": "prodfloor.tier3", "pk": 66, "fields": {"tier_two": 4, "tier_three_cause": "Cableado, cables sueltos"}}, {"model": "prodfloor.tier3", "pk": 67, "fields": {"tier_two": 4, "tier_three_cause": "Cableado, cables faltantes"}}, {"model": "prodfloor.tier3", "pk": 68, "fields": {"tier_two": 4, "tier_three_cause": "Cableado, falso contacto"}}, {"model": "prodfloor.tier3", "pk": 69, "fields": {"tier_two": 4, "tier_three_cause": "Cableado, corto circuito"}}, {"model": "prodfloor.tier3", "pk": 70, "fields": {"tier_two": 4, "tier_three_cause": "Ingenier\u00eda Error"}}, {"model": "prodfloor.tier3", "pk": 71, "fields": {"tier_two": 4, "tier_three_cause": "Informaci\u00f3n faltante de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 72, "fields": {"tier_two": 4, "tier_three_cause": "Informaci\u00f3n por validar de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 73, "fields": {"tier_two": 4, "tier_three_cause": "Informacion faltante de reporte de prueba"}}, {"model": "prodfloor.tier3", "pk": 74, "fields": {"tier_two": 4, "tier_three_cause": "Impresiones faltan hojas y/o tinta"}}, {"model": "prodfloor.tier3", "pk": 75, "fields": {"tier_two": 4, "tier_three_cause": "Escaner no disponible"}}, {"model": "prodfloor.tier3", "pk": 76, "fields": {"tier_two": 4, "tier_three_cause": "Par\u00e1metros erroneos(F1, F5, F7, R6), reeprogramacion"}}, {"model": "prodfloor.tier3", "pk": 77, "fields": {"tier_two": 4, "tier_three_cause": "Custom software fall\u00f3"}}, {"model": "prodfloor.tier3", "pk": 78, "fields": {"tier_two": 4, "tier_three_cause": "Flasheo mal realizado, tarjetas"}}, {"model": "prodfloor.tier3", "pk": 79, "fields": {"tier_two": 4, "tier_three_cause": "Flasheo mal realizado, XPORT"}}, {"model": "prodfloor.tier3", "pk": 80, "fields": {"tier_two": 4, "tier_three_cause": "Material,Features de Test faltantes"}}, {"model": "prodfloor.tier3", "pk": 81, "fields": {"tier_two": 4, "tier_three_cause": "Material,Features de Test da\u00f1ados"}}, {"model": "prodfloor.tier3", "pk": 82, "fields": {"tier_two": 4, "tier_three_cause": "Simulador Arneces rotos, arreglo"}}, {"model": "prodfloor.tier3", "pk": 83, "fields": {"tier_two": 4, "tier_three_cause": "Simulador Falla tarjetas"}}, {"model": "prodfloor.tier3", "pk": 84, "fields": {"tier_two": 4, "tier_three_cause": "Simulador Falla cableados"}}, {"model": "prodfloor.tier3", "pk": 85, "fields": {"tier_two": 4, "tier_three_cause": "Simulador falla logica"}}, {"model": "prodfloor.tier3", "pk": 86, "fields": {"tier_two": 4, "tier_three_cause": "Simulador, cambio de estaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 87, "fields": {"tier_two": 4, "tier_three_cause": "Software nuevos, pruebas"}}, {"model": "prodfloor.tier3", "pk": 88, "fields": {"tier_two": 4, "tier_three_cause": "PC Cliente, mala imagen"}},{"model": "prodfloor.tier3", "pk": 89, "fields": {"tier_two": 5, "tier_three_cause": "Componentes Faltantes en Controlador"}}, {"model": "prodfloor.tier3", "pk": 90, "fields": {"tier_two": 5, "tier_three_cause": "Componentes da\u00f1ados f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 91, "fields": {"tier_two": 5, "tier_three_cause": "Componentes da\u00f1ados internamente"}}, {"model": "prodfloor.tier3", "pk": 92, "fields": {"tier_two": 5, "tier_three_cause": "Componentes, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 93, "fields": {"tier_two": 5, "tier_three_cause": "Componentes incorrectos"}}, {"model": "prodfloor.tier3", "pk": 94, "fields": {"tier_two": 5, "tier_three_cause": "Tarjetas da\u00f1adas f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 95, "fields": {"tier_two": 5, "tier_three_cause": "Tarjetas da\u00f1adas internamente"}}, {"model": "prodfloor.tier3", "pk": 96, "fields": {"tier_two": 5, "tier_three_cause": "Tarjetas, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 97, "fields": {"tier_two": 5, "tier_three_cause": "Tarjetas incorrectas"}}, {"model": "prodfloor.tier3", "pk": 98, "fields": {"tier_two": 5, "tier_three_cause": "Mecanico, mala instalaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 99, "fields": {"tier_two": 5, "tier_three_cause": "Etiquetado, falta etiqueta"}}, {"model": "prodfloor.tier3", "pk": 100, "fields": {"tier_two": 5, "tier_three_cause": "Etiquetado, mala etiqueta"}}, {"model": "prodfloor.tier3", "pk": 101, "fields": {"tier_two": 5, "tier_three_cause": "Cableado, cables sueltos"}}, {"model": "prodfloor.tier3", "pk": 102, "fields": {"tier_two": 5, "tier_three_cause": "Cableado, cables faltantes"}}, {"model": "prodfloor.tier3", "pk": 103, "fields": {"tier_two": 5, "tier_three_cause": "Cableado, falso contacto"}}, {"model": "prodfloor.tier3", "pk": 104, "fields": {"tier_two": 5, "tier_three_cause": "Cableado, corto circuito"}}, {"model": "prodfloor.tier3", "pk": 105, "fields": {"tier_two": 5, "tier_three_cause": "Ingenier\u00eda Error"}}, {"model": "prodfloor.tier3", "pk": 106, "fields": {"tier_two": 5, "tier_three_cause": "Informaci\u00f3n faltante de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 107, "fields": {"tier_two": 5, "tier_three_cause": "Informaci\u00f3n por validar de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 108, "fields": {"tier_two": 5, "tier_three_cause": "Informacion faltante de reporte de prueba"}}, {"model": "prodfloor.tier3", "pk": 109, "fields": {"tier_two": 5, "tier_three_cause": "Impresiones faltan hojas y/o tinta"}}, {"model": "prodfloor.tier3", "pk": 110, "fields": {"tier_two": 5, "tier_three_cause": "Escaner no disponible"}}, {"model": "prodfloor.tier3", "pk": 111, "fields": {"tier_two": 5, "tier_three_cause": "Par\u00e1metros erroneos(F1, F5, F7, R6), reeprogramacion"}}, {"model": "prodfloor.tier3", "pk": 112, "fields": {"tier_two": 5, "tier_three_cause": "Custom software fall\u00f3"}}, {"model": "prodfloor.tier3", "pk": 113, "fields": {"tier_two": 5, "tier_three_cause": "Flasheo mal realizado, tarjetas"}}, {"model": "prodfloor.tier3", "pk": 114, "fields": {"tier_two": 5, "tier_three_cause": "Flasheo mal realizado, XPORT"}}, {"model": "prodfloor.tier3", "pk": 115, "fields": {"tier_two": 5, "tier_three_cause": "Material,Features de Test faltantes"}}, {"model": "prodfloor.tier3", "pk": 116, "fields": {"tier_two": 5, "tier_three_cause": "Material,Features de Test da\u00f1ados"}}, {"model": "prodfloor.tier3", "pk": 117, "fields": {"tier_two": 5, "tier_three_cause": "Simulador Arneces rotos, arreglo"}}, {"model": "prodfloor.tier3", "pk": 118, "fields": {"tier_two": 5, "tier_three_cause": "Simulador Falla tarjetas"}}, {"model": "prodfloor.tier3", "pk": 119, "fields": {"tier_two": 5, "tier_three_cause": "Simulador Falla cableados"}}, {"model": "prodfloor.tier3", "pk": 120, "fields": {"tier_two": 5, "tier_three_cause": "Simulador falla logica"}}, {"model": "prodfloor.tier3", "pk": 121, "fields": {"tier_two": 5, "tier_three_cause": "Simulador, cambio de estaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 122, "fields": {"tier_two": 5, "tier_three_cause": "Software nuevos, pruebas"}}, {"model": "prodfloor.tier3", "pk": 123, "fields": {"tier_two": 5, "tier_three_cause": "PC Cliente, mala imagen"}},{"model": "prodfloor.tier3", "pk": 124, "fields": {"tier_two": 6, "tier_three_cause": "Componentes Faltantes en Controlador"}}, {"model": "prodfloor.tier3", "pk": 125, "fields": {"tier_two": 6, "tier_three_cause": "Componentes da\u00f1ados f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 126, "fields": {"tier_two": 6, "tier_three_cause": "Componentes da\u00f1ados internamente"}}, {"model": "prodfloor.tier3", "pk": 127, "fields": {"tier_two": 6, "tier_three_cause": "Componentes, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 128, "fields": {"tier_two": 6, "tier_three_cause": "Componentes incorrectos"}}, {"model": "prodfloor.tier3", "pk": 129, "fields": {"tier_two": 6, "tier_three_cause": "Tarjetas da\u00f1adas f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 130, "fields": {"tier_two": 6, "tier_three_cause": "Tarjetas da\u00f1adas internamente"}}, {"model": "prodfloor.tier3", "pk": 131, "fields": {"tier_two": 6, "tier_three_cause": "Tarjetas, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 132, "fields": {"tier_two": 6, "tier_three_cause": "Tarjetas incorrectas"}}, {"model": "prodfloor.tier3", "pk": 133, "fields": {"tier_two": 6, "tier_three_cause": "Mecanico, mala instalaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 134, "fields": {"tier_two": 6, "tier_three_cause": "Etiquetado, falta etiqueta"}}, {"model": "prodfloor.tier3", "pk": 135, "fields": {"tier_two": 6, "tier_three_cause": "Etiquetado, mala etiqueta"}}, {"model": "prodfloor.tier3", "pk": 136, "fields": {"tier_two": 6, "tier_three_cause": "Cableado, cables sueltos"}}, {"model": "prodfloor.tier3", "pk": 137, "fields": {"tier_two": 6, "tier_three_cause": "Cableado, cables faltantes"}}, {"model": "prodfloor.tier3", "pk": 138, "fields": {"tier_two": 6, "tier_three_cause": "Cableado, falso contacto"}}, {"model": "prodfloor.tier3", "pk": 139, "fields": {"tier_two": 6, "tier_three_cause": "Cableado, corto circuito"}}, {"model": "prodfloor.tier3", "pk": 140, "fields": {"tier_two": 6, "tier_three_cause": "Ingenier\u00eda Error"}}, {"model": "prodfloor.tier3", "pk": 141, "fields": {"tier_two": 6, "tier_three_cause": "Informaci\u00f3n faltante de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 142, "fields": {"tier_two": 6, "tier_three_cause": "Informaci\u00f3n por validar de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 143, "fields": {"tier_two": 6, "tier_three_cause": "Informacion faltante de reporte de prueba"}}, {"model": "prodfloor.tier3", "pk": 144, "fields": {"tier_two": 6, "tier_three_cause": "Impresiones faltan hojas y/o tinta"}}, {"model": "prodfloor.tier3", "pk": 145, "fields": {"tier_two": 6, "tier_three_cause": "Escaner no disponible"}}, {"model": "prodfloor.tier3", "pk": 146, "fields": {"tier_two": 6, "tier_three_cause": "Par\u00e1metros erroneos(F1, F5, F7, R6), reeprogramacion"}}, {"model": "prodfloor.tier3", "pk": 147, "fields": {"tier_two": 6, "tier_three_cause": "Custom software fall\u00f3"}}, {"model": "prodfloor.tier3", "pk": 148, "fields": {"tier_two": 6, "tier_three_cause": "Flasheo mal realizado, tarjetas"}}, {"model": "prodfloor.tier3", "pk": 149, "fields": {"tier_two": 6, "tier_three_cause": "Flasheo mal realizado, XPORT"}}, {"model": "prodfloor.tier3", "pk": 150, "fields": {"tier_two": 6, "tier_three_cause": "Material,Features de Test faltantes"}}, {"model": "prodfloor.tier3", "pk": 151, "fields": {"tier_two": 6, "tier_three_cause": "Material,Features de Test da\u00f1ados"}}, {"model": "prodfloor.tier3", "pk": 152, "fields": {"tier_two": 6, "tier_three_cause": "Simulador Arneces rotos, arreglo"}}, {"model": "prodfloor.tier3", "pk": 153, "fields": {"tier_two": 6, "tier_three_cause": "Simulador Falla tarjetas"}}, {"model": "prodfloor.tier3", "pk": 154, "fields": {"tier_two": 6, "tier_three_cause": "Simulador Falla cableados"}}, {"model": "prodfloor.tier3", "pk": 155, "fields": {"tier_two": 6, "tier_three_cause": "Simulador falla logica"}}, {"model": "prodfloor.tier3", "pk": 156, "fields": {"tier_two": 6, "tier_three_cause": "Simulador, cambio de estaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 157, "fields": {"tier_two": 6, "tier_three_cause": "Software nuevos, pruebas"}}, {"model": "prodfloor.tier3", "pk": 158, "fields": {"tier_two": 6, "tier_three_cause": "PC Cliente, mala imagen"}},{"model": "prodfloor.tier3", "pk": 159, "fields": {"tier_two": 7, "tier_three_cause": "Componentes Faltantes en Controlador"}}, {"model": "prodfloor.tier3", "pk": 160, "fields": {"tier_two": 7, "tier_three_cause": "Componentes da\u00f1ados f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 161, "fields": {"tier_two": 7, "tier_three_cause": "Componentes da\u00f1ados internamente"}}, {"model": "prodfloor.tier3", "pk": 162, "fields": {"tier_two": 7, "tier_three_cause": "Componentes, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 163, "fields": {"tier_two": 7, "tier_three_cause": "Componentes incorrectos"}}, {"model": "prodfloor.tier3", "pk": 164, "fields": {"tier_two": 7, "tier_three_cause": "Tarjetas da\u00f1adas f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 165, "fields": {"tier_two": 7, "tier_three_cause": "Tarjetas da\u00f1adas internamente"}}, {"model": "prodfloor.tier3", "pk": 166, "fields": {"tier_two": 7, "tier_three_cause": "Tarjetas, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 167, "fields": {"tier_two": 7, "tier_three_cause": "Tarjetas incorrectas"}}, {"model": "prodfloor.tier3", "pk": 168, "fields": {"tier_two": 7, "tier_three_cause": "Mecanico, mala instalaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 169, "fields": {"tier_two": 7, "tier_three_cause": "Etiquetado, falta etiqueta"}}, {"model": "prodfloor.tier3", "pk": 170, "fields": {"tier_two": 7, "tier_three_cause": "Etiquetado, mala etiqueta"}}, {"model": "prodfloor.tier3", "pk": 171, "fields": {"tier_two": 7, "tier_three_cause": "Cableado, cables sueltos"}}, {"model": "prodfloor.tier3", "pk": 172, "fields": {"tier_two": 7, "tier_three_cause": "Cableado, cables faltantes"}}, {"model": "prodfloor.tier3", "pk": 173, "fields": {"tier_two": 7, "tier_three_cause": "Cableado, falso contacto"}}, {"model": "prodfloor.tier3", "pk": 174, "fields": {"tier_two": 7, "tier_three_cause": "Cableado, corto circuito"}}, {"model": "prodfloor.tier3", "pk": 175, "fields": {"tier_two": 7, "tier_three_cause": "Ingenier\u00eda Error"}}, {"model": "prodfloor.tier3", "pk": 176, "fields": {"tier_two": 7, "tier_three_cause": "Informaci\u00f3n faltante de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 177, "fields": {"tier_two": 7, "tier_three_cause": "Informaci\u00f3n por validar de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 178, "fields": {"tier_two": 7, "tier_three_cause": "Informacion faltante de reporte de prueba"}}, {"model": "prodfloor.tier3", "pk": 179, "fields": {"tier_two": 7, "tier_three_cause": "Impresiones faltan hojas y/o tinta"}}, {"model": "prodfloor.tier3", "pk": 180, "fields": {"tier_two": 7, "tier_three_cause": "Escaner no disponible"}}, {"model": "prodfloor.tier3", "pk": 181, "fields": {"tier_two": 7, "tier_three_cause": "Par\u00e1metros erroneos(F1, F5, F7, R6), reeprogramacion"}}, {"model": "prodfloor.tier3", "pk": 182, "fields": {"tier_two": 7, "tier_three_cause": "Custom software fall\u00f3"}}, {"model": "prodfloor.tier3", "pk": 183, "fields": {"tier_two": 7, "tier_three_cause": "Flasheo mal realizado, tarjetas"}}, {"model": "prodfloor.tier3", "pk": 184, "fields": {"tier_two": 7, "tier_three_cause": "Flasheo mal realizado, XPORT"}}, {"model": "prodfloor.tier3", "pk": 185, "fields": {"tier_two": 7, "tier_three_cause": "Material,Features de Test faltantes"}}, {"model": "prodfloor.tier3", "pk": 186, "fields": {"tier_two": 7, "tier_three_cause": "Material,Features de Test da\u00f1ados"}}, {"model": "prodfloor.tier3", "pk": 187, "fields": {"tier_two": 7, "tier_three_cause": "Simulador Arneces rotos, arreglo"}}, {"model": "prodfloor.tier3", "pk": 188, "fields": {"tier_two": 7, "tier_three_cause": "Simulador Falla tarjetas"}}, {"model": "prodfloor.tier3", "pk": 189, "fields": {"tier_two": 7, "tier_three_cause": "Simulador Falla cableados"}}, {"model": "prodfloor.tier3", "pk": 190, "fields": {"tier_two": 7, "tier_three_cause": "Simulador falla logica"}}, {"model": "prodfloor.tier3", "pk": 191, "fields": {"tier_two": 7, "tier_three_cause": "Simulador, cambio de estaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 192, "fields": {"tier_two": 7, "tier_three_cause": "Software nuevos, pruebas"}}, {"model": "prodfloor.tier3", "pk": 193, "fields": {"tier_two": 7, "tier_three_cause": "PC Cliente, mala imagen"}},{"model": "prodfloor.tier3", "pk": 194, "fields": {"tier_two": 8, "tier_three_cause": "Componentes Faltantes en Controlador"}}, {"model": "prodfloor.tier3", "pk": 195, "fields": {"tier_two": 8, "tier_three_cause": "Componentes da\u00f1ados f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 196, "fields": {"tier_two": 8, "tier_three_cause": "Componentes da\u00f1ados internamente"}}, {"model": "prodfloor.tier3", "pk": 197, "fields": {"tier_two": 8, "tier_three_cause": "Componentes, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 198, "fields": {"tier_two": 8, "tier_three_cause": "Componentes incorrectos"}}, {"model": "prodfloor.tier3", "pk": 199, "fields": {"tier_two": 8, "tier_three_cause": "Tarjetas da\u00f1adas f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 200, "fields": {"tier_two": 8, "tier_three_cause": "Tarjetas da\u00f1adas internamente"}}, {"model": "prodfloor.tier3", "pk": 201, "fields": {"tier_two": 8, "tier_three_cause": "Tarjetas, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 202, "fields": {"tier_two": 8, "tier_three_cause": "Tarjetas incorrectas"}}, {"model": "prodfloor.tier3", "pk": 203, "fields": {"tier_two": 8, "tier_three_cause": "Mecanico, mala instalaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 204, "fields": {"tier_two": 8, "tier_three_cause": "Etiquetado, falta etiqueta"}}, {"model": "prodfloor.tier3", "pk": 205, "fields": {"tier_two": 8, "tier_three_cause": "Etiquetado, mala etiqueta"}}, {"model": "prodfloor.tier3", "pk": 206, "fields": {"tier_two": 8, "tier_three_cause": "Cableado, cables sueltos"}}, {"model": "prodfloor.tier3", "pk": 207, "fields": {"tier_two": 8, "tier_three_cause": "Cableado, cables faltantes"}}, {"model": "prodfloor.tier3", "pk": 208, "fields": {"tier_two": 8, "tier_three_cause": "Cableado, falso contacto"}}, {"model": "prodfloor.tier3", "pk": 209, "fields": {"tier_two": 8, "tier_three_cause": "Cableado, corto circuito"}}, {"model": "prodfloor.tier3", "pk": 210, "fields": {"tier_two": 8, "tier_three_cause": "Ingenier\u00eda Error"}}, {"model": "prodfloor.tier3", "pk": 211, "fields": {"tier_two": 8, "tier_three_cause": "Informaci\u00f3n faltante de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 212, "fields": {"tier_two": 8, "tier_three_cause": "Informaci\u00f3n por validar de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 213, "fields": {"tier_two": 8, "tier_three_cause": "Informacion faltante de reporte de prueba"}}, {"model": "prodfloor.tier3", "pk": 214, "fields": {"tier_two": 8, "tier_three_cause": "Impresiones faltan hojas y/o tinta"}}, {"model": "prodfloor.tier3", "pk": 215, "fields": {"tier_two": 8, "tier_three_cause": "Escaner no disponible"}}, {"model": "prodfloor.tier3", "pk": 216, "fields": {"tier_two": 8, "tier_three_cause": "Par\u00e1metros erroneos(F1, F5, F7, R6), reeprogramacion"}}, {"model": "prodfloor.tier3", "pk": 217, "fields": {"tier_two": 8, "tier_three_cause": "Custom software fall\u00f3"}}, {"model": "prodfloor.tier3", "pk": 218, "fields": {"tier_two": 8, "tier_three_cause": "Flasheo mal realizado, tarjetas"}}, {"model": "prodfloor.tier3", "pk": 219, "fields": {"tier_two": 8, "tier_three_cause": "Flasheo mal realizado, XPORT"}}, {"model": "prodfloor.tier3", "pk": 220, "fields": {"tier_two": 8, "tier_three_cause": "Material,Features de Test faltantes"}}, {"model": "prodfloor.tier3", "pk": 221, "fields": {"tier_two": 8, "tier_three_cause": "Material,Features de Test da\u00f1ados"}}, {"model": "prodfloor.tier3", "pk": 222, "fields": {"tier_two": 8, "tier_three_cause": "Simulador Arneces rotos, arreglo"}}, {"model": "prodfloor.tier3", "pk": 223, "fields": {"tier_two": 8, "tier_three_cause": "Simulador Falla tarjetas"}}, {"model": "prodfloor.tier3", "pk": 224, "fields": {"tier_two": 8, "tier_three_cause": "Simulador Falla cableados"}}, {"model": "prodfloor.tier3", "pk": 225, "fields": {"tier_two": 8, "tier_three_cause": "Simulador falla logica"}}, {"model": "prodfloor.tier3", "pk": 226, "fields": {"tier_two": 8, "tier_three_cause": "Simulador, cambio de estaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 227, "fields": {"tier_two": 8, "tier_three_cause": "Software nuevos, pruebas"}}, {"model": "prodfloor.tier3", "pk": 228, "fields": {"tier_two": 8, "tier_three_cause": "PC Cliente, mala imagen"}},{"model": "prodfloor.tier3", "pk": 229, "fields": {"tier_two": 9, "tier_three_cause": "Componentes Faltantes en Controlador"}}, {"model": "prodfloor.tier3", "pk": 230, "fields": {"tier_two": 9, "tier_three_cause": "Componentes da\u00f1ados f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 231, "fields": {"tier_two": 9, "tier_three_cause": "Componentes da\u00f1ados internamente"}}, {"model": "prodfloor.tier3", "pk": 232, "fields": {"tier_two": 9, "tier_three_cause": "Componentes, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 233, "fields": {"tier_two": 9, "tier_three_cause": "Componentes incorrectos"}}, {"model": "prodfloor.tier3", "pk": 234, "fields": {"tier_two": 9, "tier_three_cause": "Tarjetas da\u00f1adas f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 235, "fields": {"tier_two": 9, "tier_three_cause": "Tarjetas da\u00f1adas internamente"}}, {"model": "prodfloor.tier3", "pk": 236, "fields": {"tier_two": 9, "tier_three_cause": "Tarjetas, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 237, "fields": {"tier_two": 9, "tier_three_cause": "Tarjetas incorrectas"}}, {"model": "prodfloor.tier3", "pk": 238, "fields": {"tier_two": 9, "tier_three_cause": "Mecanico, mala instalaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 239, "fields": {"tier_two": 9, "tier_three_cause": "Etiquetado, falta etiqueta"}}, {"model": "prodfloor.tier3", "pk": 240, "fields": {"tier_two": 9, "tier_three_cause": "Etiquetado, mala etiqueta"}}, {"model": "prodfloor.tier3", "pk": 241, "fields": {"tier_two": 9, "tier_three_cause": "Cableado, cables sueltos"}}, {"model": "prodfloor.tier3", "pk": 242, "fields": {"tier_two": 9, "tier_three_cause": "Cableado, cables faltantes"}}, {"model": "prodfloor.tier3", "pk": 243, "fields": {"tier_two": 9, "tier_three_cause": "Cableado, falso contacto"}}, {"model": "prodfloor.tier3", "pk": 244, "fields": {"tier_two": 9, "tier_three_cause": "Cableado, corto circuito"}}, {"model": "prodfloor.tier3", "pk": 245, "fields": {"tier_two": 9, "tier_three_cause": "Ingenier\u00eda Error"}}, {"model": "prodfloor.tier3", "pk": 246, "fields": {"tier_two": 9, "tier_three_cause": "Informaci\u00f3n faltante de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 247, "fields": {"tier_two": 9, "tier_three_cause": "Informaci\u00f3n por validar de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 248, "fields": {"tier_two": 9, "tier_three_cause": "Informacion faltante de reporte de prueba"}}, {"model": "prodfloor.tier3", "pk": 249, "fields": {"tier_two": 9, "tier_three_cause": "Impresiones faltan hojas y/o tinta"}}, {"model": "prodfloor.tier3", "pk": 250, "fields": {"tier_two": 9, "tier_three_cause": "Escaner no disponible"}}, {"model": "prodfloor.tier3", "pk": 251, "fields": {"tier_two": 9, "tier_three_cause": "Par\u00e1metros erroneos(F1, F5, F7, R6), reeprogramacion"}}, {"model": "prodfloor.tier3", "pk": 252, "fields": {"tier_two": 9, "tier_three_cause": "Custom software fall\u00f3"}}, {"model": "prodfloor.tier3", "pk": 253, "fields": {"tier_two": 9, "tier_three_cause": "Flasheo mal realizado, tarjetas"}}, {"model": "prodfloor.tier3", "pk": 254, "fields": {"tier_two": 9, "tier_three_cause": "Flasheo mal realizado, XPORT"}}, {"model": "prodfloor.tier3", "pk": 255, "fields": {"tier_two": 9, "tier_three_cause": "Material,Features de Test faltantes"}}, {"model": "prodfloor.tier3", "pk": 256, "fields": {"tier_two": 9, "tier_three_cause": "Material,Features de Test da\u00f1ados"}}, {"model": "prodfloor.tier3", "pk": 257, "fields": {"tier_two": 9, "tier_three_cause": "Simulador Arneces rotos, arreglo"}}, {"model": "prodfloor.tier3", "pk": 258, "fields": {"tier_two": 9, "tier_three_cause": "Simulador Falla tarjetas"}}, {"model": "prodfloor.tier3", "pk": 259, "fields": {"tier_two": 9, "tier_three_cause": "Simulador Falla cableados"}}, {"model": "prodfloor.tier3", "pk": 260, "fields": {"tier_two": 9, "tier_three_cause": "Simulador falla logica"}}, {"model": "prodfloor.tier3", "pk": 261, "fields": {"tier_two": 9, "tier_three_cause": "Simulador, cambio de estaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 262, "fields": {"tier_two": 9, "tier_three_cause": "Software nuevos, pruebas"}}, {"model": "prodfloor.tier3", "pk": 263, "fields": {"tier_two": 9, "tier_three_cause": "PC Cliente, mala imagen"}},{"model": "prodfloor.tier3", "pk": 264, "fields": {"tier_two": 10, "tier_three_cause": "Componentes Faltantes en Controlador"}}, {"model": "prodfloor.tier3", "pk": 265, "fields": {"tier_two": 10, "tier_three_cause": "Componentes da\u00f1ados f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 266, "fields": {"tier_two": 10, "tier_three_cause": "Componentes da\u00f1ados internamente"}}, {"model": "prodfloor.tier3", "pk": 267, "fields": {"tier_two": 10, "tier_three_cause": "Componentes, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 268, "fields": {"tier_two": 10, "tier_three_cause": "Componentes incorrectos"}}, {"model": "prodfloor.tier3", "pk": 269, "fields": {"tier_two": 10, "tier_three_cause": "Tarjetas da\u00f1adas f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 270, "fields": {"tier_two": 10, "tier_three_cause": "Tarjetas da\u00f1adas internamente"}}, {"model": "prodfloor.tier3", "pk": 271, "fields": {"tier_two": 10, "tier_three_cause": "Tarjetas, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 272, "fields": {"tier_two": 10, "tier_three_cause": "Tarjetas incorrectas"}}, {"model": "prodfloor.tier3", "pk": 273, "fields": {"tier_two": 10, "tier_three_cause": "Mecanico, mala instalaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 274, "fields": {"tier_two": 10, "tier_three_cause": "Etiquetado, falta etiqueta"}}, {"model": "prodfloor.tier3", "pk": 275, "fields": {"tier_two": 10, "tier_three_cause": "Etiquetado, mala etiqueta"}}, {"model": "prodfloor.tier3", "pk": 276, "fields": {"tier_two": 10, "tier_three_cause": "Cableado, cables sueltos"}}, {"model": "prodfloor.tier3", "pk": 277, "fields": {"tier_two": 10, "tier_three_cause": "Cableado, cables faltantes"}}, {"model": "prodfloor.tier3", "pk": 278, "fields": {"tier_two": 10, "tier_three_cause": "Cableado, falso contacto"}}, {"model": "prodfloor.tier3", "pk": 279, "fields": {"tier_two": 10, "tier_three_cause": "Cableado, corto circuito"}}, {"model": "prodfloor.tier3", "pk": 280, "fields": {"tier_two": 10, "tier_three_cause": "Ingenier\u00eda Error"}}, {"model": "prodfloor.tier3", "pk": 281, "fields": {"tier_two": 10, "tier_three_cause": "Informaci\u00f3n faltante de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 282, "fields": {"tier_two": 10, "tier_three_cause": "Informaci\u00f3n por validar de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 283, "fields": {"tier_two": 10, "tier_three_cause": "Informacion faltante de reporte de prueba"}}, {"model": "prodfloor.tier3", "pk": 284, "fields": {"tier_two": 10, "tier_three_cause": "Impresiones faltan hojas y/o tinta"}}, {"model": "prodfloor.tier3", "pk": 285, "fields": {"tier_two": 10, "tier_three_cause": "Escaner no disponible"}}, {"model": "prodfloor.tier3", "pk": 286, "fields": {"tier_two": 10, "tier_three_cause": "Par\u00e1metros erroneos(F1, F5, F7, R6), reeprogramacion"}}, {"model": "prodfloor.tier3", "pk": 287, "fields": {"tier_two": 10, "tier_three_cause": "Custom software fall\u00f3"}}, {"model": "prodfloor.tier3", "pk": 288, "fields": {"tier_two": 10, "tier_three_cause": "Flasheo mal realizado, tarjetas"}}, {"model": "prodfloor.tier3", "pk": 289, "fields": {"tier_two": 10, "tier_three_cause": "Flasheo mal realizado, XPORT"}}, {"model": "prodfloor.tier3", "pk": 290, "fields": {"tier_two": 10, "tier_three_cause": "Material,Features de Test faltantes"}}, {"model": "prodfloor.tier3", "pk": 291, "fields": {"tier_two": 10, "tier_three_cause": "Material,Features de Test da\u00f1ados"}}, {"model": "prodfloor.tier3", "pk": 292, "fields": {"tier_two": 10, "tier_three_cause": "Simulador Arneces rotos, arreglo"}}, {"model": "prodfloor.tier3", "pk": 293, "fields": {"tier_two": 10, "tier_three_cause": "Simulador Falla tarjetas"}}, {"model": "prodfloor.tier3", "pk": 294, "fields": {"tier_two": 10, "tier_three_cause": "Simulador Falla cableados"}}, {"model": "prodfloor.tier3", "pk": 295, "fields": {"tier_two": 10, "tier_three_cause": "Simulador falla logica"}}, {"model": "prodfloor.tier3", "pk": 296, "fields": {"tier_two": 10, "tier_three_cause": "Simulador, cambio de estaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 297, "fields": {"tier_two": 10, "tier_three_cause": "Software nuevos, pruebas"}}, {"model": "prodfloor.tier3", "pk": 298, "fields": {"tier_two": 10, "tier_three_cause": "PC Cliente, mala imagen"}},{"model": "prodfloor.tier3", "pk": 299, "fields": {"tier_two": 11, "tier_three_cause": "Componentes Faltantes en Controlador"}}, {"model": "prodfloor.tier3", "pk": 300, "fields": {"tier_two": 11, "tier_three_cause": "Componentes da\u00f1ados f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 301, "fields": {"tier_two": 11, "tier_three_cause": "Componentes da\u00f1ados internamente"}}, {"model": "prodfloor.tier3", "pk": 302, "fields": {"tier_two": 11, "tier_three_cause": "Componentes, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 303, "fields": {"tier_two": 11, "tier_three_cause": "Componentes incorrectos"}}, {"model": "prodfloor.tier3", "pk": 304, "fields": {"tier_two": 11, "tier_three_cause": "Tarjetas da\u00f1adas f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 305, "fields": {"tier_two": 11, "tier_three_cause": "Tarjetas da\u00f1adas internamente"}}, {"model": "prodfloor.tier3", "pk": 306, "fields": {"tier_two": 11, "tier_three_cause": "Tarjetas, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 307, "fields": {"tier_two": 11, "tier_three_cause": "Tarjetas incorrectas"}}, {"model": "prodfloor.tier3", "pk": 308, "fields": {"tier_two": 11, "tier_three_cause": "Mecanico, mala instalaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 309, "fields": {"tier_two": 11, "tier_three_cause": "Etiquetado, falta etiqueta"}}, {"model": "prodfloor.tier3", "pk": 310, "fields": {"tier_two": 11, "tier_three_cause": "Etiquetado, mala etiqueta"}}, {"model": "prodfloor.tier3", "pk": 311, "fields": {"tier_two": 11, "tier_three_cause": "Cableado, cables sueltos"}}, {"model": "prodfloor.tier3", "pk": 312, "fields": {"tier_two": 11, "tier_three_cause": "Cableado, cables faltantes"}}, {"model": "prodfloor.tier3", "pk": 313, "fields": {"tier_two": 11, "tier_three_cause": "Cableado, falso contacto"}}, {"model": "prodfloor.tier3", "pk": 314, "fields": {"tier_two": 11, "tier_three_cause": "Cableado, corto circuito"}}, {"model": "prodfloor.tier3", "pk": 315, "fields": {"tier_two": 11, "tier_three_cause": "Ingenier\u00eda Error"}}, {"model": "prodfloor.tier3", "pk": 316, "fields": {"tier_two": 11, "tier_three_cause": "Informaci\u00f3n faltante de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 317, "fields": {"tier_two": 11, "tier_three_cause": "Informaci\u00f3n por validar de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 318, "fields": {"tier_two": 11, "tier_three_cause": "Informacion faltante de reporte de prueba"}}, {"model": "prodfloor.tier3", "pk": 319, "fields": {"tier_two": 11, "tier_three_cause": "Impresiones faltan hojas y/o tinta"}}, {"model": "prodfloor.tier3", "pk": 320, "fields": {"tier_two": 11, "tier_three_cause": "Escaner no disponible"}}, {"model": "prodfloor.tier3", "pk": 321, "fields": {"tier_two": 11, "tier_three_cause": "Par\u00e1metros erroneos(F1, F5, F7, R6), reeprogramacion"}}, {"model": "prodfloor.tier3", "pk": 322, "fields": {"tier_two": 11, "tier_three_cause": "Custom software fall\u00f3"}}, {"model": "prodfloor.tier3", "pk": 323, "fields": {"tier_two": 11, "tier_three_cause": "Flasheo mal realizado, tarjetas"}}, {"model": "prodfloor.tier3", "pk": 324, "fields": {"tier_two": 11, "tier_three_cause": "Flasheo mal realizado, XPORT"}}, {"model": "prodfloor.tier3", "pk": 325, "fields": {"tier_two": 11, "tier_three_cause": "Material,Features de Test faltantes"}}, {"model": "prodfloor.tier3", "pk": 326, "fields": {"tier_two": 11, "tier_three_cause": "Material,Features de Test da\u00f1ados"}}, {"model": "prodfloor.tier3", "pk": 327, "fields": {"tier_two": 11, "tier_three_cause": "Simulador Arneces rotos, arreglo"}}, {"model": "prodfloor.tier3", "pk": 328, "fields": {"tier_two": 11, "tier_three_cause": "Simulador Falla tarjetas"}}, {"model": "prodfloor.tier3", "pk": 329, "fields": {"tier_two": 11, "tier_three_cause": "Simulador Falla cableados"}}, {"model": "prodfloor.tier3", "pk": 330, "fields": {"tier_two": 11, "tier_three_cause": "Simulador falla logica"}}, {"model": "prodfloor.tier3", "pk": 331, "fields": {"tier_two": 11, "tier_three_cause": "Simulador, cambio de estaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 332, "fields": {"tier_two": 11, "tier_three_cause": "Software nuevos, pruebas"}}, {"model": "prodfloor.tier3", "pk": 333, "fields": {"tier_two": 11, "tier_three_cause": "PC Cliente, mala imagen"}},{"model": "prodfloor.tier3", "pk": 334, "fields": {"tier_two": 12, "tier_three_cause": "Componentes Faltantes en Controlador"}}, {"model": "prodfloor.tier3", "pk": 335, "fields": {"tier_two": 12, "tier_three_cause": "Componentes da\u00f1ados f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 336, "fields": {"tier_two": 12, "tier_three_cause": "Componentes da\u00f1ados internamente"}}, {"model": "prodfloor.tier3", "pk": 337, "fields": {"tier_two": 12, "tier_three_cause": "Componentes, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 338, "fields": {"tier_two": 12, "tier_three_cause": "Componentes incorrectos"}}, {"model": "prodfloor.tier3", "pk": 339, "fields": {"tier_two": 12, "tier_three_cause": "Tarjetas da\u00f1adas f\u00edsicamente"}}, {"model": "prodfloor.tier3", "pk": 340, "fields": {"tier_two": 12, "tier_three_cause": "Tarjetas da\u00f1adas internamente"}}, {"model": "prodfloor.tier3", "pk": 341, "fields": {"tier_two": 12, "tier_three_cause": "Tarjetas, reprogramacion"}}, {"model": "prodfloor.tier3", "pk": 342, "fields": {"tier_two": 12, "tier_three_cause": "Tarjetas incorrectas"}}, {"model": "prodfloor.tier3", "pk": 343, "fields": {"tier_two": 12, "tier_three_cause": "Mecanico, mala instalaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 344, "fields": {"tier_two": 12, "tier_three_cause": "Etiquetado, falta etiqueta"}}, {"model": "prodfloor.tier3", "pk": 345, "fields": {"tier_two": 12, "tier_three_cause": "Etiquetado, mala etiqueta"}}, {"model": "prodfloor.tier3", "pk": 346, "fields": {"tier_two": 12, "tier_three_cause": "Cableado, cables sueltos"}}, {"model": "prodfloor.tier3", "pk": 347, "fields": {"tier_two": 12, "tier_three_cause": "Cableado, cables faltantes"}}, {"model": "prodfloor.tier3", "pk": 348, "fields": {"tier_two": 12, "tier_three_cause": "Cableado, falso contacto"}}, {"model": "prodfloor.tier3", "pk": 349, "fields": {"tier_two": 12, "tier_three_cause": "Cableado, corto circuito"}}, {"model": "prodfloor.tier3", "pk": 350, "fields": {"tier_two": 12, "tier_three_cause": "Ingenier\u00eda Error"}}, {"model": "prodfloor.tier3", "pk": 351, "fields": {"tier_two": 12, "tier_three_cause": "Informaci\u00f3n faltante de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 352, "fields": {"tier_two": 12, "tier_three_cause": "Informaci\u00f3n por validar de print o Dataform"}}, {"model": "prodfloor.tier3", "pk": 353, "fields": {"tier_two": 12, "tier_three_cause": "Informacion faltante de reporte de prueba"}}, {"model": "prodfloor.tier3", "pk": 354, "fields": {"tier_two": 12, "tier_three_cause": "Impresiones faltan hojas y/o tinta"}}, {"model": "prodfloor.tier3", "pk": 355, "fields": {"tier_two": 12, "tier_three_cause": "Escaner no disponible"}}, {"model": "prodfloor.tier3", "pk": 356, "fields": {"tier_two": 12, "tier_three_cause": "Par\u00e1metros erroneos(F1, F5, F7, R6), reeprogramacion"}}, {"model": "prodfloor.tier3", "pk": 357, "fields": {"tier_two": 12, "tier_three_cause": "Custom software fall\u00f3"}}, {"model": "prodfloor.tier3", "pk": 358, "fields": {"tier_two": 12, "tier_three_cause": "Flasheo mal realizado, tarjetas"}}, {"model": "prodfloor.tier3", "pk": 359, "fields": {"tier_two": 12, "tier_three_cause": "Flasheo mal realizado, XPORT"}}, {"model": "prodfloor.tier3", "pk": 360, "fields": {"tier_two": 12, "tier_three_cause": "Material,Features de Test faltantes"}}, {"model": "prodfloor.tier3", "pk": 361, "fields": {"tier_two": 12, "tier_three_cause": "Material,Features de Test da\u00f1ados"}}, {"model": "prodfloor.tier3", "pk": 362, "fields": {"tier_two": 12, "tier_three_cause": "Simulador Arneces rotos, arreglo"}}, {"model": "prodfloor.tier3", "pk": 363, "fields": {"tier_two": 12, "tier_three_cause": "Simulador Falla tarjetas"}}, {"model": "prodfloor.tier3", "pk": 364, "fields": {"tier_two": 12, "tier_three_cause": "Simulador Falla cableados"}}, {"model": "prodfloor.tier3", "pk": 365, "fields": {"tier_two": 12, "tier_three_cause": "Simulador falla logica"}}, {"model": "prodfloor.tier3", "pk": 366, "fields": {"tier_two": 12, "tier_three_cause": "Simulador, cambio de estaci\u00f3n"}}, {"model": "prodfloor.tier3", "pk": 367, "fields": {"tier_two": 12, "tier_three_cause": "Software nuevos, pruebas"}}, {"model": "prodfloor.tier3", "pk": 368, "fields": {"tier_two": 12, "tier_three_cause": "PC Cliente, mala imagen"}}
+}
 ]

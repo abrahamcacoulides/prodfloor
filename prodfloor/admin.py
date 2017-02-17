@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Info, Times, Features, Stops,Tier1,Tier2,Tier3
+from .models import Info, Times, Features, Stops
 
 
 class FeaturesInline(admin.StackedInline):
@@ -52,43 +52,7 @@ class StopsAdmin(admin.ModelAdmin):
     ]
     list_display = ('info','po','reason','extra_cause_1','extra_cause_2','solution', 'stop_start_time', 'stop_end_time')
 
-class Tier1Causes(admin.ModelAdmin):
-    fieldsets =[
-        (None,
-         {'fields': ['tier_one_cause']}),
-    ]
-    list_display = ('tier_one_cause',)
-
-class Tier2Causes(admin.ModelAdmin):
-    fieldsets = [
-        (None,
-         {'fields': ['tier_one','tier_two_cause']}),
-    ]
-    list_display = ('tier_one','tier_two_cause')
-
-    def get_queryset(self, request):
-        return self.model.objects.exclude(tier_two_cause='N/A')
-
-class Tier3Causes(admin.ModelAdmin):
-    fieldsets = [
-        (None,
-         {'fields': ['tier_two', 'tier_three_cause']}),
-    ]
-    list_display = ('get_info','tier_two', 'tier_three_cause')
-
-    def get_info(self, obj):
-        return obj.tier_two.tier_one
-
-    get_info.short_description = 'Tier One'
-    get_info.admin_order_field = 'tier_two__tier_one'
-
-    def get_queryset(self, request):
-        return self.model.objects.exclude(tier_three_cause='N/A')
-
 
 admin.site.register(MyJob,JobsInLine)
 admin.site.register(Stops,StopsAdmin)
 admin.site.register(Info,InfoAdmin)
-admin.site.register(Tier1,Tier1Causes)
-admin.site.register(Tier2,Tier2Causes)
-admin.site.register(Tier3,Tier3Causes)

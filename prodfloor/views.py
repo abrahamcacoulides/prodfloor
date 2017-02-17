@@ -1,14 +1,14 @@
 from django.http import Http404, HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, redirect, render_to_response
 from formtools.wizard.views import SessionWizardView
-from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob, getTechs
+from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob
 from django.contrib.auth import logout
-from prodfloor.models import Info,Features,Times, Stops,Tier3,Tier2,Tier1
+from prodfloor.models import Info,Features,Times, Stops
+from stopscauses.models import Tier3,Tier2,Tier1
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
 from prodfloor.dicts import dict_elem,dict_m2000,dict_m4000
-from django.core import serializers
 import json
 
 def prodfloor_view(request):
@@ -404,7 +404,6 @@ def done(request):
     return render(request, 'prodfloor/newjob.html')
 
 class Reassign(SessionWizardView):
-    getTechs()
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     list = [ReassignJob]
@@ -493,24 +492,27 @@ class JobInfo(SessionWizardView):
             self.request.session['pp_jobinfo'] = True
         user_name = self.request.user.first_name
         user_lastname = self.request.user.last_name
-        job_num = self.cleaned_data['job_num']
+        job_num = str(self.cleaned_data['job_num'])
         Tech_name = user_name + ' ' + user_lastname
         ship_date = self.cleaned_data['ship_date']
         job_type = self.cleaned_data['job_type']
-        PO = self.cleaned_data['po']
+        PO = str(self.cleaned_data['po'])
         label = self.cleaned_data['label']
         station = self.cleaned_data['station']
         status = 'Beginning'
-        if any(self.cleaned_data['po'] in obj.po for obj in previous_jobs ):
+        if any(PO in obj.po for obj in previous_jobs ):
             messages.warning(self.request,'The Job# ' + job_num + ' with PO# '+ PO + ' has already been created. If needed, request the administrator for a reassignment.')
             return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
         job_info_new_row=Info(job_num=job_num,Tech_name=Tech_name,status=status,ship_date=ship_date,current_index=0,job_type=job_type,stage_len=99,po=PO,label=label,station=station)
         job_info_new_row.save()
         ID=job_info_new_row.id
         features=self.cleaned_data['features_selection']
-        for obj in features:
-            job_features_new_row=Features(info_id=ID,features=obj)
-            job_features_new_row.save()
+        if any(obj == 'None' for obj in features):
+            pass
+        else:
+            for obj in features:
+                job_features_new_row=Features(info_id=ID,features=obj)
+                job_features_new_row.save()
         self.request.session['temp_job_num']= job_num
         self.request.session['temp_po'] = PO
         creation_time = timezone.now()

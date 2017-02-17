@@ -42,11 +42,15 @@
                 <a href="/prodfloor/continue/{{ original.job_num }}/{{ original.po }}" class="historylink">{% trans "Continue With Job" %}</a>
             </li>
             {% endif %}
-            {% elif original.job_num != null %}
+        {% elif original.job_num != null %}
             <li>
             <span style="background: green"><li>
                 <a><span>{% trans "Job Complete" %}</span></a>
                 </li>
+        {% elif original.status != null %}
+            <li>
+                <a href="/it/documentstop/{{ original.pk }}/" class="historylink">{% trans "Document Server Stop" %}</a>
+            </li>
         {% else %}
         {% endif %}
     {% if has_absolute_url %}<li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif %}

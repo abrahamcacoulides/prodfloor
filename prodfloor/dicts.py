@@ -179,3 +179,28 @@ long_ass_tier1_tupple = (('Error Funcional','Error Funcional'),
                          ('Entrenamiento','Entrenamiento'))
 long_ass_tier2_tupple = ()
 long_ass_tier3_tupple = ()
+
+features=(('COP','Car Operating Panel'),
+          ('SHC','Serial Hall Calls'),
+          ('HAPS','HAPS Battery'),
+          ('DCC','Door Control in Cartop'),
+          ('CPI','CPI Board Included'),
+          ('OVL','Overlay'),
+          ('GROUP','Group'),
+          ('mView','mView'),
+          ('iMon','iMonitor'),
+          ('None','None'))
+stations = (('1', 'S1'),
+            ('2', 'S2'),
+            ('3', 'S3'),
+            ('4', 'S4'),
+            ('5', 'S5'),
+            ('6', 'S6'),
+            ('7', 'S7'),
+            ('8', 'S8'),
+            ('9', 'S9'),
+            ('10', 'S10'),
+            ('11', 'S11'),
+            ('12', 'S12'),
+            ('13', 'ELEM1'),
+            ('14', 'ELEM2'))

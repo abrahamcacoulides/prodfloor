@@ -1,25 +1,19 @@
 from django import forms
+from django.core.validators import MaxValueValidator,MinValueValidator
 from django.utils import timezone
 from django.contrib.auth.models import User
-from prodfloor.models import Tier1,Tier2,Tier3
+from stopscauses.models import Tier1,Tier2,Tier3
 from django.forms import ModelChoiceField
-
-features=(('COP','Car Operating Panel'),('SHC','Serial Hall Calls'),('HAPS','HAPS Battery'),('DCC','Door Control in Cartop'),('CPI','CPI Board Included'),('OVL','Overlay'),('GROUP','Group'),('mView','mView'),('iMon','iMonitor'))
-stations = (('1', 'S1'), ('2', 'S2'), ('3', 'S3'),('4', 'S4'),('5', 'S5'),('6', 'S6'),('7', 'S7'),('8', 'S8'),('9', 'S9'),('10', 'S10'),('11', 'S11'),('12', 'S12'),('13', 'ELEM1'),('14', 'ELEM2'))
-
-def getTechs():
-    all_techs = User.objects.all()
-    techs_list_notup = []
-    for tech in all_techs:
-        techs_list_notup.append((tech.first_name + ' ' + tech.last_name,tech.first_name + ' ' + tech.last_name))
-        global techs_tuple
-    techs_tuple=tuple(techs_list_notup)
-    return(techs_tuple)
+from prodfloor.dicts import features,stations
+from datetime import date
 
 class Maininfo(forms.Form):
+    year_value = date.today().year + 2
+    value = year_value * 1000000
+    value2 = date.today().year * 1000000
     initial = timezone.datetime.today
-    job_num = forms.CharField(max_length=10, label='Job #')
-    po = forms.CharField(max_length=7, label='Prod #')
+    job_num = forms.IntegerField(label='Job #',validators=[MaxValueValidator(value),MinValueValidator(value2)])
+    po = forms.IntegerField(label='Prod #',validators=[MaxValueValidator(9999999),MinValueValidator(3000000)])
     label = forms.ChoiceField(label='Job label', choices=(('-', '-'),
                                                           ('A', 'A'),
                                                           ('B', 'B'),
