@@ -45,7 +45,7 @@ def getcolor(A,*args, **kwargs):
     ID = A.id
     po = A.po
     stop = Stops.objects.filter(info_id=ID,po=po)
-    times = Times.objects.get(info_id=ID,po=po)
+    times = Times.objects.get(info_id=ID,info__po=po)
     features_objects = Features.objects.filter(info_id=ID,info__po=po)
     time_elapsed_shift_end = 0
     if any(obj.reason == 'Shift ended' for obj in stop):
