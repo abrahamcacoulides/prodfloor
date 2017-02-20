@@ -20,7 +20,7 @@ class Info(models.Model):
     stage_len = models.IntegerField()
 
     def __str__(self):
-        return self.job_num
+        return self.po
 
     class Meta:
         verbose_name = _('Job')
@@ -33,7 +33,6 @@ class Features(models.Model):
 
 class Times(models.Model):
     info = models.ForeignKey(Info)
-    po = models.CharField(max_length=7)
     start_time_1 = models.DateTimeField('"Inicio de Test" start date')
     end_time_1 = models.DateTimeField('"Inicio de Test" finish date')
     start_time_2 = models.DateTimeField('"Programacion" start date')

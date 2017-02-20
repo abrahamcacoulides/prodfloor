@@ -1,5 +1,7 @@
 from django.contrib import admin
 from .models import Info, Times, Features, Stops
+from django.db.models.signals import pre_save,post_delete
+from django.dispatch import receiver
 
 
 class FeaturesInline(admin.StackedInline):
@@ -26,10 +28,11 @@ class StopsInfo(Info):
         verbose_name_plural = 'All Stops'
 
 class InfoAdmin(admin.ModelAdmin):
+    actions = None
     fieldsets = [
         (None, {'fields': ['po','job_num','label','station','job_type','ship_date']}),
     ]
-    inlines = [FeaturesInline,TimesInline]
+    inlines = [FeaturesInline]
     list_display = ('job_num','label','station','po','job_type','ship_date', 'status')
     list_filter = ['status']
 
@@ -56,3 +59,14 @@ class StopsAdmin(admin.ModelAdmin):
 admin.site.register(MyJob,JobsInLine)
 admin.site.register(Stops,StopsAdmin)
 admin.site.register(Info,InfoAdmin)
+
+
+
+#this function sets the current index to 0 if a feature is added/modified/deleted, it would leave the stage at it was previous to the change as it's being->
+# assumed that the change was noticed on time; if required admin can do this change
+@receiver(pre_save, sender=Features)
+@receiver(post_delete, sender=Features)
+def my_handler(sender,instance, **kwargs):
+    info_obj = instance.info
+    info_obj.current_index = 0
+    info_obj.save()

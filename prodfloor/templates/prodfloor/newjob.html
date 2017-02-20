@@ -11,6 +11,9 @@
 <h1 id="site-name"><a href="{% url 'prodfloor:prodfloor' %}">{{ site_header|default:_('Job Workflow') }}</a></h1>
 {% endblock %}
 {% block content %}
+<script>function clicked(e)
+{ if(!confirm('{{ message }}'))e.preventDefault();}
+</script>
     <center>
     <h1 style="font-size: 40px;margin-bottom: 0px">{{ job.job_num }}</h1>
     <h2 style="font-size: 35px;margin-top: 0px;margin-bottom: 0px">{{ job.status }}</h2>
@@ -19,9 +22,15 @@
     <h2 style="font-size: 35px;text-align: center;">{{ current_step_text }}</h2>
     <center style="margin-top: 80px">
     {% if job.status != 'Stopped' %}
+        {% if last %}
     <button><a href="/prodfloor/back/{{ current_step }}/">{%  trans "Back" %}</a></button>
-    <button><a href="/prodfloor/next/{{ current_step }}/">{%  trans "Next" %}</a></button>
+    <button id="next", onclick="clicked(event)"><a href="/prodfloor/next/{{ current_step }}/">{%  trans "Next" %}</a></button>
     <button><a href="/prodfloor/stop/{{ current_step }}/">{%  trans "Stop" %}</a></button>
+        {% else %}
+    <button><a href="/prodfloor/back/{{ current_step }}/">{%  trans "Back" %}</a></button>
+    <button id="next"><a href="/prodfloor/next/{{ current_step }}/">{%  trans "Next" %}</a></button>
+    <button><a href="/prodfloor/stop/{{ current_step }}/">{%  trans "Stop" %}</a></button>
+            {% endif %}
     {% else %}
     <button><a href="/prodfloor/resume/">{%  trans "Resume" %}</a></button>
     {% endif %}

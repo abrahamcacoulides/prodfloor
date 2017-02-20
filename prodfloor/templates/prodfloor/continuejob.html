@@ -45,7 +45,12 @@
   <!-- About Section -->
   <section class="about" id="about">
       {% if last %}
-      <script>confirm('{{ message }}');</script>
+          <script>$("[id='next']").click(function(event){
+    event.preventDefault();
+});
+          function clicked(e)
+{ if(!confirm('{{ message }}'))e.preventDefault();}
+</script>
       {% endif %}
       <center><H2>{{ current_step_text }}</H2></center>
   </section>

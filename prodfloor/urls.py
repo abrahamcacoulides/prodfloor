@@ -18,7 +18,7 @@ urlpatterns = [
     url(r'^job',login_required(JobInfo.as_view(JobInfo.jobs_list))),
     url(r'^reassignjob/(?P<jobnum>[0-9]{10})/(?P<po>[0-9]{7})', login_required(Reassign.as_view(Reassign.list))),
     url(r'^continue/(?P<jobnum>[0-9]{10})/(?P<po>[0-9]{7})', views.Continue, name='returning'),
-    url(r'^(?P<action>\w+)/(?P<index>[0-9]{1,2})', views.Middle, name='working_on_it'),
+    url(r'^(?P<action>\w+)/(?P<current_index>[0-9]{1,2})', views.Middle, name='working_on_it'),
     url(r'^stopped',login_required(Stop.as_view(Stop.form_list))),
     url(r'^start/', views.Start, name='new job'),
 ]

@@ -43,7 +43,7 @@ dict_m4000 = {'Beginning':['Documentacion Inicial',
                          'Program':['Programacion de Flasheo',
                                     'Conexion de arneces simulador del carro y arneceses cartop',#if cartop
                                     'Programacion del Firmware',
-                                    'Conexion de arneces del simulador',#if cartop
+                                    'Conexion de arneces del simulador',#if !cartop
                                     'Programacion de parametros F1',
                                     'Programacion tarjeta CE Electronics',
                                     'Programacion de Parametros F7\n Version Test',
