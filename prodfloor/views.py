@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.contrib import messages
 from prodfloor.dicts import dict_elem,dict_m2000,dict_m4000
 import json,copy
+from django.utils.translation import ugettext_lazy as _
 
 def prodfloor_view(request):
     job_list = Info.objects.order_by('job_num')
@@ -69,149 +70,128 @@ def Start(request):
 
 @login_required()
 def Continue(request,jobnum,po):
-    if 'temp_job_num' in request.session:
-        if request.user.is_authenticated() and request.user.is_active:
-            request.session['temp_job_num']=jobnum
-            request.session['temp_po'] = po
-            dict_of_steps = {}
-            job_num=jobnum
-            job = Info.objects.get(job_num=job_num,po=po)
-            features_objects = Features.objects.filter(info_id=job.id, info__po=po)
-            if job.job_type == '2000':
-                dict_of_steps = copy.deepcopy(dict_m2000)
-                if any(feature.features == 'COP' for feature in features_objects):
-                    if 'Conexion de arneces del simulador' in dict_of_steps['Program']:
-                        index_to_erase = dict_of_steps['Program'].index('Conexion de arneces del simulador')
-                        dict_of_steps['Program'].pop(index_to_erase)
+    if request.user.is_authenticated() and request.user.is_active:
+        request.session['temp_job_num']=jobnum
+        request.session['temp_po'] = po
+        dict_of_steps = {}
+        job_num=jobnum
+        job = Info.objects.get(job_num=job_num,po=po)
+        features_objects = Features.objects.filter(info_id=job.id, info__po=po)
+        if job.job_type == '2000':
+            dict_of_steps = copy.deepcopy(dict_m2000)
+            if any(feature.features == 'COP' for feature in features_objects):
+                if 'Conexion de arneces del simulador' in dict_of_steps['Program']:
+                    index_to_erase = dict_of_steps['Program'].index('Conexion de arneces del simulador')
+                    dict_of_steps['Program'].pop(index_to_erase)
+            else:
+                if 'Conexion de arneces simulador del carro y arneceses cartop' in dict_of_steps['Program']:
+                    index_to_erase = dict_of_steps['Program'].index('Conexion de arneces simulador del carro y arneceses cartop')
+                    dict_of_steps['Program'].pop(index_to_erase)
+            if any(feature.features == 'SHC' for feature in features_objects):
+                pass
+            else:
+                if 'Serial Hall Calls (Pag SH)' in dict_of_steps['Logic']:
+                    index_to_erase = dict_of_steps['Logic'].index('Serial Hall Calls (Pag SH)')
+                    dict_of_steps['Logic'].pop(index_to_erase)
+            if any(feature.features == 'DCC' for feature in features_objects):
+                if 'Door Interface (Pag 11, 11X)' in dict_of_steps['Logic']:
+                    index_to_erase = dict_of_steps['Logic'].index('Door Interface (Pag 11, 11X)')
+                    dict_of_steps['Logic'].pop(index_to_erase)
+                    dict_of_steps['Logic'].pop(index_to_erase)
+            else:
+                if 'Door Interface (Pag CT1, CT2)' in dict_of_steps['Logic']:
+                    index_to_erase = dict_of_steps['Logic'].index('Door Interface (Pag CT1, CT2)')
+                    dict_of_steps['Logic'].pop(index_to_erase)
+                    dict_of_steps['Logic'].pop(index_to_erase)
+            if any(feature.features == 'CPI' for feature in features_objects):
+                if 'Fire Service Phase II (Pag 12)' in dict_of_steps['Logic']:
+                    index_to_erase = dict_of_steps['Logic'].index('Fire Service Phase II (Pag 12)')
+                    dict_of_steps['Logic'].pop(index_to_erase)
+                    dict_of_steps['Logic'].pop(index_to_erase)
+            else:
+                if 'Fire Service Phase II (Pag CPI)' in dict_of_steps['Logic']:
+                    index_to_erase = dict_of_steps['Logic'].index('Fire Service Phase II (Pag CPI)')
+                    dict_of_steps['Logic'].pop(index_to_erase)
+                    dict_of_steps['Logic'].pop(index_to_erase)
+                    dict_of_steps['Logic'].pop(index_to_erase)
+        elif job.job_type == '4000':
+            dict_of_steps = copy.deepcopy(dict_m4000)
+            if any(feature.features == 'COP' for feature in features_objects):
+                if 'Conexion de arneces del simulador' in dict_of_steps['Program']:
+                    index_to_erase = dict_of_steps['Program'].index('Conexion de arneces del simulador')
+                    dict_of_steps['Program'].pop(index_to_erase)
+            else:
+                if 'Conexion de arneces simulador del carro y arneceses cartop' in dict_of_steps['Program']:
+                    index_to_erase = dict_of_steps['Program'].index('Conexion de arneces simulador del carro y arneceses cartop')
+                    dict_of_steps['Program'].pop(index_to_erase)
+            if any(feature.features == 'SHC' for feature in features_objects):
+                pass
+            else:
+                if 'Serial Hall Calls (Pag SH)' in dict_of_steps['Logic']:
+                    index_to_erase = dict_of_steps['Logic'].index('Serial Hall Calls (Pag SH)')
+                    dict_of_steps['Logic'].pop(index_to_erase)
+            if any(feature.features == 'DCC' for feature in features_objects):
+                if 'Door Interface (Pag 11, 11X)' in dict_of_steps['Logic']:
+                    index_to_erase = dict_of_steps['Logic'].index('Door Interface (Pag 11, 11X)')
+                    dict_of_steps['Logic'].pop(index_to_erase)
+                    dict_of_steps['Logic'].pop(index_to_erase)
+            else:
+                if 'Door Interface (Pag CT1, CT2)' in dict_of_steps['Logic']:
+                    index_to_erase = dict_of_steps['Logic'].index('Door Interface (Pag CT1, CT2)')
+                    dict_of_steps['Logic'].pop(index_to_erase)
+                    dict_of_steps['Logic'].pop(index_to_erase)
+            if any(feature.features == 'CPI' for feature in features_objects):
+                if 'Fire Service Phase II (Pag 12)' in dict_of_steps['Logic']:
+                    index_to_erase = dict_of_steps['Logic'].index('Fire Service Phase II (Pag 12)')
+                    dict_of_steps['Logic'].pop(index_to_erase)
+                    dict_of_steps['Logic'].pop(index_to_erase)
+            else:
+                if 'Fire Service Phase II (Pag CPI)' in dict_of_steps['Logic']:
+                    index_to_erase = dict_of_steps['Logic'].index('Fire Service Phase II (Pag CPI)')
+                    dict_of_steps['Logic'].pop(index_to_erase)
+                    dict_of_steps['Logic'].pop(index_to_erase)
+                    dict_of_steps['Logic'].pop(index_to_erase)
+        elif job.job_type == 'ELEM':
+            dict_of_steps = copy.deepcopy(dict_elem)
+            if any(feature.features == 'HAPS' for feature in features_objects):
+                pass
+            else:
+                if dict_of_steps['Program'][0] == 'Flashear HAPS':
+                    dict_of_steps['Program'].pop(0)
+        status = job.status
+        list_of_steps = dict_of_steps[status]
+        index_num = job.current_index
+        steps_length = len(list_of_steps)
+        job.stage_len = steps_length
+        job.save()
+        current_step = index_num + 1
+        if  job.Tech_name == request.user.first_name + ' ' + request.user.last_name:
+            if job.status == 'Stopped':
+                active_jobs = Info.objects.filter(Tech_name=request.user.first_name + ' ' + request.user.last_name).exclude(status='Complete').exclude(status='Stopped')
+                c = 0
+                for object in active_jobs:
+                    c += 1
+                if c > 0:
+                    messages.warning(request,
+                                     'You already have one active Job. In order to continue with this one stop or finish the active one.')
+                    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
                 else:
-                    if 'Conexion de arneces simulador del carro y arneceses cartop' in dict_of_steps['Program']:
-                        index_to_erase = dict_of_steps['Program'].index('Conexion de arneces simulador del carro y arneceses cartop')
-                        dict_of_steps['Program'].pop(index_to_erase)
-                if any(feature.features == 'SHC' for feature in features_objects):
-                    pass
-                else:
-                    if 'Serial Hall Calls (Pag SH)' in dict_of_steps['Logic']:
-                        index_to_erase = dict_of_steps['Logic'].index('Serial Hall Calls (Pag SH)')
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                if any(feature.features == 'DCC' for feature in features_objects):
-                    if 'Door Interface (Pag 11, 11X)' in dict_of_steps['Logic']:
-                        index_to_erase = dict_of_steps['Logic'].index('Door Interface (Pag 11, 11X)')
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                else:
-                    if 'Door Interface (Pag CT1, CT2)' in dict_of_steps['Logic']:
-                        index_to_erase = dict_of_steps['Logic'].index('Door Interface (Pag CT1, CT2)')
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                if any(feature.features == 'CPI' for feature in features_objects):
-                    if 'Fire Service Phase II (Pag 12)' in dict_of_steps['Logic']:
-                        index_to_erase = dict_of_steps['Logic'].index('Fire Service Phase II (Pag 12)')
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                else:
-                    if 'Fire Service Phase II (Pag CPI)' in dict_of_steps['Logic']:
-                        index_to_erase = dict_of_steps['Logic'].index('Fire Service Phase II (Pag CPI)')
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                        dict_of_steps['Logic'].pop(index_to_erase)
-            elif job.job_type == '4000':
-                dict_of_steps = copy.deepcopy(dict_m4000)
-                if any(feature.features == 'COP' for feature in features_objects):
-                    if 'Conexion de arneces del simulador' in dict_of_steps['Program']:
-                        index_to_erase = dict_of_steps['Program'].index('Conexion de arneces del simulador')
-                        dict_of_steps['Program'].pop(index_to_erase)
-                else:
-                    if 'Conexion de arneces simulador del carro y arneceses cartop' in dict_of_steps['Program']:
-                        index_to_erase = dict_of_steps['Program'].index('Conexion de arneces simulador del carro y arneceses cartop')
-                        dict_of_steps['Program'].pop(index_to_erase)
-                if any(feature.features == 'SHC' for feature in features_objects):
-                    pass
-                else:
-                    if 'Serial Hall Calls (Pag SH)' in dict_of_steps['Logic']:
-                        index_to_erase = dict_of_steps['Logic'].index('Serial Hall Calls (Pag SH)')
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                if any(feature.features == 'DCC' for feature in features_objects):
-                    if 'Door Interface (Pag 11, 11X)' in dict_of_steps['Logic']:
-                        index_to_erase = dict_of_steps['Logic'].index('Door Interface (Pag 11, 11X)')
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                else:
-                    if 'Door Interface (Pag CT1, CT2)' in dict_of_steps['Logic']:
-                        index_to_erase = dict_of_steps['Logic'].index('Door Interface (Pag CT1, CT2)')
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                if any(feature.features == 'CPI' for feature in features_objects):
-                    if 'Fire Service Phase II (Pag 12)' in dict_of_steps['Logic']:
-                        index_to_erase = dict_of_steps['Logic'].index('Fire Service Phase II (Pag 12)')
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                else:
-                    if 'Fire Service Phase II (Pag CPI)' in dict_of_steps['Logic']:
-                        index_to_erase = dict_of_steps['Logic'].index('Fire Service Phase II (Pag CPI)')
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                        dict_of_steps['Logic'].pop(index_to_erase)
-                        dict_of_steps['Logic'].pop(index_to_erase)
-            elif job.job_type == 'ELEM':
-                dict_of_steps = copy.deepcopy(dict_elem)
-                if any(feature.features == 'HAPS' for feature in features_objects):
-                    pass
-                else:
-                    if dict_of_steps['Program'][0] == 'Flashear HAPS':
-                        dict_of_steps['Program'].pop(0)
-            status = job.status
-            list_of_steps = dict_of_steps[status]
-            index_num = job.current_index
-            steps_length = len(list_of_steps)
-            job.stage_len = steps_length
-            job.save()
-            current_step = index_num + 1
-            if  job.Tech_name == request.user.first_name + ' ' + request.user.last_name:
-                if job.status == 'Stopped':
-                    active_jobs = Info.objects.filter(Tech_name=request.user.first_name + ' ' + request.user.last_name).exclude(status='Complete').exclude(status='Stopped')
-                    c = 0
-                    for object in active_jobs:
-                        c += 1
-                    if c > 0:
-                        messages.warning(request,
-                                         'You already have one active Job. In order to continue with this one stop or finish the active one.')
-                        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-                    else:
-                        stop = Stops.objects.filter(info_id=job.id, solution='Not available yet')
-                        if any(object.reason == 'Job reassignment' for object in stop):
-                            stop_reass = Stops.objects.get(info_id=job.id, solution='Not available yet',reason='Job reassignment')
-                            stop_reass.stop_end_time = timezone.now()
-                            stop_reass.solution = 'Job resumed.'
-                            stop_reass.save()
-                            if any(object.reason != 'Job reassignment' for object in stop):
-                                if any(object.reason == 'Shift ended' for object in stop):
-                                    solution = "Shift restart/Reassigned"
-                                    ID = job.id
-                                    stop_shiftend = Stops.objects.get(info_id=ID, solution='Not available yet', reason='Shift ended')
-                                    stop_shiftend.solution = solution
-                                    stop_shiftend.stop_end_time = timezone.now()
-                                    stop_shiftend.save()
-                                    stop_1 = Stops.objects.filter(info_id=job.id, solution='Not available yet').exclude(reason='Job reassignment')
-                                    if any(object.reason != 'Shift ended' for object in stop_1):
-                                        index_num = 0
-                                        current_step = index_num+1
-                                        status = 'Stopped'
-                                        list_of_steps = dict_of_steps[status]
-                                        steps_length = len(list_of_steps)
-                                        return render(request, 'prodfloor/newjob.html',
-                                                      {'job_num': job_num, 'job': job, 'steps': steps_length,
-                                                       'current_step_text': list_of_steps[index_num],
-                                                       'current_step': current_step})
-                                    else:
-                                        job.status = job.prev_stage
-                                        job.prev_stage = 'Stopped'
-                                        list_of_steps = dict_of_steps[job.status]
-                                        job.stage_len = len(list_of_steps)
-                                        job.save()
-                                        steps_length = job.stage_len
-                                        index_num = job.current_index
-                                        current_step = index_num + 1
-                                        return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': list_of_steps[index_num], 'current_step': current_step})
-                                else:
+                    stop = Stops.objects.filter(info_id=job.id, solution='Not available yet')
+                    if any(object.reason == 'Job reassignment' for object in stop):
+                        stop_reass = Stops.objects.get(info_id=job.id, solution='Not available yet',reason='Job reassignment')
+                        stop_reass.stop_end_time = timezone.now()
+                        stop_reass.solution = 'Job resumed.'
+                        stop_reass.save()
+                        if any(object.reason != 'Job reassignment' for object in stop):
+                            if any(object.reason == 'Shift ended' for object in stop):
+                                solution = "Shift restart/Reassigned"
+                                ID = job.id
+                                stop_shiftend = Stops.objects.get(info_id=ID, solution='Not available yet', reason='Shift ended')
+                                stop_shiftend.solution = solution
+                                stop_shiftend.stop_end_time = timezone.now()
+                                stop_shiftend.save()
+                                stop_1 = Stops.objects.filter(info_id=job.id, solution='Not available yet').exclude(reason='Job reassignment')
+                                if any(object.reason != 'Shift ended' for object in stop_1):
                                     index_num = 0
                                     current_step = index_num+1
                                     status = 'Stopped'
@@ -221,65 +201,82 @@ def Continue(request,jobnum,po):
                                                   {'job_num': job_num, 'job': job, 'steps': steps_length,
                                                    'current_step_text': list_of_steps[index_num],
                                                    'current_step': current_step})
+                                else:
+                                    job.status = job.prev_stage
+                                    job.prev_stage = 'Stopped'
+                                    list_of_steps = dict_of_steps[job.status]
+                                    job.stage_len = len(list_of_steps)
+                                    job.save()
+                                    steps_length = job.stage_len
+                                    index_num = job.current_index
+                                    current_step = index_num + 1
+                                    return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': list_of_steps[index_num], 'current_step': current_step})
                             else:
-                                job.status = job.prev_stage
-                                job.prev_stage = 'Stopped'
-                                list_of_steps = dict_of_steps[job.status]
-                                job.stage_len = len(list_of_steps)
-                                job.save()
-                                steps_length = job.stage_len
-                                index_num = job.current_index
-                                current_step = index_num+1
-                                return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,
-                                               'current_step_text': list_of_steps[index_num], 'current_step': current_step})
-                        elif any(object.reason == 'Shift ended' for object in stop):
-                            stop_shiftend = Stops.objects.get(info_id=job.id, solution='Not available yet',reason='Shift ended')
-                            stop_shiftend.solution = 'Shift restart/Reassigned.'
-                            stop_shiftend.stop_end_time = timezone.now()
-                            stop_shiftend.save()
-                            stop_2 = Stops.objects.filter(info_id=job.id, solution='Not available yet').exclude(reason='Job reassignment').exclude(reason='Shift ended')
-                            if any(object.reason != 'Shift ended' for object in stop_2):
                                 index_num = 0
-                                current_step = index_num + 1
-                                status= 'Stopped'
+                                current_step = index_num+1
+                                status = 'Stopped'
                                 list_of_steps = dict_of_steps[status]
                                 steps_length = len(list_of_steps)
                                 return render(request, 'prodfloor/newjob.html',
                                               {'job_num': job_num, 'job': job, 'steps': steps_length,
                                                'current_step_text': list_of_steps[index_num],
                                                'current_step': current_step})
-                            else:
-                                job.status = job.prev_stage
-                                job.prev_stage = 'Stopped'
-                                list_of_steps = dict_of_steps[job.status]
-                                job.stage_len = len(list_of_steps)
-                                job.save()
-                                steps_length = job.stage_len
-                                index_num = job.current_index
-                                current_step = index_num + 1
-                                return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': list_of_steps[index_num],'current_step': current_step})
                         else:
+                            job.status = job.prev_stage
+                            job.prev_stage = 'Stopped'
+                            list_of_steps = dict_of_steps[job.status]
+                            job.stage_len = len(list_of_steps)
+                            job.save()
+                            steps_length = job.stage_len
+                            index_num = job.current_index
+                            current_step = index_num+1
+                            return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,
+                                           'current_step_text': list_of_steps[index_num], 'current_step': current_step})
+                    elif any(object.reason == 'Shift ended' for object in stop):
+                        stop_shiftend = Stops.objects.get(info_id=job.id, solution='Not available yet',reason='Shift ended')
+                        stop_shiftend.solution = 'Shift restart/Reassigned.'
+                        stop_shiftend.stop_end_time = timezone.now()
+                        stop_shiftend.save()
+                        stop_2 = Stops.objects.filter(info_id=job.id, solution='Not available yet').exclude(reason='Job reassignment').exclude(reason='Shift ended')
+                        if any(object.reason != 'Shift ended' for object in stop_2):
                             index_num = 0
                             current_step = index_num + 1
-                            status = 'Stopped'
+                            status= 'Stopped'
                             list_of_steps = dict_of_steps[status]
                             steps_length = len(list_of_steps)
                             return render(request, 'prodfloor/newjob.html',
                                           {'job_num': job_num, 'job': job, 'steps': steps_length,
                                            'current_step_text': list_of_steps[index_num],
                                            'current_step': current_step})
-                else:
-                    return render(request, 'prodfloor/newjob.html', {'job_num': job_num, 'job': job, 'steps': steps_length,
-                                                             'current_step_text': list_of_steps[index_num],
-                                                             'current_step': current_step})
+                        else:
+                            job.status = job.prev_stage
+                            job.prev_stage = 'Stopped'
+                            list_of_steps = dict_of_steps[job.status]
+                            job.stage_len = len(list_of_steps)
+                            job.save()
+                            steps_length = job.stage_len
+                            index_num = job.current_index
+                            current_step = index_num + 1
+                            return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': list_of_steps[index_num],'current_step': current_step})
+                    else:
+                        index_num = 0
+                        current_step = index_num + 1
+                        status = 'Stopped'
+                        list_of_steps = dict_of_steps[status]
+                        steps_length = len(list_of_steps)
+                        return render(request, 'prodfloor/newjob.html',
+                                      {'job_num': job_num, 'job': job, 'steps': steps_length,
+                                       'current_step_text': list_of_steps[index_num],
+                                       'current_step': current_step})
             else:
-                messages.warning(request, 'The Job you tried to reach is assigned to someone else.')
-                return HttpResponseRedirect('/admin/')
+                return render(request, 'prodfloor/newjob.html', {'job_num': job_num, 'job': job, 'steps': steps_length,
+                                                         'current_step_text': list_of_steps[index_num],
+                                                         'current_step': current_step})
         else:
-            raise Http404("How you got here?")
+            messages.warning(request, 'The Job you tried to reach is assigned to someone else.')
+            return HttpResponseRedirect('/admin/')
     else:
-        messages.warning(request, 'The Job you tried to reach is not available.')
-        return HttpResponseRedirect('/admin/')
+        raise Http404("How you got here?")
 
 
 @login_required()
@@ -414,7 +411,6 @@ def Middle(request,action,current_index):
                                 if status != 'Complete':
                                     job.status=dict_of_stages[number+1]
                                     job.save()
-
                                 if number==1:
                                     job.prev_stage = 'Beginning'
                                     times.end_time_1 = time
@@ -422,11 +418,21 @@ def Middle(request,action,current_index):
                                     job.save()
                                     times.save()
                                 elif number==2:
-                                    job.prev_stage = 'Program'
-                                    times.end_time_2 = time
-                                    times.start_time_3 = time
-                                    job.save()
-                                    times.save()
+                                    if job.job_type == 'ELEM':
+                                        job.prev_stage = 'Program'
+                                        job.status = dict_of_stages[number + 2]
+                                        times.end_time_2 = time
+                                        times.start_time_3 = time
+                                        times.end_time_3 = time
+                                        times.start_time_4 = time
+                                        job.save()
+                                        times.save()
+                                    else:
+                                        job.prev_stage = 'Program'
+                                        times.end_time_2 = time
+                                        times.start_time_3 = time
+                                        job.save()
+                                        times.save()
                                 elif number==3:
                                     job.prev_stage = 'Logic'
                                     times.end_time_3 = time
@@ -459,7 +465,7 @@ def Middle(request,action,current_index):
                         job.save()
                         return render(request, 'prodfloor/newjob.html', {'job_num': job_num, 'job': job, 'steps': steps_length,
                                                                          'current_step_text': list_of_steps[index_num],
-                                                                         'current_step': current_step,'last':True,'message':'You wont be able to return'})
+                                                                         'current_step': current_step,'last':True,'message':_("This was the last step for this stage, you wont be able to return to it once you click OK.")})
                     else:
                         request.session['already_here'] = True
                         job.current_index += 1

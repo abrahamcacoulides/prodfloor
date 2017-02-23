@@ -1,0 +1,429 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-02-23 11:43-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\it\models.py:18 .\it\models.py:19
+msgid "Server Stop"
+msgstr "Paro debido al servidor"
+
+#: .\it\models.py:28
+msgid "Server Issues Cause"
+msgstr "Causa del Problema del Servidor"
+
+#: .\it\models.py:29
+msgid "Server Issues Causes"
+msgstr "Causas del Problema del Servidor"
+
+#: .\it\templates\it\wizard_form_it.html:5
+msgid "Server Issue Documentation"
+msgstr "Documentacion del Problema del Servidor"
+
+#: .\it\templates\it\wizard_form_it.html:11
+#: .\prodfloor\templates\formtools\wizard\reassign.html:4
+#: .\prodfloor\templates\prodfloor\wizard_form_reassign.html:6
+#: .\prodfloor\templates\prodfloor\wizard_form_reassign.html:12
+#: .\templates\admin\change_form.html:38
+msgid "Reassign Job"
+msgstr "Reassignar Job"
+
+#: .\it\templates\it\wizard_form_it.html:28
+#: .\prodfloor\templates\formtools\wizard\reassign.html:26
+#: .\prodfloor\templates\formtools\wizard\wizard_form.html:29
+#: .\prodfloor\templates\prodfloor\wizard_form_reassign.html:29
+#: .\prodfloor\templates\prodfloor\wizard_form_resume.html:29
+#: .\prodfloor\templates\prodfloor\wizard_form_stop.html:29
+msgid "prev step"
+msgstr "paso anterior"
+
+#: .\it\templates\it\wizard_form_it.html:30
+#: .\prodfloor\templates\formtools\wizard\reassign.html:28
+#: .\prodfloor\templates\formtools\wizard\wizard_form.html:31
+#: .\prodfloor\templates\prodfloor\wizard_form_reassign.html:31
+#: .\prodfloor\templates\prodfloor\wizard_form_resume.html:31
+#: .\prodfloor\templates\prodfloor\wizard_form_stop.html:31
+msgid "submit"
+msgstr "enviar"
+
+#: .\prodfloor\admin.py:8
+msgid "Features"
+msgstr "Caracteristicas"
+
+#: .\prodfloor\admin.py:9
+msgid "Feature"
+msgstr "Caracteristica"
+
+#: .\prodfloor\admin.py:14
+msgid "Times"
+msgstr "Tiempos"
+
+#: .\prodfloor\admin.py:15
+msgid "Time"
+msgstr "Tiempo"
+
+#: .\prodfloor\admin.py:23
+#, fuzzy
+#| msgid "My Jobs"
+msgid "All Jobs"
+msgstr "Mis Jobs"
+
+#: .\prodfloor\admin.py:28
+#, fuzzy
+#| msgid "Stop"
+msgid "All Stops"
+msgstr "Detener"
+
+#: .\prodfloor\dicts.py:166 .\prodfloor\dicts.py:171
+msgid "Door Control in Cartop"
+msgstr "Door Control en Cartop"
+
+#: .\prodfloor\dicts.py:167 .\prodfloor\dicts.py:172
+msgid "CPI Board Included"
+msgstr "Tarjeta CPI incluida"
+
+#: .\prodfloor\dicts.py:177
+msgid "None"
+msgstr "Ninguno"
+
+#: .\prodfloor\forms.py:18
+msgid "Job #"
+msgstr "Job #"
+
+#: .\prodfloor\forms.py:19
+msgid "Prod #"
+msgstr "Prod #"
+
+#: .\prodfloor\forms.py:20
+msgid "Job label"
+msgstr "Job label"
+
+#: .\prodfloor\forms.py:21
+msgid "Job type"
+msgstr "Tipo de Job"
+
+#: .\prodfloor\forms.py:22 .\prodfloor\forms.py:81
+msgid "Station"
+msgstr "Estacion"
+
+#: .\prodfloor\forms.py:23
+msgid "Shipping date"
+msgstr "Fecha de envio"
+
+#: .\prodfloor\forms.py:37
+msgid "Please validate the 'Job #' input."
+msgstr "Revise el 'Job #'"
+
+#: .\prodfloor\forms.py:42
+msgid ""
+"The production order number captured is already assigned to someone else."
+msgstr "El numero de produccion capturado ya esta asignado a alguien mas."
+
+#: .\prodfloor\forms.py:48
+msgid "Please validate the 'Prod #' input."
+msgstr "Revise el 'Prod #'"
+
+#: .\prodfloor\forms.py:53
+msgid "Select all the features that apply\n"
+msgstr "Seleccione todas las caracteristicas que apliquen \n"
+
+#: .\prodfloor\forms.py:57
+msgid "Select the reason that fits"
+msgstr "Elija la razon"
+
+#: .\prodfloor\forms.py:70
+msgid "Cause"
+msgstr "Causa"
+
+#: .\prodfloor\forms.py:71
+msgid "First reason"
+msgstr "Causa Nivel Uno"
+
+#: .\prodfloor\forms.py:72
+msgid "Second reason"
+msgstr "Causa Nivel Dos"
+
+#: .\prodfloor\forms.py:80
+msgid "Would be assigned to:"
+msgstr "Se asignara a:"
+
+#: .\prodfloor\forms.py:82
+msgid "Reason"
+msgstr "Razon"
+
+#: .\prodfloor\models.py:26
+msgid "Job"
+msgstr "Job"
+
+#: .\prodfloor\models.py:27
+msgid "My Jobs"
+msgstr "Mis Jobs"
+
+#: .\prodfloor\models.py:57
+msgid "Stops per Job"
+msgstr "Paros por Job"
+
+#: .\prodfloor\templates\formtools\wizard\reassign.html:10
+msgid "Job Reassignment"
+msgstr "Reassignar Job"
+
+#: .\prodfloor\templates\formtools\wizard\wizard_form.html:6
+msgid "New Job Info"
+msgstr "Informacion de Job Nuevo"
+
+#: .\prodfloor\templates\formtools\wizard\wizard_form.html:12
+msgid "Job Information"
+msgstr "Informacion de Job"
+
+#: .\prodfloor\templates\prodfloor\newjob.html:11
+msgid "Job Workflow"
+msgstr "Diagrama de Flujo del Job"
+
+#: .\prodfloor\templates\prodfloor\newjob.html:26
+#: .\prodfloor\templates\prodfloor\newjob.html:30
+msgid "Back"
+msgstr "Atras"
+
+#: .\prodfloor\templates\prodfloor\newjob.html:27
+#: .\prodfloor\templates\prodfloor\newjob.html:31
+msgid "Next"
+msgstr "Siguiente"
+
+#: .\prodfloor\templates\prodfloor\newjob.html:28
+#: .\prodfloor\templates\prodfloor\newjob.html:32
+msgid "Stop"
+msgstr "Detener"
+
+#: .\prodfloor\templates\prodfloor\newjob.html:35
+msgid "Resume"
+msgstr "Resumir"
+
+#: .\prodfloor\templates\prodfloor\wizard_form_resume.html:6
+#: .\prodfloor\templates\prodfloor\wizard_form_resume.html:12
+msgid "Resume Job"
+msgstr "Resumir Job"
+
+#: .\prodfloor\templates\prodfloor\wizard_form_stop.html:6
+#: .\prodfloor\templates\prodfloor\wizard_form_stop.html:12
+msgid "Stop Job"
+msgstr "Detener Job"
+
+#: .\prodfloor\views.py:468
+msgid ""
+"This was the last step for this stage, you wont be able to return to it once "
+"you click OK."
+msgstr ""
+"Este fue el ultimo paso para esta etapa, no podra regresar a ella "
+"una vez que presione OK."
+
+#: .\stopscauses\models.py:12
+msgid "First Level Cause"
+msgstr "Causa Nivel Uno"
+
+#: .\stopscauses\models.py:13
+msgid "First Level Causes"
+msgstr "Causas Nivel Uno"
+
+#: .\stopscauses\models.py:23
+msgid "Second Level Cause"
+msgstr "Causa Nivel Dos"
+
+#: .\stopscauses\models.py:24
+msgid "Second Level Causes"
+msgstr "Causas Nivel Dos"
+
+#: .\stopscauses\models.py:34
+msgid "Third Level Cause"
+msgstr "Causa Nivel Tres"
+
+#: .\stopscauses\models.py:35
+msgid "Third Level Causes"
+msgstr "Causas Nivel Tres"
+
+#: .\templates\admin\base.html:30 .\templates\base.html:30
+msgid "Welcome,"
+msgstr "Bienvenido,"
+
+#: .\templates\admin\base.html:35 .\templates\base.html:35
+msgid "View site"
+msgstr "Ver sitio"
+
+#: .\templates\admin\base.html:40 .\templates\base.html:40
+msgid "Documentation"
+msgstr "Documentacion"
+
+#: .\templates\admin\base.html:44 .\templates\base.html:44
+msgid "Change password"
+msgstr "Cambiar contraseña"
+
+#: .\templates\admin\base.html:46 .\templates\base.html:46
+#: .\templates\base.html:61
+msgid "Log out"
+msgstr "Cerrar sesion"
+
+#: .\templates\admin\base.html:56 .\templates\admin\change_form.html:18
+#: .\templates\admin\change_list.html:31 .\templates\base.html:56
+msgid "Home"
+msgstr "Inicio"
+
+#: .\templates\admin\base_site.html:6
+msgid "Django administration"
+msgstr "Django administracion"
+
+#: .\templates\admin\change_form.html:21 .\templates\admin\change_list.html:56
+#, python-format
+msgid "Add %(name)s"
+msgstr "Agregar %(name)s"
+
+#: .\templates\admin\change_form.html:33
+msgid "History"
+msgstr "Historial"
+
+#: .\templates\admin\change_form.html:42
+msgid "Continue With Job"
+msgstr "Continuar con Job"
+
+#: .\templates\admin\change_form.html:48
+msgid "Job Complete"
+msgstr "Job Completo"
+
+#: .\templates\admin\change_form.html:52
+msgid "Document Server Stop"
+msgstr "Documentacion Paro por Servidor"
+
+#: .\templates\admin\change_form.html:56
+msgid "View on site"
+msgstr "Ver en el sitio"
+
+#: .\templates\admin\change_form.html:68 .\templates\admin\change_list.html:65
+#: .\templates\admin\login.html:21 .\templates\registration\login.html:21
+msgid "Please correct the error below."
+msgstr "Por favor corrija el error."
+
+#: .\templates\admin\change_form.html:68 .\templates\admin\change_list.html:65
+#: .\templates\admin\login.html:21 .\templates\registration\login.html:21
+msgid "Please correct the errors below."
+msgstr "Por favor corrija los errores."
+
+#: .\templates\admin\change_list.html:48 .\templates\admin\index.html:57
+msgid "New Job"
+msgstr "Nuevo Job"
+
+#: .\templates\admin\change_list.html:76
+msgid "Filter"
+msgstr "Filtrar"
+
+#: .\templates\admin\index.html:20
+#, python-format
+msgid "Models in the %(name)s application"
+msgstr "Modelos en la %(name)s aplicacion"
+
+#: .\templates\admin\index.html:31
+msgid "Add"
+msgstr "Agregar"
+
+#: .\templates\admin\index.html:37
+msgid "Change"
+msgstr "Cambiar"
+
+#: .\templates\admin\index.html:47
+msgid "You don't have permission to edit anything."
+msgstr "No tiene permisos para editar nada."
+
+#: .\templates\admin\index.html:55
+msgid "Available actions"
+msgstr "Acciones disponibles"
+
+#: .\templates\admin\index.html:58
+msgid "End Shift"
+msgstr "Terminar Turno"
+
+#: .\templates\admin\index.html:61
+msgid "Available views"
+msgstr "Vistas Disponibles"
+
+#: .\templates\admin\index.html:63
+msgid "M2000"
+msgstr "M2000"
+
+#: .\templates\admin\index.html:64
+msgid "M4000"
+msgstr "M4000"
+
+#: .\templates\admin\index.html:65
+msgid "ELEM"
+msgstr "Element"
+
+#: .\templates\admin\index.html:66
+msgid "All"
+msgstr "Todos"
+
+#: .\templates\admin\index.html:69
+msgid "Recent actions"
+msgstr "Acciones recientes"
+
+#: .\templates\admin\index.html:70
+msgid "My actions"
+msgstr "Mis acciones"
+
+#: .\templates\admin\index.html:74
+msgid "None available"
+msgstr "No disponibles"
+
+#: .\templates\admin\index.html:88
+msgid "Unknown content"
+msgstr "Contenido desconocido"
+
+#: .\templates\admin\login.html:37 .\templates\registration\login.html:37
+#, python-format
+msgid ""
+"You are authenticated as %(username)s, but are not authorized to access this "
+"page. Would you like to login to a different account?"
+msgstr ""
+"Iniciaste sesion como %(username)s, pero no esta autorizado para accesar a "
+"esta pagina. Desearia iniciar sesion con una cuenta diferente?"
+
+#: .\templates\admin\login.html:57 .\templates\registration\login.html:57
+msgid "Forgotten your password or username?"
+msgstr "Olvido su contraseña o usuario?"
+
+#: .\templates\admin\login.html:61 .\templates\registration\login.html:61
+msgid "Log in"
+msgstr "Iniciar sesion"
+
+#: .\templates\base.html:59
+msgid "You're logged in as,"
+msgstr "Iniciaste sesion como,"
+
+#: .\templates\base_site.html:3
+msgid "ProdFloor site admin"
+msgstr "Prodfloor site admin"
+
+#: .\templates\base_site.html:6
+msgid "ProdFloor administration"
+msgstr "ProdFloor administration"
+
+#~ msgid "Solution"
+#~ msgstr "Solucion"
+
+#, fuzzy
+#~| msgid "Job Reassignment"
+#~ msgid "Job reassignment"
+#~ msgstr "Reassignar Job"
+
+#~ msgid "Shift ended"
+#~ msgstr "El turno termino"

@@ -1,9 +1,11 @@
+from django.utils.translation import ugettext_lazy as _
+
 dict_m2000 = {'Beginning':['Documentacion Inicial',
                                       'Inspeccion Visual',
                                       'Preparacion de Labview',
                                       'Chequeo preliminar de voltajes iniciales'],
                          'Program':['Programacion de Flasheo',
-                                    'Conexion de arneces simulador del carro y arneceses cartop',#if cartop
+                                    'Conexion de arneces simulador del carro y arneces cartop',#if cartop
                                     'Programacion del Firmware',
                                     'Conexion de arneces del simulador',#if !cartop
                                     'Programacion del Solid State Starter',
@@ -26,7 +28,7 @@ dict_m2000 = {'Beginning':['Documentacion Inicial',
                                   'Movement Indication (Pag CPI)',#if CPI
                                   'Car Calls (Pag CPI)',#if CPI
                                   'Calls (Pag 16)',
-                                  'Serial Hall Calls',#if serial hall calls
+                                  'Serial Hall Calls (Pag SH)',#if serial hall calls
                                   'Programmable Input/Outputs'],
                          'Ending':['Inspeccion Final',
                                    'Passcode',
@@ -41,7 +43,7 @@ dict_m4000 = {'Beginning':['Documentacion Inicial',
                                       'Preparacion de Labview',
                                       'Chequeo preliminar de voltajes iniciales'],
                          'Program':['Programacion de Flasheo',
-                                    'Conexion de arneces simulador del carro y arneceses cartop',#if cartop
+                                    'Conexion de arneces simulador del carro y arneces cartop',#if cartop
                                     'Programacion del Firmware',
                                     'Conexion de arneces del simulador',#if !cartop
                                     'Programacion de parametros F1',
@@ -108,6 +110,7 @@ dict_elem = {'Beginning':['Configuracion Inicial de PC',
                          'Logic':[''],
                          'Complete':['Fin de pruebas'],
                          'Stopped': ['Detenido']}
+
 times_m2000 = {'Beginning':60,
                          'Program':40,
                          'Logic':110,
@@ -119,7 +122,6 @@ times_m4000 = {'Beginning':240,
 times_elem = {'Beginning':40,
                          'Program':120,
                          'Ending':60}
-
 stop_reasons = [('Job reassignment', 'Job reassignment'),
                 ('Shift ended','Shift ended'),
                 ('Error Funcional', 'Error Funcional'),
@@ -130,8 +132,7 @@ stop_reasons = [('Job reassignment', 'Job reassignment'),
                 ('Personal', 'Personal'),
                 ('Ingenieria', 'Ingenieria'),
                 ('Falla en equipo de computo', 'Falla en equipo de computo'),
-                ('Entrenamiento', 'Entrenamiento')]
-
+                ('Entrenamiento', 'Entrenamiento')]#TODO is this list still needed?
 stations_dict = [('1', 'S1'),
                  ('2', 'S2'),
                  ('3', 'S3'),
@@ -146,50 +147,34 @@ stations_dict = [('1', 'S1'),
                  ('12', 'S12'),
                  ('13', 'ELEM1'),
                  ('14', 'ELEM2')]
-
 status_dict = [('Beginning', 'Beginning'),
                ('Program', 'Program'),
                ('Logic', 'Logic'),
                ('Ending', 'Ending'),
                ('Complete', 'Complete'),
                ('Stopped', 'Stopped')]
-
 type_of_jobs = [('2000', 'M2000'),
                 ('4000', 'M4000'),
                 ('ELEM', 'Element')]
-
-features_list = [('COP','Car Operating Panel'),
+features_list = [('COP','Serial Car Operating Panel'),
                  ('SHC','Serial Hall Calls'),
                  ('HAPS','HAPS battery'),
                  ('OVL','Overlay'),
                  ('GROUP','Group'),
                  ('mView','mView'),
                  ('iMon','iMonitor'),
-                 ('DCC','Door Control in Cartop'),
-                 ('CPI','CPI Board Included')]
-
-long_ass_tier1_tupple = (('Error Funcional','Error Funcional'),
-                         ('Tarjetas T','Tarjetas T'),
-                         ('Material Faltante','Custom Software Faltante'),
-                         ('Junta de supervisor','Junta de supervisor'),
-                         ('Tecnico no asignado','Tecnico no asignado'),
-                         ('Personal','Personal'),
-                         ('Ingenieria', 'Ingenieria'),
-                         ('Falla en equipo de computo','Falla en equipo de computo'),
-                         ('Entrenamiento','Entrenamiento'))
-long_ass_tier2_tupple = ()
-long_ass_tier3_tupple = ()
-
-features=(('COP','Car Operating Panel'),
+                 ('DCC',_('Door Control in Cartop')),
+                 ('CPI',_('CPI Board Included'))]
+features=(('COP','Serial Car Operating Panel'),
           ('SHC','Serial Hall Calls'),
           ('HAPS','HAPS Battery'),
-          ('DCC','Door Control in Cartop'),
-          ('CPI','CPI Board Included'),
+          ('DCC',_('Door Control in Cartop')),
+          ('CPI',_('CPI Board Included')),
           ('OVL','Overlay'),
           ('GROUP','Group'),
           ('mView','mView'),
           ('iMon','iMonitor'),
-          ('None','None'))
+          ('None',_('None')))
 stations = (('1', 'S1'),
             ('2', 'S2'),
             ('3', 'S3'),
@@ -204,3 +189,24 @@ stations = (('1', 'S1'),
             ('12', 'S12'),
             ('13', 'ELEM1'),
             ('14', 'ELEM2'))
+label_admin = [('-', '-'),
+               ('A', 'A'),
+               ('B', 'B'),
+               ('C', 'C'),
+               ('D', 'D'),
+               ('E', 'E'),
+               ('F', 'F'),
+               ('G', 'G'),
+               ('H', 'H')]
+label = (('-', '-'),
+         ('A', 'A'),
+         ('B', 'B'),
+         ('C', 'C'),
+         ('D', 'D'),
+         ('E', 'E'),
+         ('F', 'F'),
+         ('G', 'G'),
+         ('H', 'H'))
+job_type = (('2000', 'M2000'),
+            ('4000', 'M4000'),
+            ('ELEM', 'Element'))

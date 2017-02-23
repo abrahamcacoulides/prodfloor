@@ -2,17 +2,17 @@ from django.contrib import admin
 from .models import Info, Times, Features, Stops
 from django.db.models.signals import pre_save,post_delete
 from django.dispatch import receiver
-
+from django.utils.translation import ugettext_lazy as _
 
 class FeaturesInline(admin.StackedInline):
-    verbose_name_plural = 'Features'
-    verbose_name = 'Feature'
+    verbose_name_plural = _('Features')
+    verbose_name = _('Feature')
     model = Features
     extra = 0
 
 class TimesInline(admin.StackedInline):
-    verbose_name_plural = 'Times'
-    verbose_name = 'Time'
+    verbose_name_plural = _('Times')
+    verbose_name = _('Time')
     model = Times
     extra = 0
 
@@ -20,15 +20,16 @@ class TimesInline(admin.StackedInline):
 class MyJob(Info):
     class Meta:
         proxy = True
-        verbose_name_plural = 'All Jobs'
+        verbose_name_plural = _('All Jobs')
 
 class StopsInfo(Info):
     class Meta:
         proxy = True
-        verbose_name_plural = 'All Stops'
+        verbose_name_plural = _('All Stops')
 
 class InfoAdmin(admin.ModelAdmin):
     actions = None
+    readonly_fields = ('po','job_num')
     fieldsets = [
         (None, {'fields': ['po','job_num','label','station','job_type','ship_date']}),
     ]
@@ -42,6 +43,7 @@ class InfoAdmin(admin.ModelAdmin):
 
 
 class JobsInLine(admin.ModelAdmin):
+    readonly_fields = ('Tech_name','status')
     fieldsets = [
         (None, {'fields': ['Tech_name','po', 'job_num','label','station', 'job_type', 'ship_date', 'status']}),
     ]

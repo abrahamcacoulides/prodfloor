@@ -25,7 +25,9 @@ SECRET_KEY = 'fp#!j2v0gjvc1%wkc&4xl1r9%*^=&m88o8jbr=lp%%uqtti+#%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['prodfloor.com']
+ALLOWED_HOSTS = ['prodfloor.com',
+                 '10.113.1.13',
+                 'abrahamcacoulides.pythonanywhere.com']
 
 
 # Application definition
@@ -48,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    #'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
