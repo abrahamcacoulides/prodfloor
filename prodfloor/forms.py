@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from stopscauses.models import Tier1,Tier2,Tier3
 from .models import Info
 from django.forms import ModelChoiceField
-from prodfloor.dicts import features,stations
+from prodfloor.dicts import features,stations_tupple
 from datetime import date
 from django.utils.translation import ugettext_lazy as _
 from .dicts import label,job_type
@@ -15,14 +15,16 @@ class Maininfo(forms.Form):
     job_num = forms.CharField(label=_('Job #'),max_length=10)
     po = forms.CharField(label=_('Prod #'),max_length=7)
     label = forms.ChoiceField(label=_('Job label'), choices=label)
-    job_type = forms.ChoiceField(label=_('Job type'), choices=job_type)
-    station = forms.ChoiceField(label=_('Station'), choices=stations)
+    job_type = forms.ChoiceField(label=_('Job type'), choices=job_type,widget=forms.Select(attrs = {'class':'job_type','id':'job_type'}))
+    station = forms.ChoiceField(label=_('Station'), choices=stations_tupple,widget=forms.Select(attrs = {'class':'stations','id':'stations'}))
     ship_date=forms.DateField(label=_('Shipping date'),widget = forms.SelectDateWidget, initial= initial,localize=True)
 
     def clean(self):
         cleaned_data = super(Maininfo, self).clean()
         job_num = cleaned_data.get('job_num')
         po = cleaned_data.get('po')
+        station = cleaned_data.get('station')
+        job_type = cleaned_data.get('job_type')
         previous_jobs = Info.objects.all()
 
         if job_num and po:
@@ -30,22 +32,18 @@ class Maininfo(forms.Form):
             if job_num.isdigit() and len(job_num) == 10:
                 pass
             else:
-                raise forms.ValidationError(
-                    _("Please validate the 'Job #' input.")
-                )
+                raise forms.ValidationError({'job_num':_("Please validate the 'Job #' input.")})
             if (po.isdigit()) and len(po) == 7:
                 if any(po in obj.po for obj in previous_jobs):
-                    raise forms.ValidationError(
-                        _("The production order number captured is already assigned to someone else.")
-                    )
+                    raise forms.ValidationError({'po':_("The production order number captured is already assigned to someone else.")})
                 else:
                     pass
             else:
-                raise forms.ValidationError(
-                    _("Please validate the 'Prod #' input.")
-                )
-
-
+                raise forms.ValidationError({'po':_("Please validate the 'Prod #' input.")})
+            if job_type == '0':
+                raise forms.ValidationError({'job_type':_("Please validate the 'Job type' input.")})
+            if station == '0':
+                raise forms.ValidationError({'station':_("Please validate the 'Station' input.")})
 
 class FeaturesSelection(forms.Form):
     features_selection=forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=features, label=_('Select all the features that apply\n'))
@@ -60,7 +58,7 @@ class FeaturesSelection(forms.Form):
                 )
 
 
-class StopReason(forms.Form):#TODO valid reasons for stops
+class StopReason(forms.Form):
     reason_for_stop = forms.ModelChoiceField(required=True,label=_('Select the reason that fits'),queryset=Tier1.objects.all())
     reason_description = forms.CharField(required=True,widget=forms.Textarea)
 
@@ -85,5 +83,5 @@ class UserModelChoiceField(ModelChoiceField):
 
 class ReassignJob(forms.Form):
     new_tech = UserModelChoiceField(queryset=User.objects.filter(groups__name='Technicians'),label=_('Would be assigned to:'))
-    station = forms.ChoiceField(label=_('Station'), choices=stations)
+    station = forms.ChoiceField(label=_('Station'), choices=stations_tupple)
     reason_description = forms.CharField(required=True, widget=forms.Textarea,label=_('Reason'))

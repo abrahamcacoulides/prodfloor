@@ -1,9 +1,40 @@
-{% extends "base.html" %}
+{% extends "base_site.html" %}
+{% load i18n admin_urls static admin_modify %}
 <head>
     <title>{% block title %}Details for Job#{{ job.job_num }}{% endblock %}</title>
 </head>
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />{% endblock %}
+
 {% block content %}
+    <div class="results">
+<table id="result_list">
+<div id="content-main">
+<thead>
+<tr>
+{% for header in result_headers %}
+<th>
+   <div class="text"><span>{{header}}</span></div>
+</th>
+{% endfor %}
+</tr>
+</thead>
+<tbody>
+{% for job in jobs %}
+<tr>
+<td>{{ job.job_num }}</td>
+<td>{{ job.po }}</td>
+<td>{{ job.job_type }}</td>
+<td>{{ job.status }}</td>
+<td><center>{{ job.station }}</center></td>
+</tr>
+{% endfor %}
+</tbody>
+</div>
+</table>
+</div>
 <H1>{{ job.job_num }}</H1>
 <H1>{{ job.Tech_name }}</H1>
 <H1>{{ user }}</H1>
+    </div>
 {% endblock %}

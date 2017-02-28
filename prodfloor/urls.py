@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^endshift/', views.EndShift, name='endshift'),
     url(r'^resume/get_tier_2/', views.get_tier_2, name='t2'),
     url(r'^resume/get_tier_3/', views.get_tier_3, name='t3'),
+    url(r'^job/get_stations/', views.get_stations, name='stations'),
     url(r'^first/', views.first, name='first'),
     url(r'^resume',login_required(ResumeView.as_view(ResumeView.form_list))),
     url(r'^job',login_required(JobInfo.as_view(JobInfo.jobs_list))),

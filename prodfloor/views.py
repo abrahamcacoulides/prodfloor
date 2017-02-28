@@ -8,7 +8,7 @@ from stopscauses.models import Tier3,Tier2,Tier1
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
-from prodfloor.dicts import dict_elem,dict_m2000,dict_m4000
+from prodfloor.dicts import dict_elem,dict_m2000,dict_m4000, stations_by_type
 import json,copy
 from django.utils.translation import ugettext_lazy as _
 
@@ -32,12 +32,19 @@ def ELEMView(request):
     context = {'job_list': job_list}
     return render(request, 'prodfloor/prodfloor.html', context)
 
-def detail(request, info_job_num):#TODO is this view really needed? right now is only showing some things about the job *maybe I can develop it a bit more
+def detail_1(request, info_job_num):#TODO is this view really needed? right now is only showing some things about the job *maybe I can develop it a bit more
     try:
         job = Info.objects.get(job_num=info_job_num)
     except Info.DoesNotExist:
         raise Http404("Job doesnt exist")
     return render(request, 'prodfloor/detail.html', {'job': job})
+
+def detail(request,info_job_num):
+    jobs_objs = Info.objects.all()
+    headers = ['Job #','PO','Job Type','Status','Station']
+    results = {'results_header':headers,
+               'results': jobs_objs}
+    return render(request, 'prodfloor/detail.html', {'result_headers': headers,'jobs':jobs_objs})
 
 @login_required()
 def Start(request):
@@ -582,6 +589,15 @@ class JobInfo(SessionWizardView):
     redirect_field_name = 'redirect_to'
     jobs_list=[Maininfo,FeaturesSelection]
 
+    def get_template_names(self):
+        print(self.steps.current)
+        if self.steps.current == '0':
+            return ['formtools/wizard/wizard_form.html']
+        elif self.steps.current == '1':
+            return ['prodfloor/wizard_form.html']
+        else:
+            return ['prodfloor/wizard_form.html']
+
     def get_all_cleaned_data(self):
         self.cleaned_data = {}
         for form_key in self.get_form_list():
@@ -765,6 +781,22 @@ def get_tier_3(request):
                 tier_three_causes[obj.id]=obj.tier_three_cause
 
         return HttpResponse(json.dumps(tier_three_causes),content_type="application/json")
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )
+
+def get_stations(request):
+    if request.method == 'POST':
+        job_type = request.POST.get('job_type')
+        dict = stations_by_type
+        if job_type == '0':
+            stations = {'0':'-----'}
+        else:
+            stations = dict[job_type]
+
+        return HttpResponse(json.dumps(stations),content_type="application/json")
     else:
         return HttpResponse(
             json.dumps({"nothing to see": "this isn't happening"}),

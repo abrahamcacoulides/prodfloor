@@ -49,6 +49,7 @@ class JobsInLine(admin.ModelAdmin):
     ]
     inlines = [FeaturesInline, TimesInline]
     list_display = ('Tech_name','job_num','label','station','po', 'job_type', 'ship_date', 'status')
+    search_fields = ['job_num','ship_date']
 
 
 class StopsAdmin(admin.ModelAdmin):
