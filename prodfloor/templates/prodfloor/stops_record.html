@@ -61,18 +61,16 @@
 <tbody>
 {% for job in jobs %}
 <tr>
-<td>{{ job.job_num }}</td>
+<td>{% getinfo job.info_id 'job_num'%}</td>
 <td>{{ job.po }}</td>
-<td>{{ job.job_type }}</td>
-<td>{{ job.status }}</td>
-<td><center>{% getstation job.station%}</center></td>
-<td>{{ job.ship_date }}</td>
-<td>{% resultingtime job.pk 1 %}</td>
-<td>{% resultingtime job.pk 2 %}</td>
-<td>{% resultingtime job.pk 3 %}</td>
-<td>{% resultingtime job.pk 4 %}</td>
-<td><center>{% stopsnumber job.pk %}</center></td>
-<td>{% timeonstop job.pk %}</td>
+<td>{% getinfo job.info_id 'job_type' %}</td>
+<td>{{ job.reason }}</td>
+<td>{{ job.extra_cause_1 }}</td>
+<td>{{ job.extra_cause_2 }}</td>
+<td>{{ job.reason_description }}</td>
+<td>{{ job.solution }}</td>
+<td><center>{% getinfo job.info_id 'station' %}</center></td>
+<td>{% timeonstop_1 job.id %}</td>
 </tr>
 {% endfor %}
 </tbody>
@@ -93,7 +91,7 @@
     </span>
 </div>
 <br>
-<a href="/prodfloor/generate_report_xml/" class="button" style="background-color: #3e8e41">{%  trans "Excel" %}</a>
+<a href="/prodfloor/generate_stop_report_xml/" class="button" style="background-color: #3e8e41">{%  trans "Excel" %}</a>
 </div>
 <script src="{% static 'prodfloor/reportsfunctions.js' %}"></script>
 {% endblock %}

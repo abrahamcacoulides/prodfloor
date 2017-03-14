@@ -190,13 +190,33 @@ footer .footer_column p {
 	margin-left: 20px;
 	margin-right: 20px;
 }
-.button {
+.button2 {
 	width: 200px;
 	margin-top: 40px;
 	margin-right: auto;
 	margin-bottom: auto;
 	margin-left: auto;
 	padding-top: 20px;
+	padding-right: 10px;
+	padding-bottom: 20px;
+	padding-left: 10px;
+	text-align: center;
+	vertical-align: middle;
+	border-radius: 0px;
+	text-transform: uppercase;
+	font-weight: bold;
+	letter-spacing: 2px;
+	border: 3px solid #FFFFFF;
+	color: #FFFFFF;
+	transition: all 0.3s linear;
+}
+.button {
+	width: 200px;
+	margin-top: 40px;
+	margin-right: auto;
+	margin-bottom: auto;
+	margin-left: auto;
+	padding-top: 30px;
 	padding-right: 10px;
 	padding-bottom: 20px;
 	padding-left: 10px;

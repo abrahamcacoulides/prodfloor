@@ -28,11 +28,11 @@ class Info(models.Model):
 
 
 class Features(models.Model):
-    info=models.ForeignKey(Info)
+    info=models.ForeignKey(Info, related_name='features')
     features = models.CharField(max_length=200, choices=features_list)
 
 class Times(models.Model):
-    info = models.ForeignKey(Info)
+    info = models.ForeignKey(Info, related_name='times')
     start_time_1 = models.DateTimeField('"Inicio de Test" start date')
     end_time_1 = models.DateTimeField('"Inicio de Test" finish date')
     start_time_2 = models.DateTimeField('"Programacion" start date')
@@ -43,7 +43,7 @@ class Times(models.Model):
     end_time_4 = models.DateTimeField('"Fin de Test" finish date')
 
 class Stops(models.Model):
-    info = models.ForeignKey(Info)
+    info = models.ForeignKey(Info, related_name='stops')
     po = models.CharField(max_length=7)
     reason = models.CharField(max_length=200)
     extra_cause_1 = models.CharField(max_length=200)

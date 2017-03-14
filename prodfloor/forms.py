@@ -1,21 +1,20 @@
 from django import forms
-from django.core.validators import MaxValueValidator,MinValueValidator
+from django.contrib.admin.widgets import AdminDateWidget
 from django.utils import timezone
 from django.contrib.auth.models import User
 from stopscauses.models import Tier1,Tier2,Tier3
 from .models import Info
-from django.forms import ModelChoiceField
+from django.forms import ModelChoiceField,ModelMultipleChoiceField
 from prodfloor.dicts import features,stations_tupple
-from datetime import date
 from django.utils.translation import ugettext_lazy as _
-from .dicts import label,job_type
+from .dicts import label,job_type_tupple,status_dict_tupple
 
 class Maininfo(forms.Form):
     initial = timezone.datetime.today
     job_num = forms.CharField(label=_('Job #'),max_length=10)
     po = forms.CharField(label=_('Prod #'),max_length=7)
     label = forms.ChoiceField(label=_('Job label'), choices=label)
-    job_type = forms.ChoiceField(label=_('Job type'), choices=job_type,widget=forms.Select(attrs = {'class':'job_type','id':'job_type'}))
+    job_type = forms.ChoiceField(label=_('Job type'), choices=job_type_tupple,widget=forms.Select(attrs = {'class':'job_type','id':'job_type'}))
     station = forms.ChoiceField(label=_('Station'), choices=stations_tupple,widget=forms.Select(attrs = {'class':'stations','id':'stations'}))
     ship_date=forms.DateField(label=_('Shipping date'),widget = forms.SelectDateWidget, initial= initial,localize=True)
 
@@ -81,7 +80,33 @@ class UserModelChoiceField(ModelChoiceField):
     def label_from_instance(self, obj):
         return obj.get_full_name()
 
+class Tier1ChoiceField(ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return obj.tier_one_cause
+
 class ReassignJob(forms.Form):
     new_tech = UserModelChoiceField(queryset=User.objects.filter(groups__name='Technicians'),label=_('Would be assigned to:'))
     station = forms.ChoiceField(label=_('Station'), choices=stations_tupple)
     reason_description = forms.CharField(required=True, widget=forms.Textarea,label=_('Reason'))
+
+class Records(forms.Form):
+    job_num = forms.CharField(label=_('Job #'), max_length=10,required=False,help_text='filter by numbers in the Job#',widget=forms.TextInput(attrs={'style':'width:75px'}))
+    po = forms.CharField(label=_('Prod #'), max_length=7,required=False,help_text='filter by numbers in the PO#',widget=forms.TextInput(attrs={'style':'width:55px'}))
+    status = forms.MultipleChoiceField(label=_('Status'), choices=status_dict_tupple,widget=forms.SelectMultiple(attrs={'style':'width:90px'}),required=False,help_text='filter by Status')
+    job_type = forms.MultipleChoiceField(label=_('Job type'), choices=job_type_tupple,widget=forms.SelectMultiple(attrs={'style':'width:80px'}),required=False,help_text='filter by Type')
+    station = forms.MultipleChoiceField(label=_('Station'), choices=stations_tupple,widget=forms.SelectMultiple(attrs={'style':'width:80px'}),required=False,help_text='filter by Station')
+    after = forms.DateField(label=_('Min Start Date'),help_text='filter by the start date',widget=AdminDateWidget,required=False)
+    before = forms.DateField(label=_('Max Start Date'),help_text='filter by the start date',widget=AdminDateWidget,required=False)
+    completed_after = forms.DateField(label=_('Min Completion Date'),help_text='filter by the end date', widget=AdminDateWidget, required=False)
+    completed_before = forms.DateField(label=_('Max Completion Date'),help_text='filter by the end date', widget=AdminDateWidget, required=False)
+
+class StopRecord(forms.Form):
+    job_num = forms.CharField(label=_('Job #'), max_length=10, required=False,help_text='filter by numbers in the Job#',widget=forms.TextInput(attrs={'style': 'width:75px'}))
+    po = forms.CharField(label=_('Prod #'), max_length=7, required=False, help_text='filter by numbers in the PO#',widget=forms.TextInput(attrs={'style': 'width:55px'}))
+    reason = Tier1ChoiceField(label=_('Reason'),queryset=Tier1.objects.all(),widget=forms.SelectMultiple(attrs={'style': 'width:180px'}), required=False,help_text='filter by Stop Reason',to_field_name="tier_one_cause")
+    job_type = forms.MultipleChoiceField(label=_('Job type'), choices=job_type_tupple,widget=forms.SelectMultiple(attrs={'style': 'width:80px'}), required=False,help_text='filter by Type')
+    station = forms.MultipleChoiceField(label=_('Station'), choices=stations_tupple,widget=forms.SelectMultiple(attrs={'style': 'width:80px'}), required=False,help_text='filter by Station')
+    after = forms.DateField(label=_('Min Start Date'), help_text='filter by the start date', widget=AdminDateWidget,required=False)
+    before = forms.DateField(label=_('Max Start Date'), help_text='filter by the start date', widget=AdminDateWidget,required=False)
+    completed_after = forms.DateField(label=_('Min Completion Date'), help_text='filter by the end date',widget=AdminDateWidget, required=False)
+    completed_before = forms.DateField(label=_('Max Completion Date'), help_text='filter by the end date',widget=AdminDateWidget, required=False)

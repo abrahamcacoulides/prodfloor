@@ -1,16 +1,20 @@
 from django.http import Http404, HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, redirect, render_to_response
 from formtools.wizard.views import SessionWizardView
-from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob
+from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob,Records,StopRecord
 from django.contrib.auth import logout
 from prodfloor.models import Info,Features,Times, Stops
 from stopscauses.models import Tier3,Tier2,Tier1
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
-from prodfloor.dicts import dict_elem,dict_m2000,dict_m4000, stations_by_type
-import json,copy
+from prodfloor.dicts import dict_elem,dict_m2000,dict_m4000, stations_by_type,headers,stops_headers
+import json,copy,datetime
+from .extra_functions import spentTime,timeonstop,stopsnumber,timeonstop_1
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import ugettext_lazy as _
+from xlsxwriter.workbook import Workbook
+import io
 
 def prodfloor_view(request):
     job_list = Info.objects.order_by('job_num')
@@ -32,19 +36,294 @@ def ELEMView(request):
     context = {'job_list': job_list}
     return render(request, 'prodfloor/prodfloor.html', context)
 
-def detail_1(request, info_job_num):#TODO is this view really needed? right now is only showing some things about the job *maybe I can develop it a bit more
-    try:
-        job = Info.objects.get(job_num=info_job_num)
-    except Info.DoesNotExist:
-        raise Http404("Job doesnt exist")
-    return render(request, 'prodfloor/detail.html', {'job': job})
+@login_required()
+def detail(request):#reports view
+    job = Info.objects.all()
+    if request.method == 'POST':#this if is for the filtering, the arguments to filter are received through it
+        form = Records(request.POST)
+        if form.is_valid():
+            job_num = form.cleaned_data['job_num']
+            po = form.cleaned_data['po']
+            status = form.cleaned_data['status']
+            job_type = form.cleaned_data['job_type']
+            station = form.cleaned_data['station']
+            before = form.cleaned_data['before']
+            after = form.cleaned_data['after']
+            if job_num != '':
+                job = job.filter(job_num__contains=job_num)
+            if po != '':
+                job = job.filter(po__contains=po)
+            if status:
+                job = job.filter(status__in=status)
+            if job_type:
+                job = job.filter(job_type__in=job_type)
+            if station:
+                job = job.filter(station__in=station)
+            if after:
+                if before:
+                    times = Times.objects.filter(start_time_1__gte=after,start_time_1__lte=before)
+                    times_pks=[]
+                    for i in times:
+                        times_pks.append(i.info.pk)
+                    job = job.filter(pk__in=times_pks)
+                else:
+                    times = Times.objects.filter(start_time_1__gte=after)
+                    times_pks = []
+                    for i in times:
+                        times_pks.append(i.info.pk)
+                    job = job.filter(pk__in=times_pks)
+            else:
+                if before:
+                    times = Times.objects.filter(start_time_1__lte=before)
+                    times_pks = []
+                    for i in times:
+                        times_pks.append(i.info.pk)
+                    job = job.filter(pk__in=times_pks)
+            request.session['report_objects'] = []
+            for item in job:
+                request.session['report_objects'].append(item.pk)
+            paginator = Paginator(job, 25)
+            jobs = paginator.page(1)
+            return render(request, 'prodfloor/detail.html', {'result_headers': headers,'jobs':jobs,'form':form,'job':job})
+        else:
+            request.session['report_objects'] = []
+            for item in job:
+                request.session['report_objects'].append(item.pk)
+            return render(request, 'prodfloor/detail.html', {'result_headers': headers,'jobs':job,'form':form,'job':job})
+    else:#this else refers to when the page is been requested, usually on the first access and when pagination is clicked ('next' or 'previous')
+        try:
+            if request.session['report_objects']:
+                job = []
+                pks = request.session['report_objects']
+                for pk in pks:
+                    job.append(Info.objects.get(pk=pk))
+        except KeyError:
+            pass
+        form = Records
+        paginator = Paginator(job, 25)
+        request.session['report_objects'] = []
+        for item in job:
+            request.session['report_objects'].append(item.pk)
+        page = request.GET.get('page')
+        try:
+            jobs = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            jobs = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            jobs = paginator.page(paginator.num_pages)
+        return render(request, 'prodfloor/detail.html', {'result_headers': headers, 'jobs': jobs,'form':form,'job':job})
 
-def detail(request,info_job_num):
-    jobs_objs = Info.objects.all()
-    headers = ['Job #','PO','Job Type','Status','Station']
-    results = {'results_header':headers,
-               'results': jobs_objs}
-    return render(request, 'prodfloor/detail.html', {'result_headers': headers,'jobs':jobs_objs})
+@login_required()
+def stops_reports(request):#reports for the stops view
+    job = Info.objects.all()
+    stops = Stops.objects.all()
+    if request.method == 'POST':#this if is for the filtering, the arguments to filter are received through it
+        form = StopRecord(request.POST)
+        if form.is_valid():
+            job_num = form.cleaned_data['job_num']
+            po = form.cleaned_data['po']
+            reason = form.cleaned_data['reason'].values_list('tier_one_cause',flat=True)
+            job_type = form.cleaned_data['job_type']
+            station = form.cleaned_data['station']
+            before = form.cleaned_data['before']
+            after = form.cleaned_data['after']
+            completed_after = form.cleaned_data['completed_after']
+            completed_before = form.cleaned_data['completed_before']
+            if job_num != '':
+                job=job.filter(job_num__contains=job_num)
+                jobs_lst = []
+                for j in job:
+                    jobs_lst.append(j.pk)
+                stops = stops.filter(info_id__in=jobs_lst)
+            if po != '':
+                stops = stops.filter(info_po__contains=po)
+            if reason:
+                stops = stops.filter(reason__in=reason)
+            if job_type:
+                job = job.filter(job_type__in=job_type)
+                jobs_lst = []
+                for j in job:
+                    jobs_lst.append(j.pk)
+                stops = stops.filter(info_id__in=jobs_lst)
+            if station:
+                job = job.filter(station__in=station)
+                jobs_lst = []
+                for j in job:
+                    jobs_lst.append(j.pk)
+                stops = stops.filter(info_id__in=jobs_lst)
+            if after:
+                if before:
+                    stops = stops.filter(stop_start_time__gte=after,stop_start_time__lte=before)
+                else:
+                    stops = stops.filter(stop_start_time__gte=after)
+            else:
+                if before:
+                    stops = stops.filter(stop_start_time__lte=before)
+            if completed_after:
+                if completed_before:
+                    stops = stops.filter(stop_end_time__gte=completed_after,stop_end_time__lte=completed_before)
+                else:
+                    stops = stops.filter(stop_end_time__gte=completed_after)
+            else:
+                if completed_before:
+                    stops = stops.filter(stop_end_time__lte=completed_before)
+            request.session['stops_objects'] = []
+            for item in stops:
+                request.session['stops_objects'].append(item.pk)
+            paginator = Paginator(stops, 25)
+            stop = paginator.page(1)
+            return render(request, 'prodfloor/stops_record.html', {'result_headers': stops_headers,'jobs':stop,'form':form,'job':stops})
+        else:
+            request.session['stops_objects'] = []
+            paginator = Paginator(stops, 25)
+            stop = paginator.page(1)
+            for item in stops:
+                request.session['stops_objects'].append(item.pk)
+            return render(request, 'prodfloor/stops_record.html', {'result_headers': stops_headers,'jobs':stop,'form':form,'job':stops})
+    else:#this else refers to when the page is been requested, usually on the first access and when pagination is clicked ('next' or 'previous')
+        try:
+            if request.session['stops_objects']:
+                stops = []
+                pks = request.session['stops_objects']
+                for pk in pks:
+                    stops.append(Stops.objects.get(pk=pk))
+        except KeyError:
+            pass
+        form = StopRecord
+        paginator = Paginator(stops, 25)
+        request.session['stops_objects'] = []
+        for item in stops:
+            request.session['stops_objects'].append(item.pk)
+        page = request.GET.get('page')
+        try:
+            stop = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            stop = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            stop = paginator.page(paginator.num_pages)
+        return render(request, 'prodfloor/stops_record.html', {'result_headers': stops_headers, 'jobs': stop,'form':form,'job':stops})
+
+def generatexml(request):
+    stations_dict = {'0':'-----',
+                   '1':'S1',
+            '2':'S2',
+            '3':'S3',
+            '4':'S4',
+            '5':'S5',
+            '6':'S6',
+            '7':'S7',
+            '8':'S8',
+            '9':'S9',
+            '10':'S10',
+            '11':'S11',
+            '12':'S12',
+            '13':'ELEM1',
+            '14':'ELEM2'}
+    job_type_dict = {'2000':'M2000',
+            '4000':'M4000',
+            'ELEM':'Element'}
+    jobs= request.session['report_objects']
+    output = io.BytesIO()
+    book = Workbook(output)
+    title_format = book.add_format({'bold':True,'border':True,'bg_color':'#d8d8d8','align':'center'})
+    other_format = book.add_format({'border':True})
+    sheet = book.add_worksheet('Report')
+    i = 0
+    for header in headers:
+        sheet.write(0, i, header, title_format)
+        i+=1
+    c=1
+    while c < len(jobs)+1:
+        for pk in jobs:
+            job = Info.objects.get(pk=pk)
+            beginning_time = spentTime(pk,1)
+            program_time = spentTime(pk, 2)
+            logic_time = spentTime(pk, 3)
+            ending_time = spentTime(pk, 4)
+            number_of_stops = stopsnumber(pk)
+            time_on_stop = timeonstop(pk)
+            sheet.write(c, 0, job.job_num,other_format)
+            sheet.write(c, 1, job.po,other_format)
+            sheet.write(c, 2, job_type_dict[job.job_type],other_format)
+            sheet.write(c, 3, job.status,other_format)
+            sheet.write(c, 4, stations_dict[job.station],other_format)
+            sheet.write(c, 5, str(job.ship_date).split('.', 2)[0], other_format)
+            sheet.write(c, 6, beginning_time, other_format)
+            sheet.write(c, 7, program_time, other_format)
+            sheet.write(c, 8, logic_time, other_format)
+            sheet.write(c, 9, ending_time, other_format)
+            sheet.write(c, 10, number_of_stops, other_format)
+            sheet.write(c, 11, time_on_stop, other_format)
+            c+=1
+    sheet.set_column(0,0,10.29)
+    sheet.set_column(3,3,13.14)
+    sheet.autofilter('A1:E1')
+    book.close()
+    output.seek(0)
+    response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response['Content-Disposition'] = "attachment; filename=Report%s.xlsx"%str(timezone.now())
+
+    return response
+
+def generatestopsxml(request):
+    stations_dict = {'0':'-----',
+                   '1':'S1',
+            '2':'S2',
+            '3':'S3',
+            '4':'S4',
+            '5':'S5',
+            '6':'S6',
+            '7':'S7',
+            '8':'S8',
+            '9':'S9',
+            '10':'S10',
+            '11':'S11',
+            '12':'S12',
+            '13':'ELEM1',
+            '14':'ELEM2'}
+    job_type_dict = {'2000':'M2000',
+            '4000':'M4000',
+            'ELEM':'Element'}
+    stops= request.session['stops_objects']
+    output = io.BytesIO()
+    book = Workbook(output)
+    title_format = book.add_format({'bold':True,'border':True,'bg_color':'#d8d8d8','align':'center'})
+    other_format = book.add_format({'border':True})
+    sheet = book.add_worksheet('Report')
+    i = 0
+    for header in stops_headers:
+        sheet.write(0, i, header, title_format)
+        i+=1
+    c=1
+    while c < len(stops)+1:
+        for pk in stops:
+            stop = Stops.objects.get(pk=pk)
+            job = Info.objects.get(pk=stop.info_id)
+            time_on_stop = timeonstop_1(pk)
+            sheet.write(c, 0, job.job_num,other_format)
+            sheet.write(c, 1, stop.po,other_format)
+            sheet.write(c, 2, job_type_dict[job.job_type],other_format)
+            sheet.write(c, 3, stop.reason,other_format)
+            sheet.write(c, 4, stop.extra_cause_1, other_format)
+            sheet.write(c, 5, stop.extra_cause_2, other_format)
+            sheet.write(c, 6, stop.reason_description, other_format)
+            sheet.write(c, 7, stop.solution, other_format)
+            sheet.write(c, 8, stations_dict[job.station],other_format)
+            sheet.write(c, 9, time_on_stop, other_format)
+            c+=1
+    sheet.set_column(0,0,10.29)
+    sheet.set_column(3,3,13.14)
+    sheet.autofilter('A1:E1')
+    book.close()
+    output.seek(0)
+    response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response['Content-Disposition'] = "attachment; filename=Stops_Report%s.xlsx"%str(timezone.now())
+
+    return response
 
 @login_required()
 def Start(request):

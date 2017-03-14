@@ -26,7 +26,7 @@ SECRET_KEY = 'fp#!j2v0gjvc1%wkc&4xl1r9%*^=&m88o8jbr=lp%%uqtti+#%'
 DEBUG = True
 
 ALLOWED_HOSTS = ['prodfloor.com',
-                 '10.113.1.13',
+                 '10.113.1.42',
                  'abrahamcacoulides.pythonanywhere.com']
 
 

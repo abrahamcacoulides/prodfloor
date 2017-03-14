@@ -1,7 +1,6 @@
 from django import template
-from prodfloor.models import Stops, Times, Features
+from prodfloor.models import Stops, Times, Features,Info
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from prodfloor.dicts import times_elem,times_m2000,times_m4000
 
 register = template.Library()
@@ -134,3 +133,84 @@ def getstation(A,*args, **kwargs):
                 '13': 'ELEM1',
                 '14': 'ELEM2'}
     return stations[A]
+
+@register.simple_tag()
+def resultingtime(pk,number, *args, **kwargs):
+    now = timezone.now()
+    end = 0
+    start = 0
+    times = Times.objects.get(info_id=pk)
+    if number == 1:
+        start = times.start_time_1
+        end = times.end_time_1
+    elif number == 2:
+        start = times.start_time_2
+        end = times.end_time_2
+    elif number == 3:
+        start = times.start_time_3
+        end = times.end_time_3
+    elif number == 4:
+        start = times.start_time_4
+        end = times.end_time_4
+    if end>start:#means that the stop_time has been set
+        elapsed_time = str(end-start).split('.', 2)[0]
+        return elapsed_time
+    elif end == start:#means that it has not being started
+        elapsed_time = '-'
+        return elapsed_time
+    else:#job is being worked on
+        elapsed_time = str(now - start).split('.', 2)[0]
+        return elapsed_time
+
+@register.simple_tag()
+def stopsnumber(pk,*args, **kwargs):
+    stops = Stops.objects.filter(info_id=pk)
+    numer_of_stops = 0
+    for stop in stops:
+        numer_of_stops+=1
+    return numer_of_stops
+
+@register.simple_tag()
+def timeonstop(pk,*args, **kwargs):
+    now = timezone.now()
+    stops = Stops.objects.filter(info_id=pk)
+    timeinstop = timezone.timedelta(0)
+    for stop in stops:
+        if stop.stop_end_time>stop.stop_start_time:
+            timeinstop += stop.stop_end_time - stop.stop_start_time
+        else:
+            timeinstop += now - stop.stop_start_time
+    return str(timeinstop).split('.', 2)[0]
+
+@register.simple_tag()
+def getinfo(pk,info,*args, **kwargs):
+    stations = {'1': 'S1',
+                '2': 'S2',
+                '3': 'S3',
+                '4': 'S4',
+                '5': 'S5',
+                '6': 'S6',
+                '7': 'S7',
+                '8': 'S8',
+                '9': 'S9',
+                '10': 'S10',
+                '11': 'S11',
+                '12': 'S12',
+                '13': 'ELEM1',
+                '14': 'ELEM2'}
+    job = Info.objects.get(pk=pk)
+    dict = {'job_num':job.job_num,
+            'job_type':job.job_type,
+            'station':stations[job.station]}
+    return dict[info]
+
+@register.simple_tag()
+def timeonstop_1(pk,*args, **kwargs):
+    now = timezone.now()
+    stop = Stops.objects.get(pk=pk)
+    timeinstop = timezone.timedelta(0)
+    if stop.stop_end_time>stop.stop_start_time:
+        timeinstop = stop.stop_end_time - stop.stop_start_time
+    else:
+        timeinstop = now - stop.stop_start_time
+    return str(timeinstop).split('.', 2)[0]

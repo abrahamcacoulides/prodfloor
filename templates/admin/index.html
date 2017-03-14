@@ -58,6 +58,11 @@
         <li class="deletelink"><a href="/prodfloor/endshift/">{% trans 'End Shift' %}</a></li>
         </ul>
         {% if request.user.is_superuser %}
+        <h2>{% trans 'Reports Generation' %}</h2>
+        <ul class="actionlist">
+        <li class=""><a href="/prodfloor/reports/">{% trans 'Jobs Report' %}</a></li>
+        <li class=""><a href="/prodfloor/stops_reports/">{% trans 'Stops Report' %}</a></li>
+        </ul>
         <h2>{% trans 'Available views' %}</h2>
         <ul class="actionlist">
         <li class=""><a href="/prodfloor/live/M2000/">{% trans 'M2000' %}</a></li>
