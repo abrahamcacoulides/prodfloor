@@ -27,12 +27,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['prodfloor.com',
                  '10.113.1.42',
+                 '192.168.137.1',
+                 '192.168.137.1',
+                 '192.168.0.100',
                  'abrahamcacoulides.pythonanywhere.com']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'flat_responsive',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

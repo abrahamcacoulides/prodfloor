@@ -27,11 +27,11 @@
     <nav>
       <ul>
           {% if job.status != 'Stopped' %}
-              <li><a href="/prodfloor/end/back" enable=False>BACK</a></li>
-              <li><a href="/prodfloor/end/next">NEXT</a></li>
-              <li> <a href="/prodfloor/end/stop">STOP</a></li>
+              <li class=""><a href="/prodfloor/end/back/" enable=False>BACK</a></li>
+              <li class=""><a href="/prodfloor/end/next/">NEXT</a></li>
+              <li class=""> <a href="/prodfloor/end/stop/">STOP</a></li>
           {% else %}
-              <li><a href="/prodfloor/end/next">RESUME</a></li>
+              <li class=""><a href="/prodfloor/end/next/">RESUME</a></li>
           {% endif %}
       </ul>
     </nav>

@@ -23,17 +23,17 @@
     <center style="margin-top: 80px">
     {% if job.status != 'Stopped' %}
         {% if last %}
-    <button><a href="/prodfloor/back/{{ current_step }}/">{%  trans "Back" %}</a></button>
-    <button id="next", onclick="clicked(event)"><a href="/prodfloor/next/{{ current_step }}/">{%  trans "Next" %}</a></button>
-    <button><a href="/prodfloor/stop/{{ current_step }}/">{%  trans "Stop" %}</a></button>
+    <a href="/prodfloor/back/{{ current_step }}/"><button>{%  trans "Back" %}</button></a>
+    <a href="/prodfloor/next/{{ current_step }}/"><button id="next", onclick="clicked(event)">{%  trans "Next" %}</button></a>
+    <a href="/prodfloor/stop/{{ current_step }}/"><button>{%  trans "Stop" %}</button></a>
         {% else %}
-    <button><a href="/prodfloor/back/{{ current_step }}/">{%  trans "Back" %}</a></button>
-    <button id="next"><a href="/prodfloor/next/{{ current_step }}/">{%  trans "Next" %}</a></button>
-    <button><a href="/prodfloor/stop/{{ current_step }}/">{%  trans "Stop" %}</a></button>
+    <a href="/prodfloor/back/{{ current_step }}/"><button>{%  trans "Back" %}</button></a>
+    <a href="/prodfloor/next/{{ current_step }}/"><button id="next">{%  trans "Next" %}</button></a>
+    <a href="/prodfloor/stop/{{ current_step }}/"><button>{%  trans "Stop" %}</button></a>
             {% endif %}
     {% else %}
-    <button><a href="/prodfloor/resume/">{%  trans "Resume" %}</a></button>
+    <a href="/prodfloor/resume/"><button>{%  trans "Resume" %}</button></a>
     {% endif %}
     </center>
-    <div class="copyright" style="margin-top: 50px"><center>&copy;2015 - <strong>MCE info</strong></center></div>
+    <div class="copyright" style="margin-top: 50px"><center>&copy;2017 - <strong>MCE info</strong></center></div>
 {% endblock %}

@@ -1,10 +1,20 @@
 /**
  * Created by abraham.cacoulides on 2/7/2017.
  */
-$(document).ready(function(){
-     // sanity check
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+if (isMobile()) {
+//things to do for mobile devices
     update_tier_2();
-});
+}
+
+if (!isMobile()) {
+//thing for not mobile
+    update_tier_2();
+}
+
 
 $("[name='0-tier2']").change(function(event){
     event.preventDefault();
