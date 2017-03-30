@@ -46,7 +46,6 @@ class Maininfo(forms.Form):
 
 class FeaturesSelection(forms.Form):
     features_selection=forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=features, label=_('Select all the features that apply\n'))
-
     def clean(self):
         cleaned_data = super(FeaturesSelection, self).clean()
         features = cleaned_data.get('features_selection')

@@ -785,9 +785,6 @@ def Middle(request,action,current_index):
                     if job.status != 'Stopped':
                         return HttpResponseRedirect("/prodfloor/stopped/")
                 else:
-                    print(action)
-                    print(current_index)
-                    print(index_num)
                     raise Http404("First Else")
             else:
                 messages.warning(request, 'The Job you tried to reach is not assigned to you.')
@@ -869,7 +866,6 @@ class JobInfo(SessionWizardView):
     jobs_list=[Maininfo,FeaturesSelection]
 
     def get_template_names(self):
-        print(self.steps.current)
         if self.steps.current == '0':
             return ['formtools/wizard/wizard_form.html']
         elif self.steps.current == '1':
