@@ -1,12 +1,13 @@
 from django.utils.translation import ugettext_lazy as _
 
-dict_m2000 = {'Beginning':['Documentacion Inicial',
+dict_m2000 = {
+    'Beginning':['Documentacion Inicial',
                                       'Inspeccion Visual',
                                       'Preparacion de Labview',
                                       'Chequeo preliminar de voltajes iniciales'],
                          'Program':['Programacion de Flasheo',
                                     'Conexion de arneces simulador del carro y arneces cartop',#if cartop
-                                    'Programacion del Firmware',
+                                    'Programacion del Firmware(Chip)',
                                     'Conexion de arneces del simulador',#if !cartop
                                     'Programacion del Solid State Starter',
                                     'Programacion de parametros F1',
@@ -29,7 +30,7 @@ dict_m2000 = {'Beginning':['Documentacion Inicial',
                                   'Car Calls (Pag CPI)',#if CPI
                                   'Calls (Pag 16)',
                                   'Serial Hall Calls (Pag SH)',#if serial hall calls
-                                  'Programmable Input/Outputs'],
+                                  'Pruebas de entradas y salidas (Pag 15, 17, etc.)'],
                          'Ending':['Inspeccion Final',
                                    'Passcode',
                                    'Papeleria Final',
@@ -44,7 +45,7 @@ dict_m4000 = {'Beginning':['Documentacion Inicial',
                                       'Chequeo preliminar de voltajes iniciales'],
                          'Program':['Programacion de Flasheo',
                                     'Conexion de arneces simulador del carro y arneces cartop',#if cartop
-                                    'Programacion del Firmware',
+                                    'Programacion del Firmware(Chip)',
                                     'Conexion de arneces del simulador',#if !cartop
                                     'Programacion de parametros F1',
                                     'Programacion tarjeta CE Electronics',
@@ -71,7 +72,7 @@ dict_m4000 = {'Beginning':['Documentacion Inicial',
                                   'Car Calls (Pag CPI)',#if CPI
                                   'Calls (Pag 16)',
                                   'Serial Hall Calls (Pag SH)',#if serial hall calls
-                                  'Programmable Input/Outputs',
+                                  'Pruebas de entradas y salidas (Pag 15, 17, etc.)',
                                   'Additional Manual Test\n(Overspeeds and Limits)',
                                   'MBRAKE\nCalibracion Final',
                                   'Programacion de Parametros F7\n Version Cliente',
@@ -242,8 +243,10 @@ headers = ['Job #',
            'Program',
            'Logic',
            'Ending',
+           'Elapsed Time on Job',
            '# of Stops',
-           'Time on Stops']
+           'Time on Stops',
+           'Effective Time on Job']
 stops_headers = ['Job #',
            'PO',
            'Job Type',

@@ -1,0 +1,27 @@
+{% extends "base_site.html" %}
+{% load staticfiles %}
+{% load i18n %}
+{% load prodfloor_extras %}
+<head>
+    <title>{% block title %}{% trans "Stop Creation" %}{% endblock %}</title>
+</head>
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'prodfloor:prodfloor' %}">{{ site_header|default:_('Job Information') }}</a></h1>
+{% endblock %}
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+    {% for i in form %}
+        <table>
+    <div class="fieldWrapper" title="{{  i.help_text }}">
+                <td>{{ i.label }}</td>
+                <td>{{ i }}</td>
+                <td>{{ i.errors }}</td>
+                </div>
+        </table>
+    {% endfor %}
+<input type="submit" value="{% trans "submit" %}"/>
+</form>
+{% endblock %}

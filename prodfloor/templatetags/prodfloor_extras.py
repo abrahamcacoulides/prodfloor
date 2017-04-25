@@ -2,6 +2,7 @@ from django import template
 from prodfloor.models import Stops, Times, Features,Info
 from django.utils import timezone
 from prodfloor.dicts import times_elem,times_m2000,times_m4000
+import datetime
 
 register = template.Library()
 
@@ -140,6 +141,8 @@ def resultingtime(pk,number, *args, **kwargs):
     end = 0
     start = 0
     times = Times.objects.get(info_id=pk)
+    stops = Stops.objects.filter(info_id=pk,reason='Shift ended')
+    minutes_on_shift_end = datetime.timedelta(0)
     if number == 1:
         start = times.start_time_1
         end = times.end_time_1
@@ -152,15 +155,52 @@ def resultingtime(pk,number, *args, **kwargs):
     elif number == 4:
         start = times.start_time_4
         end = times.end_time_4
+    for stop in stops:
+        if stop.stop_start_time == stop.stop_end_time: #job is in shift end stop
+            if stop.stop_start_time > start:
+                minutes_on_shift_end += now - stop.stop_start_time
+        else:
+            if stop.stop_start_time > start and stop.stop_end_time < end:
+                minutes_on_shift_end += stop.stop_end_time - stop.stop_start_time
     if end>start:#means that the stop_time has been set
-        elapsed_time = str(end-start).split('.', 2)[0]
+        elapsed_time = str((end-start)-minutes_on_shift_end).split('.', 2)[0]
         return elapsed_time
     elif end == start:#means that it has not being started
         elapsed_time = '-'
         return elapsed_time
     else:#job is being worked on
-        elapsed_time = str(now - start).split('.', 2)[0]
+        elapsed_time = str((now - start)-minutes_on_shift_end).split('.', 2)[0]
         return elapsed_time
+
+@register.simple_tag()
+def totaltime(pk, *args, **kwargs):
+    now = timezone.now()
+    end = 0
+    start = 0
+    times = Times.objects.get(info_id=pk)
+    elapsed_time = datetime.timedelta(0)
+    number = 1
+    while number < 5:
+        if number == 1:
+            start = times.start_time_1
+            end = times.end_time_1
+        elif number == 2:
+            start = times.start_time_2
+            end = times.end_time_2
+        elif number == 3:
+            start = times.start_time_3
+            end = times.end_time_3
+        elif number == 4:
+            start = times.start_time_4
+            end = times.end_time_4
+        if end > start:  # means that the stop_time has been set
+            elapsed_time += (end - start)
+        elif end == start and number != 1:  # means that it has not being started and is not in beginning stage
+            elapsed_time += datetime.timedelta(0)
+        else:  # job is being worked on
+            elapsed_time += (now - start)
+        number += 1
+    return str(elapsed_time).split('.', 2)[0]
 
 @register.simple_tag()
 def stopsnumber(pk,*args, **kwargs):
@@ -214,3 +254,41 @@ def timeonstop_1(pk,*args, **kwargs):
     else:
         timeinstop = now - stop.stop_start_time
     return str(timeinstop).split('.', 2)[0]
+
+@register.simple_tag()
+def effectivetime(pk,*args, **kwargs):
+    now = timezone.now()
+    stops = Stops.objects.filter(info_id=pk)
+    timeinstop = timezone.timedelta(0)
+    end = 0
+    start = 0
+    times = Times.objects.get(info_id=pk)
+    elapsed_time = datetime.timedelta(0)
+    number = 1
+    while number < 5:
+        if number == 1:
+            start = times.start_time_1
+            end = times.end_time_1
+        elif number == 2:
+            start = times.start_time_2
+            end = times.end_time_2
+        elif number == 3:
+            start = times.start_time_3
+            end = times.end_time_3
+        elif number == 4:
+            start = times.start_time_4
+            end = times.end_time_4
+        if end > start:  # means that the stop_time has been set
+            elapsed_time += (end - start)
+        elif end == start and number != 1:  # means that it has not being started and is not in beginning stage
+            elapsed_time += datetime.timedelta(0)
+        else:  # job is being worked on
+            elapsed_time += (now - start)
+        number += 1
+    for stop in stops:
+        if stop.stop_end_time > stop.stop_start_time:
+            timeinstop += stop.stop_end_time - stop.stop_start_time
+        else:
+            timeinstop += now - stop.stop_start_time
+    eff_time = str(elapsed_time - timeinstop).split('.', 2)[0]
+    return (eff_time)

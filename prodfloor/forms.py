@@ -109,3 +109,29 @@ class StopRecord(forms.Form):
     before = forms.DateField(label=_('Max Start Date'), help_text='filter by the start date', widget=AdminDateWidget,required=False)
     completed_after = forms.DateField(label=_('Min Completion Date'), help_text='filter by the end date',widget=AdminDateWidget, required=False)
     completed_before = forms.DateField(label=_('Max Completion Date'), help_text='filter by the end date',widget=AdminDateWidget, required=False)
+
+class SUStop(forms.Form):
+    job_num = forms.CharField(label=_('Job #'), max_length=10, help_text='filter by numbers in the Job#',)
+    po = forms.CharField(label=_('Prod #'), max_length=7, help_text='filter by numbers in the PO#')
+
+    def clean(self):
+        cleaned_data = super(SUStop, self).clean()
+        job_num = cleaned_data.get('job_num')
+        po = cleaned_data.get('po')
+        previous_jobs = Info.objects.all()
+
+        if job_num and po:
+            # Only do something if both fields are valid so far.
+            if job_num.isdigit() and len(job_num) == 10:
+                pass
+            else:
+                raise forms.ValidationError({'job_num':_("Please validate the 'Job #' input.")})
+            if (po.isdigit()) and len(po) == 7:
+                if any(po in obj.po for obj in previous_jobs):
+                    job_with_po = Info.objects.get(po=po)
+                    if job_num != job_with_po.job_num:
+                        raise forms.ValidationError({'job_num': _("The job number doesn't match the one for that po in the system.")})
+                else:
+                    raise forms.ValidationError({'po': _("The production order number captured is not in the system.")})
+            else:
+                raise forms.ValidationError({'po':_("Please validate the 'Prod #' input.")})

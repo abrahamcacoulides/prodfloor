@@ -1,7 +1,7 @@
 from django.http import Http404, HttpResponseRedirect,HttpResponse
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect
 from formtools.wizard.views import SessionWizardView
-from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob,Records,StopRecord
+from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob, Records, StopRecord, SUStop
 from django.contrib.auth import logout
 from prodfloor.models import Info,Features,Times, Stops
 from stopscauses.models import Tier3,Tier2,Tier1
@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
 from prodfloor.dicts import dict_elem,dict_m2000,dict_m4000, stations_by_type,headers,stops_headers
-import json,copy,datetime
-from .extra_functions import spentTime,timeonstop,stopsnumber,timeonstop_1
+import json,copy
+from .extra_functions import spentTime,timeonstop,stopsnumber,timeonstop_1,effectivetime,totaltime
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import ugettext_lazy as _
 from xlsxwriter.workbook import Workbook
@@ -138,7 +138,7 @@ def stops_reports(request):#reports for the stops view
                     jobs_lst.append(j.pk)
                 stops = stops.filter(info_id__in=jobs_lst)
             if po != '':
-                stops = stops.filter(info_po__contains=po)
+                stops = stops.filter(po__contains=po)
             if reason:
                 stops = stops.filter(reason__in=reason)
             if job_type:
@@ -246,6 +246,8 @@ def generatexml(request):
             ending_time = spentTime(pk, 4)
             number_of_stops = stopsnumber(pk)
             time_on_stop = timeonstop(pk)
+            elapsed_time = totaltime(pk)
+            eff_time = effectivetime(pk)
             sheet.write(c, 0, job.job_num,other_format)
             sheet.write(c, 1, job.po,other_format)
             sheet.write(c, 2, job_type_dict[job.job_type],other_format)
@@ -256,12 +258,14 @@ def generatexml(request):
             sheet.write(c, 7, program_time, other_format)
             sheet.write(c, 8, logic_time, other_format)
             sheet.write(c, 9, ending_time, other_format)
-            sheet.write(c, 10, number_of_stops, other_format)
-            sheet.write(c, 11, time_on_stop, other_format)
+            sheet.write(c, 10, elapsed_time, other_format)
+            sheet.write(c, 11, number_of_stops, other_format)
+            sheet.write(c, 12, time_on_stop, other_format)
+            sheet.write(c, 13, eff_time, other_format)
             c+=1
     sheet.set_column(0,0,10.29)
     sheet.set_column(3,3,13.14)
-    sheet.autofilter('A1:E1')
+    sheet.autofilter('A1:O1')
     book.close()
     output.seek(0)
     response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -317,7 +321,7 @@ def generatestopsxml(request):
             c+=1
     sheet.set_column(0,0,10.29)
     sheet.set_column(3,3,13.14)
-    sheet.autofilter('A1:E1')
+    sheet.autofilter('A1:J1')
     book.close()
     output.seek(0)
     response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -564,7 +568,6 @@ def Continue(request,jobnum,po):
     else:
         raise Http404("How you got here?")
 
-
 @login_required()
 def EndShift(request):
     tech_name = request.user.first_name + ' ' + request.user.last_name
@@ -584,7 +587,6 @@ def EndShift(request):
     logout(request)
     messages.success(request, 'You succesfully ended your shift.')
     return HttpResponseRedirect('/admin/')
-
 
 @login_required()
 def Middle(request,action,current_index):
@@ -795,7 +797,6 @@ def Middle(request,action,current_index):
         messages.warning(request, 'The Job you tried to reach is not available.')
         return HttpResponseRedirect('/admin/')
 
-
 def done(request):
     return render(request, 'prodfloor/newjob.html')
 
@@ -846,7 +847,6 @@ class Reassign(SessionWizardView):
         messages.success(self.request,'The Job ' + job_num_info.job_num + ' has been properly reassigned.')
         return HttpResponseRedirect("/admin/prodfloor/myjob/"+str(job_num_info.id)+"/change/")
 
-
 def first(request):
     job = Info.objects.filter(Tech_name=request.user.first_name + ' ' + request.user.last_name).exclude(
         status='Complete').exclude(status='Stopped')
@@ -858,7 +858,6 @@ def first(request):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         return HttpResponseRedirect("/prodfloor/job/")
-
 
 class JobInfo(SessionWizardView):
     login_url = '/login/'
@@ -924,7 +923,6 @@ class JobInfo(SessionWizardView):
         start_time.save()
         return HttpResponseRedirect("/prodfloor/start/")
 
-
 class Stop(SessionWizardView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
@@ -967,6 +965,47 @@ class Stop(SessionWizardView):
             stop.save()
             return HttpResponseRedirect("/prodfloor/continue/"+job_num+"/" + po)
 
+class SuperUserStop(SessionWizardView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    form_list=[StopReason]
+
+    def get_template_names(self):
+        return ["prodfloor/wizard_form_stop.html"]
+
+    def get_all_cleaned_data(self):
+        self.cleaned_data = {}
+        for form_key in self.get_form_list():
+            form_obj = self.get_form(
+                step=form_key,
+                data=self.storage.get_step_data(form_key),
+                files=self.storage.get_step_files(form_key)
+            )
+            if form_obj.is_valid():
+                if isinstance(form_obj.cleaned_data, (tuple, list)):
+                    self.cleaned_data.update({
+                        'formset-%s' % form_key: form_obj.cleaned_data
+                    })
+                else:
+                    self.cleaned_data.update(form_obj.cleaned_data)
+
+    def done(self, form_list, **kwargs):
+        if self.request.user.is_authenticated() and self.request.user.is_active:
+            job_num = self.request.session['temp_job_num']
+            po = self.request.session['temp_po']
+            job = Info.objects.get(job_num=job_num,po=po)
+            ID = job.id
+            self.get_all_cleaned_data()
+            stop_reason=self.cleaned_data['reason_for_stop']
+            description = self.cleaned_data['reason_description']
+            time = timezone.now()
+            stop = Stops(info_id=ID,reason=stop_reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
+            if job.status != 'Stopped':
+                job.prev_stage = job.status
+            job.status = 'Stopped'
+            job.save()
+            stop.save()
+            return HttpResponseRedirect("/prodfloor/continue/"+job_num+"/" + po)
 
 class ResumeView(SessionWizardView):
     login_url = '/login/'
@@ -1077,3 +1116,17 @@ def get_stations(request):
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
+
+def createStop(request):
+    if request.method == 'POST':#this if is for the filtering, the arguments to filter are received through it
+        form = SUStop(request.POST)
+        if form.is_valid():
+            request.session['temp_job_num'] = form.cleaned_data['job_num']
+            request.session['temp_po'] = form.cleaned_data['po']
+            messages.warning(request, _('The Stop has been properly registered.'))
+            return HttpResponseRedirect('/admin/')
+        else:
+            return render(request, 'prodfloor/su_report_stop.html', {'form': form})
+    else:
+        form = SUStop
+        return render(request, 'prodfloor/su_report_stop.html', {'form': form})
