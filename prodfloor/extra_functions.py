@@ -2,6 +2,43 @@ from django.utils import timezone
 from prodfloor.models import Stops, Times, Features
 import datetime
 
+def compare(text, features_to_compare, values,features_in_job):
+    if None in features_to_compare:
+        return True
+    else:
+        count = 0
+        while count < len(features_to_compare):
+            feature_to_compare = features_to_compare[count]
+            value = values[count]
+            if any(feature.features == feature_to_compare for feature in features_in_job):  # the feature to compare is IN the job features
+                if value == 1:  # the feature to compare is wanted in the step and is in it
+                    count += 1
+                else:  # the feature to compare is NOT wanted in the step but it is there
+                    # should restart the function but skipping the current step
+                    return False
+            else:  # the feature to compare is NOT in the job features
+                if value == 0:  # the feature to compare is NOT wanted in the step and is NOT in it
+                    count += 1
+                else:  # the feature to compare is wanted in the step but it is NOT there
+                    # should restart the function but skipping the current step
+                    return False
+        return True
+
+def compare_single(text, feature_to_compare, value,features_in_job):
+    if feature_to_compare == None:
+        return True
+    elif any(feature.features == feature_to_compare for feature in features_in_job):  # the feature to compare is IN the job features
+        if value == 1:  # the feature to compare is wanted in the step and is in it
+            return True
+        else:  # the feature to compare is NOT wanted in the step but it is there
+            # should restart the function but skipping the current step
+            return False
+    else:  # the feature to compare is NOT in the job features
+        if value == 0:  # the feature to compare is NOT wanted in the step and is NOT in it
+            return True
+        else:  # the feature to compare is wanted in the step but it is NOT there
+            # should restart the function but skipping the current step
+            return False
 
 def spentTime(pk,number):
     now = timezone.now()
