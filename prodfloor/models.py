@@ -20,7 +20,7 @@ class Info(models.Model):
     stage_len = models.IntegerField()
 
     def __str__(self):
-        return self.po
+        return self.job_num
 
     class Meta:
         verbose_name = _('Job')

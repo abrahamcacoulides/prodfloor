@@ -71,6 +71,7 @@
 <td>{{ job.solution }}</td>
 <td><center>{% getinfo job.info_id 'station' %}</center></td>
 <td>{% timeonstop_1 job.id %}</td>
+<td>{% gettech job.info_id %}</td>
 </tr>
 {% endfor %}
 </tbody>

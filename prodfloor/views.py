@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.http import Http404, HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, redirect
 from formtools.wizard.views import SessionWizardView
@@ -10,7 +11,7 @@ from django.utils import timezone
 from django.contrib import messages
 from prodfloor.dicts import stations_by_type,headers,stops_headers,dict_m2000_new,dict_elem_new,dict_m4000_new
 import json,copy
-from .extra_functions import spentTime,timeonstop,stopsnumber,timeonstop_1,effectivetime,totaltime,compare
+from .extra_functions import spentTime,timeonstop,stopsnumber,timeonstop_1,effectivetime,totaltime,compare, gettech, remaining_steps
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import ugettext_lazy as _
 from xlsxwriter.workbook import Workbook
@@ -49,8 +50,12 @@ def detail(request):#reports view
             station = form.cleaned_data['station']
             before = form.cleaned_data['before']
             after = form.cleaned_data['after']
+            tech = form.cleaned_data['tech']
             if job_num != '':
                 job = job.filter(job_num__contains=job_num)
+            if tech != None:
+                tech_obj = User.objects.get(username=tech)
+                job = job.filter(Tech_name=tech_obj.get_full_name())
             if po != '':
                 job = job.filter(po__contains=po)
             if status:
@@ -91,27 +96,34 @@ def detail(request):#reports view
                 request.session['report_objects'].append(item.pk)
             return render(request, 'prodfloor/detail.html', {'result_headers': headers,'jobs':job,'form':form,'job':job})
     else:#this else refers to when the page is been requested, usually on the first access and when pagination is clicked ('next' or 'previous')
-        try:
-            if request.session['report_objects']:
-                job = []
-                pks = request.session['report_objects']
-                for pk in pks:
-                    job.append(Info.objects.get(pk=pk))
-        except KeyError:
-            pass
-        form = Records
-        paginator = Paginator(job, 25)
-        request.session['report_objects'] = []
-        for item in job:
-            request.session['report_objects'].append(item.pk)
         page = request.GET.get('page')
         try:
+            try:
+                if request.session['report_objects']:
+                    job = []
+                    pks = request.session['report_objects']
+                    for pk in pks:
+                        job.append(Info.objects.get(pk=pk))
+            except KeyError:
+                pass
+            form = Records
+            paginator = Paginator(job, 25)
+            request.session['report_objects'] = []
+            for item in job:
+                request.session['report_objects'].append(item.pk)
             jobs = paginator.page(page)
         except PageNotAnInteger:
             # If page is not an integer, deliver first page.
+            form = Records
+            paginator = Paginator(job, 25)
+            request.session['report_objects'] = []
+            for item in job:
+                request.session['report_objects'].append(item.pk)
             jobs = paginator.page(1)
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
+            form = Records
+            paginator = Paginator(job, 5)
             jobs = paginator.page(paginator.num_pages)
         return render(request, 'prodfloor/detail.html', {'result_headers': headers, 'jobs': jobs,'form':form,'job':job})
 
@@ -248,6 +260,7 @@ def generatexml(request):
             time_on_stop = timeonstop(pk)
             elapsed_time = totaltime(pk)
             eff_time = effectivetime(pk)
+            tech = gettech(pk)
             sheet.write(c, 0, job.job_num,other_format)
             sheet.write(c, 1, job.po,other_format)
             sheet.write(c, 2, job_type_dict[job.job_type],other_format)
@@ -262,6 +275,7 @@ def generatexml(request):
             sheet.write(c, 11, number_of_stops, other_format)
             sheet.write(c, 12, time_on_stop, other_format)
             sheet.write(c, 13, eff_time, other_format)
+            sheet.write(c, 14, tech, other_format)
             c+=1
     sheet.set_column(0,0,10.29)
     sheet.set_column(3,3,13.14)
@@ -318,6 +332,7 @@ def generatestopsxml(request):
             sheet.write(c, 7, stop.solution, other_format)
             sheet.write(c, 8, stations_dict[job.station],other_format)
             sheet.write(c, 9, time_on_stop, other_format)
+            sheet.write(c, 10, gettech(pk), other_format)
             c+=1
     sheet.set_column(0,0,10.29)
     sheet.set_column(3,3,13.14)
@@ -335,8 +350,9 @@ def Start(request):
         dict_of_steps = {}
         job_num = request.session['temp_job_num']
         po = request.session['temp_po']
-        job = Info.objects.get(job_num=job_num,po=po,Tech_name=request.user.first_name + ' ' + request.user.last_name)
-        features_objects = Features.objects.filter(info_id=job.id, info__po=po)
+        pk = request.session['temp_pk']
+        job = Info.objects.get(pk = pk)
+        features_objects = Features.objects.filter(info__pk=pk)
         if job.job_type == '2000':
             dict_of_steps = dict_m2000_new
         elif job.job_type == '4000':
@@ -367,14 +383,15 @@ def Start(request):
         raise Http404("This is not the droid you're looking for")
 
 @login_required()
-def Continue(request,jobnum,po):
+def Continue(request,pk,po):
     if request.user.is_authenticated() and request.user.is_active:
-        request.session['temp_job_num']=jobnum
+        job = Info.objects.get(pk=pk)
+        request.session['temp_pk'] = job.pk
+        request.session['temp_job_num'] = job.job_num
         request.session['temp_po'] = po
+        job_num = job.job_num
         dict_of_steps = {}
-        job_num=jobnum
-        job = Info.objects.get(job_num=job_num,po=po)
-        features_objects = Features.objects.filter(info_id=job.id, info__po=po)
+        features_objects = Features.objects.filter(info_id=job.id)
         if job.job_type == '2000':
             dict_of_steps = copy.deepcopy(dict_m2000_new)
         elif job.job_type == '4000':
@@ -384,13 +401,18 @@ def Continue(request,jobnum,po):
         status = job.status
         list_of_steps = dict_of_steps[status]
         while True:
-            current_data = list_of_steps[job.current_index]
-            if compare(current_data[0],current_data[1],current_data[2],features_objects):
+            if status == 'Stopped':
+                current_data = list_of_steps[0]
                 text = current_data[0]
                 break
             else:
-                job.current_index +=1
-                job.save()
+                current_data = list_of_steps[job.current_index]
+                if compare(current_data[0],current_data[1],current_data[2],features_objects):
+                    text = current_data[0]
+                    break
+                else:
+                    job.current_index +=1
+                    job.save()
         steps_length = len(list_of_steps)
         job.stage_len = steps_length
         job.save()
@@ -438,9 +460,16 @@ def Continue(request,jobnum,po):
                                     job.stage_len = len(list_of_steps)
                                     job.save()
                                     steps_length = job.stage_len
-                                    index_num = job.current_index
-                                    current_step = index_num + 1
-                                    return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': list_of_steps[index_num], 'current_step': current_step})
+                                    while True:
+                                       current_data = list_of_steps[job.current_index]
+                                       if compare(current_data[0],current_data[1],current_data[2],features_objects):
+                                           text = current_data[0]
+                                           break
+                                       else:
+                                           job.current_index +=1
+                                           job.save()
+                                    current_step = job.current_index + 1
+                                    return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': text, 'current_step': current_step})
                             else:
                                 index_num = 0
                                 current_step = index_num+1
@@ -458,10 +487,17 @@ def Continue(request,jobnum,po):
                             job.stage_len = len(list_of_steps)
                             job.save()
                             steps_length = job.stage_len
-                            index_num = job.current_index
-                            current_step = index_num+1
+                            while True:
+                                current_data = list_of_steps[job.current_index]
+                                if compare(current_data[0], current_data[1], current_data[2], features_objects):
+                                    text = current_data[0]
+                                    break
+                                else:
+                                    job.current_index += 1
+                                    job.save()
+                            current_step = job.current_index+1
                             return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,
-                                           'current_step_text': list_of_steps[index_num], 'current_step': current_step})
+                                           'current_step_text': text, 'current_step': current_step})
                     elif any(object.reason == 'Shift ended' for object in stop):
                         stop_shiftend = Stops.objects.get(info_id=job.id, solution='Not available yet',reason='Shift ended')
                         stop_shiftend.solution = 'Shift restart/Reassigned.'
@@ -485,9 +521,16 @@ def Continue(request,jobnum,po):
                             job.stage_len = len(list_of_steps)
                             job.save()
                             steps_length = job.stage_len
-                            index_num = job.current_index
-                            current_step = index_num + 1
-                            return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': list_of_steps[index_num],'current_step': current_step})
+                            while True:
+                                current_data = list_of_steps[job.current_index]
+                                if compare(current_data[0], current_data[1], current_data[2], features_objects):
+                                    text = current_data[0]
+                                    break
+                                else:
+                                    job.current_index += 1
+                                    job.save()
+                            current_step = job.current_index+1
+                            return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': text,'current_step': current_step})
                     else:
                         index_num = 0
                         current_step = index_num + 1
@@ -535,8 +578,9 @@ def Middle(request,action,current_index):
         if request.user.is_authenticated() and request.user.is_active:
             job_num = request.session['temp_job_num']
             po = request.session['temp_po']
-            job = Info.objects.get(job_num=job_num,po=po)
-            features_objects = Features.objects.filter(info_id=job.id,info__po=po)
+            pk = request.session['temp_pk']
+            job = Info.objects.get(pk = pk)
+            features_objects = Features.objects.filter(info_id=job.id,info__po=po,info__Tech_name=request.user.first_name + ' ' + request.user.last_name)
             if job.Tech_name == request.user.first_name + ' ' + request.user.last_name:
                 if job.job_type == '2000':
                     dict_of_steps = copy.deepcopy(dict_m2000_new)
@@ -551,7 +595,7 @@ def Middle(request,action,current_index):
                     if status=='Stopped':
                         return HttpResponseRedirect("/prodfloor/resume/")
                     times = Times.objects.get(info_id=job.id)
-                    if job.current_index+1 == steps_length:
+                    if remaining_steps(1,job.current_index,dict_of_steps,status,features_objects):
                         dict_of_stages = {1: 'Beginning',
                                           2: 'Program',
                                           3: 'Logic',
@@ -616,7 +660,7 @@ def Middle(request,action,current_index):
                         return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,
                                                                          'current_step_text': text,
                                                                          'current_step': current_step})
-                    elif job.current_index+2 == steps_length:
+                    elif remaining_steps(2,job.current_index,dict_of_steps,status,features_objects):
                         request.session['already_here'] = True
                         job.current_index += 1
                         while True:
@@ -684,12 +728,15 @@ def Middle(request,action,current_index):
                                                                      'current_step_text': text,
                                                                      'current_step': current_step})
                 elif (action == 'next' and (job.current_index == int(current_index))) or (action == 'back' and (((job.current_index == int(current_index))-2) or (job.current_index == 0))):
-                        return HttpResponseRedirect("/prodfloor/continue/" + job_num + "/" + po)
+                        return HttpResponseRedirect("/prodfloor/continue/" + str(pk) + "/" + po)
                 elif action == 'back' and (job.current_index == 0):
                     messages.warning(request, 'In order to get to previous stages contact your Administrator.')
-                    return HttpResponseRedirect("/prodfloor/continue/" + job_num + "/" + po)
+                    return HttpResponseRedirect("/prodfloor/continue/" + str(pk) + "/" + po)
                 elif action == 'stop':
                     if job.status != 'Stopped':
+                        request.session['temp_pk'] = pk
+                        request.session['temp_job_num'] = job.job_num
+                        request.session['temp_po'] = po
                         return HttpResponseRedirect("/prodfloor/stopped/")
                 else:
                     raise Http404("First Else")
@@ -731,22 +778,44 @@ class Reassign(SessionWizardView):
 
     def done(self, form_list, **kwargs):
         self.get_all_cleaned_data()
-        self.jobnum = kwargs.get('jobnum', None)
         po = kwargs.get('po', None)
+        pk  = kwargs.get('pk', None)
+        times = Times.objects.get(info__pk=pk)
         time = timezone.now()
-        job_num_info = Info.objects.get(job_num=self.jobnum, po=po)
+        job_num_info = Info.objects.get(pk = pk)
         reason = 'Job reassignment'
         new_tech_obj = self.cleaned_data['new_tech']
         new_tech = new_tech_obj.first_name + ' ' + new_tech_obj.last_name
         station = self.cleaned_data['station']
         description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech
-        ID = job_num_info.id
-        job_num_info.Tech_name = new_tech
-        job_num_info.station = station
         if job_num_info.status != 'Stopped':
             job_num_info.prev_stage = job_num_info.status
-        job_num_info.status = 'Stopped'
+        else:
+            pass
+        if job_num_info.prev_stage == 'Beginning':
+            times.end_time_1 = time
+        elif job_num_info.prev_stage == 'Program':
+            times.end_time_2 = time
+        elif job_num_info.prev_stage == 'Logic':
+            times.end_time_3 = time
+        elif job_num_info.prev_stage == 'Ending':
+            times.end_time_4 = time
+        else:
+            pass
+        job_num_info.status = 'Complete'
         job_num_info.save()
+        times.save()
+        job_info_new_row = Info(job_num=job_num_info.job_num, prev_stage=job_num_info.prev_stage, Tech_name=new_tech,
+                                status='Stopped', ship_date=job_num_info.ship_date,
+                                current_index=job_num_info.current_index, job_type=job_num_info.job_type,
+                                stage_len=job_num_info.stage_len, po=job_num_info.po, label=job_num_info.label,
+                                station=station)
+        job_info_new_row.save()
+        ID = job_info_new_row.id
+        start_time = Times(info_id=ID, start_time_1=time, end_time_1=time, start_time_2=time,
+                           end_time_2=time, start_time_3=time, end_time_3=time,
+                           start_time_4=time, end_time_4=time)
+        start_time.save()
         job_num_stop = Stops(info_id=ID,reason=reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description, po=po)
         job_num_stop.save()
         messages.success(self.request,'The Job ' + job_num_info.job_num + ' has been properly reassigned.')
@@ -823,6 +892,7 @@ class JobInfo(SessionWizardView):
                 job_features_new_row.save()
         self.request.session['temp_job_num']= job_num
         self.request.session['temp_po'] = PO
+        self.request.session['temp_pk'] =job_info_new_row.pk
         creation_time = timezone.now()
         start_time=Times(info_id=ID,start_time_1=creation_time,end_time_1=creation_time,start_time_2=creation_time,end_time_2=creation_time,start_time_3=creation_time,end_time_3=creation_time,start_time_4=creation_time,end_time_4=creation_time)
         start_time.save()
@@ -856,7 +926,8 @@ class Stop(SessionWizardView):
         if self.request.user.is_authenticated() and self.request.user.is_active:
             job_num = self.request.session['temp_job_num']
             po = self.request.session['temp_po']
-            job = Info.objects.get(job_num=job_num,po=po)
+            pk = self.request.session['temp_pk']
+            job = Info.objects.get(pk=pk)
             ID = job.id
             self.get_all_cleaned_data()
             stop_reason=self.cleaned_data['reason_for_stop']
@@ -868,7 +939,7 @@ class Stop(SessionWizardView):
             job.status = 'Stopped'
             job.save()
             stop.save()
-            return HttpResponseRedirect("/prodfloor/continue/"+job_num+"/" + po)
+            return HttpResponseRedirect("/prodfloor/continue/"+str(pk)+"/" + po)
 
 class SuperUserStop(SessionWizardView):
     login_url = '/login/'
@@ -898,7 +969,7 @@ class SuperUserStop(SessionWizardView):
         if self.request.user.is_authenticated() and self.request.user.is_active:
             job_num = self.request.session['temp_job_num']
             po = self.request.session['temp_po']
-            job = Info.objects.get(job_num=job_num,po=po)
+            job = Info.objects.exclude(status = 'Complete').get(job_num=job_num,po=po)
             ID = job.id
             self.get_all_cleaned_data()
             stop_reason=self.cleaned_data['reason_for_stop']
@@ -910,7 +981,8 @@ class SuperUserStop(SessionWizardView):
             job.status = 'Stopped'
             job.save()
             stop.save()
-            return HttpResponseRedirect("/prodfloor/continue/"+job_num+"/" + po)
+            messages.warning(self.request, _('The Stop has been properly registered.'))
+            return HttpResponseRedirect('/admin/')
 
 class ResumeView(SessionWizardView):
     login_url = '/login/'
@@ -924,7 +996,8 @@ class ResumeView(SessionWizardView):
         initial = {}
         po = self.request.session['temp_po']
         job_num = self.request.session['temp_job_num']
-        job = Info.objects.get(job_num=job_num, po=po)
+        pk = self.request.session['temp_pk']
+        job = Info.objects.get(pk = pk)
         ID = job.id
         stop = Stops.objects.get(info_id=ID, solution='Not available yet', po=po)
         tier1 = stop.reason
@@ -952,7 +1025,8 @@ class ResumeView(SessionWizardView):
         if self.request.user.is_authenticated() and self.request.user.is_active:
             job_num = self.request.session['temp_job_num']
             po = self.request.session['temp_po']
-            job = Info.objects.get(job_num=job_num,po=po)
+            pk = self.request.session['temp_pk']
+            job = Info.objects.get(pk = pk)
             job.status = job.prev_stage
             job.prev_stage = 'Stopped'
             ID = job.id
@@ -967,7 +1041,7 @@ class ResumeView(SessionWizardView):
             stop.stop_end_time = timezone.now()
             job.save()
             stop.save()
-            return HttpResponseRedirect("/prodfloor/continue/" + job_num + "/" + po)
+            return HttpResponseRedirect("/prodfloor/continue/" + str(pk) + "/" + po)
 
 def get_tier_2(request):
     if request.method == 'POST':
@@ -1028,8 +1102,7 @@ def createStop(request):
         if form.is_valid():
             request.session['temp_job_num'] = form.cleaned_data['job_num']
             request.session['temp_po'] = form.cleaned_data['po']
-            messages.warning(request, _('The Stop has been properly registered.'))
-            return HttpResponseRedirect('/admin/')
+            return HttpResponseRedirect('/prodfloor/su/stop/')
         else:
             return render(request, 'prodfloor/su_report_stop.html', {'form': form})
     else:

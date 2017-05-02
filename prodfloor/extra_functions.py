@@ -1,5 +1,5 @@
 from django.utils import timezone
-from prodfloor.models import Stops, Times, Features
+from prodfloor.models import Stops, Times, Features, Info
 import datetime
 
 def compare(text, features_to_compare, values,features_in_job):
@@ -23,6 +23,63 @@ def compare(text, features_to_compare, values,features_in_job):
                     # should restart the function but skipping the current step
                     return False
         return True
+
+def remaining_steps(remaining_steps,starting_index, dict, status, features_in_job):
+    c=0 #number of matching steps
+    index = starting_index #index provided by user in which the index in which to start is provided
+    steps = dict[status] #list of steps, is determined in function of the status which is provided by the cust
+    while index<len(steps):#loop to be performed if
+        current = steps[index]
+        features_to_compare = current[1]
+        if None in features_to_compare:
+            c += 1
+            if index < len(steps):
+                index += 1
+            else:
+                if c == remaining_steps:
+                    return True
+                else:
+                    return False
+        else:#this else is for the steps with features
+            count = 0
+            meet_the_criteria = False
+            while count < len(features_to_compare):
+                current = steps[index]
+                features_to_compare = current[1]
+                values = current[2]
+                feature_to_compare = features_to_compare[count]
+                value = values[count]
+                if any(feature.features == feature_to_compare for feature in features_in_job):  # the feature to compare is IN the job features
+                    if value == 1:  # the feature to compare is wanted in the step and is in it
+                        count += 1
+                        if count == len(features_to_compare):
+                            meet_the_criteria = True
+                    else:  # the feature to compare is NOT wanted in the step but it is there
+                        # should restart the function but skipping the current step
+                        break
+                else:  # the feature to compare is NOT in the job features
+                    if value == 0:  # the feature to compare is NOT wanted in the step and is NOT in it
+                        count += 1
+                        if count == len(features_to_compare):
+                            meet_the_criteria = True
+                    else:  # the feature to compare is wanted in the step but it is NOT there
+                        # should restart the function but skipping the current step
+                        break
+            if meet_the_criteria:
+                c += 1
+            else:
+                pass
+            if index < len(steps):
+                index += 1
+            else:
+                if c == remaining_steps:
+                    return True
+                else:
+                    return False
+    if c == remaining_steps:
+        return True
+    else:
+        return False
 
 def compare_single(text, feature_to_compare, value,features_in_job):
     if feature_to_compare == None:
@@ -173,3 +230,8 @@ def effectivetime(pk):
             timeinstop += now - stop.stop_start_time
     eff_time = str(elapsed_time - timeinstop).split('.', 2)[0]
     return (eff_time)
+
+def gettech(pk,*args, **kwargs):
+    info = Info.objects.get(pk=pk)
+    tech = info.Tech_name
+    return tech

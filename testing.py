@@ -1,298 +1,105 @@
-import json
-
-template_data =[{
-    "model": "prodfloor.tier3",
-    "pk": 19,
-    "fields": {
-        "tier_three_cause": "Componentes Faltantes en Controlador",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 20,
-    "fields": {
-        "tier_three_cause": "Componentes da\u00f1ados f\u00edsicamente",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 21,
-    "fields": {
-        "tier_three_cause": "Componentes da\u00f1ados internamente",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 22,
-    "fields": {
-        "tier_three_cause": "Componentes, reprogramacion",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 23,
-    "fields": {
-        "tier_three_cause": "Componentes incorrectos",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 24,
-    "fields": {
-        "tier_three_cause": "Tarjetas da\u00f1adas f\u00edsicamente",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 25,
-    "fields": {
-        "tier_three_cause": "Tarjetas da\u00f1adas internamente",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 26,
-    "fields": {
-        "tier_three_cause": "Tarjetas, reprogramacion",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 27,
-    "fields": {
-        "tier_three_cause": "Tarjetas incorrectas",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 28,
-    "fields": {
-        "tier_three_cause": "Mecanico, mala instalaci\u00f3n",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 29,
-    "fields": {
-        "tier_three_cause": "Etiquetado, falta etiqueta",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 30,
-    "fields": {
-        "tier_three_cause": "Etiquetado, mala etiqueta",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 31,
-    "fields": {
-        "tier_three_cause": "Cableado, cables sueltos",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 32,
-    "fields": {
-        "tier_three_cause": "Cableado, cables faltantes",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 33,
-    "fields": {
-        "tier_three_cause": "Cableado, falso contacto",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 34,
-    "fields": {
-        "tier_three_cause": "Cableado, corto circuito",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 35,
-    "fields": {
-        "tier_three_cause": "Ingenier\u00eda Error",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 36,
-    "fields": {
-        "tier_three_cause": "Informaci\u00f3n faltante de print o Dataform",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 37,
-    "fields": {
-        "tier_three_cause": "Informaci\u00f3n por validar de print o Dataform",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 38,
-    "fields": {
-        "tier_three_cause": "Informacion faltante de reporte de prueba",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 39,
-    "fields": {
-        "tier_three_cause": "Impresiones faltan hojas y/o tinta",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 40,
-    "fields": {
-        "tier_three_cause": "Escaner no disponible",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 41,
-    "fields": {
-        "tier_three_cause": "Par\u00e1metros erroneos(F1, F5, F7, R6), reeprogramacion",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 42,
-    "fields": {
-        "tier_three_cause": "Custom software fall\u00f3",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 43,
-    "fields": {
-        "tier_three_cause": "Flasheo mal realizado, tarjetas",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 44,
-    "fields": {
-        "tier_three_cause": "Flasheo mal realizado, XPORT",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 45,
-    "fields": {
-        "tier_three_cause": "Material,Features de Test faltantes",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 46,
-    "fields": {
-        "tier_three_cause": "Material,Features de Test da\u00f1ados",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 47,
-    "fields": {
-        "tier_three_cause": "Simulador Arneces rotos, arreglo",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 48,
-    "fields": {
-        "tier_three_cause": "Simulador Falla tarjetas",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 49,
-    "fields": {
-        "tier_three_cause": "Simulador Falla cableados",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 50,
-    "fields": {
-        "tier_three_cause": "Simulador falla logica",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 51,
-    "fields": {
-        "tier_three_cause": "Simulador, cambio de estaci\u00f3n",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 52,
-    "fields": {
-        "tier_three_cause": "Software nuevos, pruebas",
-        "tier_two": 3
-    }
-},
-{
-    "model": "prodfloor.tier3",
-    "pk": 53,
-    "fields": {
-        "tier_three_cause": "PC Cliente, mala imagen",
-        "tier_two": 3
-    }
-}]
-
-
-
-with open(r'C:\Users\abraham.cacoulides\Documents\Abraham\json.txt', 'w') as f:
-    z = 4
-    c = 54
-    while z < 13:
-        i = 0
-        while i < len(template_data):
-            template_data[i]["pk"]=c
-            template_data[i]["fields"]["tier_two"]=z
-            i+=1
+def remaining_steps(remaining_steps,starting_index, dict, status, features_in_job):
+    c=0 #number of matching steps
+    index = starting_index #index provided by user in which the index in which to start is provided
+    steps = dict[status] #list of steps, is determined in function of the status which is provided by the cust
+    while index<len(steps):#loop to be performed if
+        current = steps[index]
+        features_to_compare = current[1]
+        if None in features_to_compare:
             c += 1
-        json.dump(template_data, f, indent=4)
-        print(z)
-        z+=1
+            if index < len(steps):
+                index += 1
+            else:
+                if c == remaining_steps:
+                    return True
+                else:
+                    return False
+        else:#this else is for the steps with features
+            count = 0
+            meet_the_criteria = False
+            while count < len(features_to_compare):
+                current = steps[index]
+                features_to_compare = current[1]
+                values = current[2]
+                feature_to_compare = features_to_compare[count]
+                value = values[count]
+                if any(i == feature_to_compare for i in features_in_job):  # the feature to compare is IN the job features
+                    if value == 1:  # the feature to compare is wanted in the step and is in it
+                        count += 1
+                        if count == len(features_to_compare):
+                            meet_the_criteria = True
+                    else:  # the feature to compare is NOT wanted in the step but it is there
+                        # should restart the function but skipping the current step
+                        break
+                else:  # the feature to compare is NOT in the job features
+                    if value == 0:  # the feature to compare is NOT wanted in the step and is NOT in it
+                        count += 1
+                        if count == len(features_to_compare):
+                            meet_the_criteria = True
+                    else:  # the feature to compare is wanted in the step but it is NOT there
+                        # should restart the function but skipping the current step
+                        break
+            if meet_the_criteria:
+                c += 1
+            else:
+                pass
+            if index < len(steps):
+                index += 1
+            else:
+                if c == remaining_steps:
+                    return True
+                else:
+                    return False
+    if c == remaining_steps:
+        return True
+    else:
+        return False
+
+print(remaining_steps(1,6,{
+    'Beginning': [['Documentacion Inicial', [None,], [None,]],
+                  ['Inspeccion Visual', [None,], [None,]],
+                  ['Preparacion de Labview', [None,], [None,]],
+                  ['Chequeo preliminar de voltajes iniciales', [None,], [None,]]],
+    'Program': [['Programacion de Flasheo', [None,], [None,]],#0
+                ['Conexion de arneces simulador del carro y arneces cartop', ['COP'], [1]],#1
+                ['Programacion del Firmware(Chip)', [None,], [None,]],#2
+                ['Conexion de arneces del simulador', ['COP'], [0]],#3
+                ['Programacion del Solid State Starter', [None,], [None,]],#4
+                ['Programacion de parametros F1', [None,], [None,]],#5
+                ['Programacion tarjeta CE Electronics', ['COP',], [0,]]],#6
+    'Logic': [['Board power test SAFL & SAFS', [None,], [None,]],
+              ['Motor Starter Test', [None,], [None,]],
+              ['Valve control and limits', [None,], [None,]],
+              ['Safety and inspection', [None,], [None,]],
+              ['Door locks and hoistway access', [None,], [None,]],
+              ['Landing system', [None,], [None,]],
+              ['Door Interface (Pag CT1, CT2)', ['DCC'], [1]],
+              ['COP parte 1 (Pag CPI)', ['DCC'], [1]],
+              ['Door Interface (Pag 11, 11X)', ['DCC'], [0]],
+              ['COP parte 1 (Pag 12)', ['DCC'], [0]],
+              ['Fire Service Phase I (Pag 13)', [None,], [None,]],
+              ['Fire Service Phase II (Pag 12)', ['CPI'], [0]],
+              ['Movement Indication (Pag 14)', ['CPI'], [0]],
+              ['Fire Service Phase II (Pag CPI)', ['CPI'], [1]],
+              ['Movement Indication (Pag CPI)', ['CPI'], [1]],
+              ['Car Calls (Pag CPI)', ['CPI'], [1]],
+              ['Calls (Pag 16)', ['CPI'], [0]],
+              ['Serial Hall Calls (Pag SH)', ['SHC'], [1]],
+              ['Pruebas de entradas y salidas (Pag 15, 17, etc.)', [None,], [None,]],
+              ['Flasheo de Puerto CHP y/o MPU', ['mView','iMon'], [1, 1]],
+              ['Flasheo de Puerto CHP y/o MPU', ['mView','iMon'], [0, 1]],
+              ['Flasheo de Puerto CHP y/o MPU', ['mView','iMon'], [1, 0]],
+              ['Configuracion de PC, Imagen y Softwares', ['PC','mView','iMon'], [1, 1, 1]],
+              ['Configuracion de PC, Imagen y Softwares', ['PC','mView','iMon'], [1, 0, 1]],
+              ['Configuracion de PC, Imagen y Softwares', ['PC','mView','iMon'], [1, 1, 0]],
+              ['Prueba de Monitoring', ['mView','iMon'], [1, 1]],
+              ['Prueba de Monitoring', ['mView','iMon'], [0, 1]],
+              ['Prueba de Monitoring', ['mView','iMon'], [1, 0]], ],
+    'Ending': [['Inspeccion Final', [None,], [None,]],
+               ['Passcode', [None,], [None,]],
+               ['Papeleria Final', [None,], [None,]],
+               ['Respaldo Electronico de la papeleria', [None,], [None,]],
+               ['Desconnecion de Arneces', [None,], [None,]],
+               ['Carro a estacion final', [None,], [None,]]],
+    'Complete': [['Fin de pruebas', [None,], [None,]]],
+    'Stopped': ['Detenido']},'Program',['SHC','COP']))

@@ -292,3 +292,9 @@ def effectivetime(pk,*args, **kwargs):
             timeinstop += now - stop.stop_start_time
     eff_time = str(elapsed_time - timeinstop).split('.', 2)[0]
     return (eff_time)
+
+@register.simple_tag()
+def gettech(pk,*args, **kwargs):
+    info = Info.objects.get(pk=pk)
+    tech = info.Tech_name
+    return tech

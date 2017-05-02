@@ -98,6 +98,8 @@ class Records(forms.Form):
     before = forms.DateField(label=_('Max Start Date'),help_text='filter by the start date',widget=AdminDateWidget,required=False)
     completed_after = forms.DateField(label=_('Min Completion Date'),help_text='filter by the end date', widget=AdminDateWidget, required=False)
     completed_before = forms.DateField(label=_('Max Completion Date'),help_text='filter by the end date', widget=AdminDateWidget, required=False)
+    tech = UserModelChoiceField(queryset=User.objects.filter(groups__name='Technicians'),help_text=_('Was assigned to:'), required=False)
+
 
 class StopRecord(forms.Form):
     job_num = forms.CharField(label=_('Job #'), max_length=10, required=False,help_text='filter by numbers in the Job#',widget=forms.TextInput(attrs={'style': 'width:75px'}))
@@ -128,7 +130,7 @@ class SUStop(forms.Form):
                 raise forms.ValidationError({'job_num':_("Please validate the 'Job #' input.")})
             if (po.isdigit()) and len(po) == 7:
                 if any(po in obj.po for obj in previous_jobs):
-                    job_with_po = Info.objects.get(po=po)
+                    job_with_po = Info.objects.exclude(status='Complete').get(po=po)
                     if job_num != job_with_po.job_num:
                         raise forms.ValidationError({'job_num': _("The job number doesn't match the one for that po in the system.")})
                 else:

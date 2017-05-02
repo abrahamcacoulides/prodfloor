@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
-from prodfloor.views import JobInfo, Stop, ResumeView,Reassign
+from prodfloor.views import JobInfo, Stop, ResumeView,Reassign,SuperUserStop
 
 from . import views
 
@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^live/ELEM/', views.ELEMView, name='elemlive'),
     url(r'^live/M4000/', views.M4000View, name='m4000live'),
     url(r'^su/create_stop/', views.createStop, name='createStop'),
+    url(r'^su/stop/', SuperUserStop.as_view(SuperUserStop.form_list), name='SUStop'),
     url(r'^live/', views.prodfloor_view, name='prodfloor'),
     url(r'^reports/', views.detail, name='detail'),
     url(r'^stops_reports/', views.stops_reports, name='stopsreports'),
@@ -21,8 +22,8 @@ urlpatterns = [
     url(r'^first/', views.first, name='first'),
     url(r'^resume',login_required(ResumeView.as_view(ResumeView.form_list))),
     url(r'^job',login_required(JobInfo.as_view(JobInfo.jobs_list))),
-    url(r'^reassignjob/(?P<jobnum>[0-9]{10})/(?P<po>[0-9]{7})', login_required(Reassign.as_view(Reassign.list))),
-    url(r'^continue/(?P<jobnum>[0-9]{10})/(?P<po>[0-9]{7})', views.Continue, name='returning'),
+    url(r'^reassignjob/(?P<pk>[0-9]{1,10})/(?P<po>[0-9]{7})', login_required(Reassign.as_view(Reassign.list))),
+    url(r'^continue/(?P<pk>[0-9]{1,10})/(?P<po>[0-9]{7})', views.Continue, name='returning'),
     url(r'^(?P<action>\w+)/(?P<current_index>[0-9]{1,2})', views.Middle, name='working_on_it'),
     url(r'^stopped',login_required(Stop.as_view(Stop.form_list))),
     url(r'^start/', views.Start, name='new job'),
