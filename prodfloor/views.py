@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.contrib import messages
 from prodfloor.dicts import stations_by_type,headers,stops_headers,dict_m2000_new,dict_elem_new,dict_m4000_new
 import json,copy
-from .extra_functions import spentTime,timeonstop,stopsnumber,timeonstop_1,effectivetime,totaltime,compare, gettech, remaining_steps
+from .extra_functions import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import ugettext_lazy as _
 from xlsxwriter.workbook import Workbook
@@ -261,6 +261,7 @@ def generatexml(request):
             elapsed_time = totaltime(pk)
             eff_time = effectivetime(pk)
             tech = gettech(pk)
+            category = categories(pk)
             sheet.write(c, 0, job.job_num,other_format)
             sheet.write(c, 1, job.po,other_format)
             sheet.write(c, 2, job_type_dict[job.job_type],other_format)
@@ -275,7 +276,8 @@ def generatexml(request):
             sheet.write(c, 11, number_of_stops, other_format)
             sheet.write(c, 12, time_on_stop, other_format)
             sheet.write(c, 13, eff_time, other_format)
-            sheet.write(c, 14, tech, other_format)
+            sheet.write(c, 14, category, other_format)
+            sheet.write(c, 15, tech, other_format)
             c+=1
     sheet.set_column(0,0,10.29)
     sheet.set_column(3,3,13.14)
