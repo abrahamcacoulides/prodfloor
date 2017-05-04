@@ -1,0 +1,65 @@
+[
+{
+    "model": "stopscauses.tier1",
+    "pk": 3,
+    "fields": {
+        "tier_one_cause": "Error Funcional"
+    }
+},
+{
+    "model": "stopscauses.tier1",
+    "pk": 4,
+    "fields": {
+        "tier_one_cause": "Tarjetas T"
+    }
+},
+{
+    "model": "stopscauses.tier1",
+    "pk": 5,
+    "fields": {
+        "tier_one_cause": "Material Faltante"
+    }
+},
+{
+    "model": "stopscauses.tier1",
+    "pk": 6,
+    "fields": {
+        "tier_one_cause": "Junta de supervisor"
+    }
+},
+{
+    "model": "stopscauses.tier1",
+    "pk": 7,
+    "fields": {
+        "tier_one_cause": "Tecnico no asignado"
+    }
+},
+{
+    "model": "stopscauses.tier1",
+    "pk": 8,
+    "fields": {
+        "tier_one_cause": "Personal"
+    }
+},
+{
+    "model": "stopscauses.tier1",
+    "pk": 9,
+    "fields": {
+        "tier_one_cause": "Ingenieria"
+    }
+},
+{
+    "model": "stopscauses.tier1",
+    "pk": 10,
+    "fields": {
+        "tier_one_cause": "Falla en equipo de computo"
+    }
+},
+{
+    "model": "stopscauses.tier1",
+    "pk": 11,
+    "fields": {
+        "tier_one_cause": "Entrenamiento"
+    }
+}
+]
