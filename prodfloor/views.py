@@ -588,11 +588,14 @@ def Middle(request,action,current_index):
                     dict_of_steps = copy.deepcopy(dict_m2000_new)
                 elif job.job_type == '4000':
                     dict_of_steps = copy.deepcopy(dict_m4000_new)
-                if job.job_type == 'ELEM':
+                elif job.job_type == 'ELEM':
                     dict_of_steps = copy.deepcopy(dict_elem_new)
                 status = job.status
                 list_of_steps = dict_of_steps[status]
                 steps_length = job.stage_len
+                if job.current_index >= len(list_of_steps):
+                    messages.warning(request, 'There seemed to be an error. Try validating the job')
+                    return HttpResponseRedirect('/admin/')
                 if action == 'next' and ((job.current_index == int(current_index)-1) or job.current_index == 0):
                     if status=='Stopped':
                         return HttpResponseRedirect("/prodfloor/resume/")
@@ -741,12 +744,13 @@ def Middle(request,action,current_index):
                         request.session['temp_po'] = po
                         return HttpResponseRedirect("/prodfloor/stopped/")
                 else:
-                    raise Http404("First Else")
+                    messages.warning(request, 'There seemed to be an error. Try validating the job')
+                    return HttpResponseRedirect('/admin/')
             else:
                 messages.warning(request, 'The Job you tried to reach is not assigned to you.')
                 return HttpResponseRedirect('/admin/')
         else:
-            raise Http404("How you got here?")
+            return HttpResponseRedirect('/admin/')
     else:
         messages.warning(request, 'The Job you tried to reach is not available.')
         return HttpResponseRedirect('/admin/')

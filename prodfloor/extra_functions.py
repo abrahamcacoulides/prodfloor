@@ -240,6 +240,12 @@ def categories(pk,*args, **kwargs):
     features_in_job = Features.objects.filter(info_id = pk)
     job = Info.objects.get(pk = pk)
     job_type = job.job_type
+    element_dict = {
+        'level_2': [],
+        'level_3': [],
+        'level_4': [],
+        'level_5': [],
+        'level_6': []}#pending
     m2000_dict = {
         'level_2': ['REAR', 'DUP', 'MOD', '2STARTERS', 'SHC', 'EMCO', 'R6'],
         'level_3': ['mView', 'iMon', 'LOC'],
@@ -257,7 +263,7 @@ def categories(pk,*args, **kwargs):
     elif job_type == '4000':
         dict = copy.deepcopy(m4000_dict)
     else:
-        dict = []
+        dict = copy.deepcopy(element_dict)
     if any(feature.features in dict['level_6'] for feature in features_in_job):
         category = 6
     elif any(feature.features in dict['level_5'] for feature in features_in_job):
