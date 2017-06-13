@@ -1,24 +1,22 @@
 from django.contrib.auth.models import User
+from django.forms import formset_factory
 from django.http import Http404, HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, redirect
 from formtools.wizard.views import SessionWizardView
-from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob, Records, StopRecord, SUStop
+from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob, Records, StopRecord, SUStop, MultipleReassign
 from django.contrib.auth import logout
-from prodfloor.models import Info,Features,Times, Stops
 from stopscauses.models import Tier3,Tier2,Tier1
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
 from django.contrib import messages
-from prodfloor.dicts import stations_by_type,headers,stops_headers,dict_m2000_new,dict_elem_new,dict_m4000_new
-import json,copy
+from prodfloor.dicts import stations_by_type,headers,stops_headers,dict_m2000_new,dict_elem_new,dict_m4000_new,mureassign_headers
+import json,io
 from .extra_functions import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import ugettext_lazy as _
 from xlsxwriter.workbook import Workbook
-import io
 
 def prodfloor_view(request):
-    job_list = Info.objects.order_by('job_num')
+    job_list = Info.objects.exclude(status="Complete").order_by('job_num')
     context = {'job_list': job_list}
     return render(request, 'prodfloor/prodfloor.html', context)
 
@@ -789,7 +787,8 @@ class Reassign(SessionWizardView):
         times = Times.objects.get(info__pk=pk)
         time = timezone.now()
         job_num_info = Info.objects.get(pk = pk)
-        reason = 'Job reassignment'
+        reason = 'Job reassignment//'
+        new_reason = reason + str(self.cleaned_data['reason_description'])
         new_tech_obj = self.cleaned_data['new_tech']
         new_tech = new_tech_obj.first_name + ' ' + new_tech_obj.last_name
         station = self.cleaned_data['station']
@@ -822,7 +821,7 @@ class Reassign(SessionWizardView):
                            end_time_2=time, start_time_3=time, end_time_3=time,
                            start_time_4=time, end_time_4=time)
         start_time.save()
-        job_num_stop = Stops(info_id=ID,reason=reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description, po=po)
+        job_num_stop = Stops(info_id=ID,reason=new_reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description, po=po)
         job_num_stop.save()
         messages.success(self.request,'The Job ' + job_num_info.job_num + ' has been properly reassigned.')
         return HttpResponseRedirect("/admin/prodfloor/myjob/"+str(job_num_info.id)+"/change/")
@@ -1114,3 +1113,45 @@ def createStop(request):
     else:
         form = SUStop
         return render(request, 'prodfloor/su_report_stop.html', {'form': form})
+
+def multiplereassigns(request):
+    QuestionFormSet = formset_factory(MultipleReassign,extra=0)
+    if request.method == "POST":
+        formset = QuestionFormSet(request.POST)
+        if(formset.is_valid()):
+            for form in formset:
+                update = form.cleaned_data['tobeupdated']
+                if update:
+                    job_num = form.cleaned_data['job_num']
+                    po = form.cleaned_data['po']
+                    pk = Info.objects.exclude(status="Complete").get(po=po).pk
+                    tech = form.cleaned_data['new_tech']
+                    station = form.cleaned_data['station']
+                    reason = form.cleaned_data['reason_description']
+                    new_values_dict = {"new_tech":tech,"station":station,"reason":reason,"job_num":job_num}
+                    multireassignfunct(pk,new_values_dict)
+            messages.success(request, 'The Jobs selected have been succesfully reassigned.')
+            return HttpResponseRedirect('/prodfloor/su/multiple_reassign')
+            #for form in formset:
+            #    print("Cool")
+        else:
+            print("NOT Cool")
+            new_formset = []
+            for form in formset:
+                print(form.cleaned_data)
+                #job_num = form.cleaned_data['job_num']
+                #po = form.cleaned_data['po']
+                #tech = form.cleaned_data['new_tech']
+                #station = form.cleaned_data['station']
+                #reason = form.cleaned_data['reason_description']
+                #new_formset.append({"job_num": job_num, "po": po, "new_tech": tech, "station": station,"reason_description":reason})
+            return render(request, 'prodfloor/MUreassign.html', {'formset': formset,'headers':mureassign_headers})
+    else:
+        jobs = Info.objects.exclude(status="Complete")
+        initial = []
+        for job in jobs:
+            full_name = job.Tech_name.split(' ',)
+            name = full_name[0]
+            last_name = full_name[1]
+            initial.append({"job_num":job.job_num,"po":job.po,"new_tech":User.objects.get(first_name=name,last_name=last_name).pk,"station":job.station})
+        return render(request,'prodfloor/MUreassign.html',{'formset': QuestionFormSet(initial = initial),'headers':mureassign_headers})

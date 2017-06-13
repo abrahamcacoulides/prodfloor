@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^live/M2000/', views.M2000View, name='m2000live'),
     url(r'^live/ELEM/', views.ELEMView, name='elemlive'),
     url(r'^live/M4000/', views.M4000View, name='m4000live'),
+    url(r'^su/multiple_reassign/', views.multiplereassigns, name='multipleReassign'),
     url(r'^su/create_stop/', views.createStop, name='createStop'),
     url(r'^su/stop/', SuperUserStop.as_view(SuperUserStop.form_list), name='SUStop'),
     url(r'^live/', views.prodfloor_view, name='prodfloor'),

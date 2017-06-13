@@ -55,11 +55,9 @@ class FeaturesSelection(forms.Form):
                     _("You selected 'None' but also another feature, please confirm your selections.")
                 )
 
-
 class StopReason(forms.Form):
     reason_for_stop = forms.ModelChoiceField(required=True,label=_('Select the reason that fits'),queryset=Tier1.objects.all())
     reason_description = forms.CharField(required=True,widget=forms.Textarea)
-
 
 class ResumeSolution(forms.Form):
     choices_tier_2 = []
@@ -100,7 +98,6 @@ class Records(forms.Form):
     completed_before = forms.DateField(label=_('Max Completion Date'),help_text='filter by the end date', widget=AdminDateWidget, required=False)
     tech = UserModelChoiceField(queryset=User.objects.filter(groups__name='Technicians'),help_text=_('Was assigned to:'), required=False)
 
-
 class StopRecord(forms.Form):
     job_num = forms.CharField(label=_('Job #'), max_length=10, required=False,help_text='filter by numbers in the Job#',widget=forms.TextInput(attrs={'style': 'width:75px'}))
     po = forms.CharField(label=_('Prod #'), max_length=7, required=False, help_text='filter by numbers in the PO#',widget=forms.TextInput(attrs={'style': 'width:55px'}))
@@ -140,3 +137,37 @@ class SUStop(forms.Form):
                     raise forms.ValidationError({'po': _("The production order number captured is not in the system.")})
             else:
                 raise forms.ValidationError({'po':_("Please validate the 'Prod #' input.")})
+
+class MultipleReassign(forms.Form):
+    tobeupdated = forms.BooleanField(required=False,)
+    job_num = forms.CharField(required=False,label=_('Job #'), max_length=10,widget=forms.TextInput(attrs = {'readonly':True}))
+    po = forms.CharField(required=False,label=_('Prod #'), max_length=7,widget=forms.TextInput(attrs = {'readonly':True}))
+    new_tech = UserModelChoiceField(required=False,queryset=User.objects.filter(groups__name='Technicians'),label=_('Would be assigned to'))
+    station = forms.ChoiceField(required=False,label=_('Station'), choices=stations_tupple)
+    reason_description = forms.CharField(required=False, widget=forms.Textarea(attrs={'style': 'height:18px;width:200px'}), label=_('Reason'))
+
+    def clean(self):
+        cleaned_data = super(MultipleReassign, self).clean()
+        update = cleaned_data.get('tobeupdated')
+        po = cleaned_data.get('po')
+        new_tech = cleaned_data.get('new_tech')
+        station = cleaned_data.get('station')
+        reason = cleaned_data.get('reason_description')
+        job = Info.objects.exclude(status="Complete").get(po=po)
+        if update:
+            if not new_tech:
+                raise forms.ValidationError(
+                    {'new_tech': _("This field is required.")})
+            if not station:
+                raise forms.ValidationError(
+                    {'station': _("This field is required.")})
+            if not reason:
+                raise forms.ValidationError(
+                    {'reason_description': _("This field is required.")})
+            if job.Tech_name == new_tech.first_name + ' ' + new_tech.last_name and job.station == station:
+                raise forms.ValidationError(
+                    {'new_tech': _("No change."),'station': _("No change.")})
+        else:
+            if job.Tech_name != new_tech.first_name + ' ' + new_tech.last_name or job.station != station:
+                raise forms.ValidationError(
+                    {'tobeupdated': _("Select the checkbox.")})

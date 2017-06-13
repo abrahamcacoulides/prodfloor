@@ -277,3 +277,45 @@ def categories(pk,*args, **kwargs):
     else:
         category = 1
     return category
+
+def multireassignfunct(pk,newvalues, *args, **kwargs):
+    times = Times.objects.get(info__pk=pk)
+    time = timezone.now()
+    job_num_info = Info.objects.get(pk = pk)
+    reason = 'Job reassignment//'
+    po = job_num_info.po
+    new_tech_obj = newvalues['new_tech']
+    new_tech = new_tech_obj.first_name + ' ' + new_tech_obj.last_name
+    station = newvalues['station']
+    description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech
+    if job_num_info.status != 'Stopped':
+        job_num_info.prev_stage = job_num_info.status
+    else:
+        pass
+    if job_num_info.prev_stage == 'Beginning':
+        times.end_time_1 = time
+    elif job_num_info.prev_stage == 'Program':
+        times.end_time_2 = time
+    elif job_num_info.prev_stage == 'Logic':
+        times.end_time_3 = time
+    elif job_num_info.prev_stage == 'Ending':
+        times.end_time_4 = time
+    else:
+        pass
+    job_num_info.status = 'Complete'
+    job_num_info.save()
+    times.save()
+    new_reason = reason + str(newvalues['reason'])
+    job_info_new_row = Info(job_num=job_num_info.job_num, prev_stage=job_num_info.prev_stage, Tech_name=new_tech,
+                            status='Stopped', ship_date=job_num_info.ship_date,
+                            current_index=job_num_info.current_index, job_type=job_num_info.job_type,
+                            stage_len=job_num_info.stage_len, po=job_num_info.po, label=job_num_info.label,
+                            station=station)
+    job_info_new_row.save()
+    ID = job_info_new_row.id
+    start_time = Times(info_id=ID, start_time_1=time, end_time_1=time, start_time_2=time,
+                       end_time_2=time, start_time_3=time, end_time_3=time,
+                       start_time_4=time, end_time_4=time)
+    start_time.save()
+    job_num_stop = Stops(info_id=ID,reason=new_reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description, po=po)
+    job_num_stop.save()

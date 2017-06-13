@@ -316,3 +316,5 @@ stops_headers = ['Job #',
                  'Station',
                  'Time on Stop',
                  'Technician']
+mureassign_headers_old=['Reassign?','Job #','Prod #','Current Tech','Current Station','New Tech','New Station','Reason']
+mureassign_headers=['Reassign?','Job #','Prod #','Tech','Station','Reason']
