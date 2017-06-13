@@ -135,5 +135,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 30*60 # set just 30 mins to test
+SESSION_COOKIE_AGE = 75*60 # set just 30 mins to test
 SESSION_SAVE_EVERY_REQUEST = True
