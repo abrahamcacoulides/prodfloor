@@ -63,7 +63,7 @@
     {% for job in job_list %}
         <hr>
     <div class="progress" style="height: 32px">
-      <div class="{% getcolor job %}" role="progressbar" aria-valuenow="{% getpercentage job.current_index job.stage_len %}" aria-valuemin="0" aria-valuemax="100" style="width:{% getpercentage job.current_index job.stage_len %}%"></div>
+      <div class="{% getcolor job%}" role="progressbar" aria-valuenow="{% getpercentage job.current_index job.stage_len %}" aria-valuemin="0" aria-valuemax="100" style="width:{% getpercentage job.current_index job.stage_len %}%"></div>
       &nbsp;</div>
     {% endfor %}
 </div>

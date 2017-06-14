@@ -554,7 +554,7 @@ def Continue(request,pk,po):
 @login_required()
 def EndShift(request):
     tech_name = request.user.first_name + ' ' + request.user.last_name
-    jobs = Info.objects.filter(Tech_name= tech_name).exclude(status='Complete').exclude(status='Stopped')
+    jobs = Info.objects.filter(Tech_name= tech_name).exclude(status='Complete')
     for obj in jobs:
         if obj.status != 'Stopped':
             obj.prev_stage = obj.status
@@ -783,19 +783,31 @@ class Reassign(SessionWizardView):
     def done(self, form_list, **kwargs):
         self.get_all_cleaned_data()
         po = kwargs.get('po', None)
-        pk  = kwargs.get('pk', None)
+        pk = kwargs.get('pk', None)
         times = Times.objects.get(info__pk=pk)
         time = timezone.now()
         job_num_info = Info.objects.get(pk = pk)
-        reason = 'Job reassignment//'
-        new_reason = reason + str(self.cleaned_data['reason_description'])
+        reason = 'Job reassignment'
         new_tech_obj = self.cleaned_data['new_tech']
         new_tech = new_tech_obj.first_name + ' ' + new_tech_obj.last_name
         station = self.cleaned_data['station']
-        description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech
+        description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech + 'reason: ' + str(self.cleaned_data['reason_description'])
+        previous_stops = {}
         if job_num_info.status != 'Stopped':
             job_num_info.prev_stage = job_num_info.status
         else:
+            stops = Stops.objects.filter(info_id=job_num_info.id,solution="Not available yet")
+            if stops:
+                for stop in stops:
+                    if stop.reason=="Shift ended" or "Job reassignment" in stop.reason:
+                        stop.solution='Job reassigned to ' + str(new_tech)
+                        stop.stop_end_time = time
+                        stop.save()
+                    else:
+                        previous_stops[stop.pk] = [stop.reason,stop.reason_description]
+                        stop.solution = 'Job reassigned to ' + str(new_tech)
+                        stop.stop_end_time = time
+                        stop.save()
             pass
         if job_num_info.prev_stage == 'Beginning':
             times.end_time_1 = time
@@ -805,8 +817,6 @@ class Reassign(SessionWizardView):
             times.end_time_3 = time
         elif job_num_info.prev_stage == 'Ending':
             times.end_time_4 = time
-        else:
-            pass
         job_num_info.status = 'Complete'
         job_num_info.save()
         times.save()
@@ -821,8 +831,12 @@ class Reassign(SessionWizardView):
                            end_time_2=time, start_time_3=time, end_time_3=time,
                            start_time_4=time, end_time_4=time)
         start_time.save()
-        job_num_stop = Stops(info_id=ID,reason=new_reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description, po=po)
+        job_num_stop = Stops(info_id=ID,reason=reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description, po=po)
         job_num_stop.save()
+        for stop in previous_stops:
+            new_stop = Stops(info_id=ID,reason=previous_stops[stop][0],extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=previous_stops[stop][1], po=po)
+            new_stop.save()
+            pass
         messages.success(self.request,'The Job ' + job_num_info.job_num + ' has been properly reassigned.')
         return HttpResponseRedirect("/admin/prodfloor/myjob/"+str(job_num_info.id)+"/change/")
 

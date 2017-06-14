@@ -30,7 +30,7 @@ def getcolor(A,*args, **kwargs):
     if status == 'Complete':
         return 'progress-bar progress-bar-complete'
     elif status == 'Stopped':
-        if any(obj.reason == 'Shift ended' for obj in stop):
+        if any(obj.reason == 'Shift ended' and obj.solution=='Not available yet' for obj in stop):
             return 'progress-bar progress-bar-nassigned'
         else:
             return 'progress-bar progress-bar-stop'
@@ -156,12 +156,13 @@ def resultingtime(pk,number, *args, **kwargs):
         start = times.start_time_4
         end = times.end_time_4
     for stop in stops:
-        if stop.stop_start_time == stop.stop_end_time: #job is in shift end stop
-            if stop.stop_start_time > start:
-                minutes_on_shift_end += now - stop.stop_start_time
-        else:
-            if stop.stop_start_time > start and stop.stop_end_time < end:
-                minutes_on_shift_end += stop.stop_end_time - stop.stop_start_time
+        if stop.stop_start_time > start and stop.stop_end_time < end:
+            if stop.stop_start_time == stop.stop_end_time: #job is in shift end stop
+                if stop.stop_start_time > start:
+                    minutes_on_shift_end += now - stop.stop_start_time
+            else:
+                if stop.stop_start_time > start and stop.stop_end_time < end:
+                    minutes_on_shift_end += stop.stop_end_time - stop.stop_start_time
     if end>start:#means that the stop_time has been set
         elapsed_time = str((end-start)-minutes_on_shift_end).split('.', 2)[0]
         return elapsed_time
@@ -286,10 +287,11 @@ def effectivetime(pk,*args, **kwargs):
             elapsed_time += (now - start)
         number += 1
     for stop in stops:
-        if stop.stop_end_time > stop.stop_start_time:
-            timeinstop += stop.stop_end_time - stop.stop_start_time
-        else:
-            timeinstop += now - stop.stop_start_time
+        if stop.stop_start_time > start and stop.stop_end_time < end:
+            if stop.stop_end_time > stop.stop_start_time:
+                timeinstop += stop.stop_end_time - stop.stop_start_time
+            else:
+                timeinstop += now - stop.stop_start_time
     eff_time = str(elapsed_time - timeinstop).split('.', 2)[0]
     return (eff_time)
 
@@ -341,3 +343,7 @@ def categories(pk,*args, **kwargs):
     else:
         category = 1
     return category
+
+@register.simple_tag()
+def ETF(pk,*args, **kwargs):#function to return the expected time remaining
+    return '0'
