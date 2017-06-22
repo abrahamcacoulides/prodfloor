@@ -43,7 +43,7 @@ class InfoAdmin(admin.ModelAdmin):
 
 
 class JobsInLine(admin.ModelAdmin):
-    readonly_fields = ('Tech_name','status')
+    readonly_fields = ('Tech_name',)
     fieldsets = [
         (None, {'fields': ['Tech_name','po', 'job_num','label','station', 'job_type', 'ship_date', 'status']}),
     ]

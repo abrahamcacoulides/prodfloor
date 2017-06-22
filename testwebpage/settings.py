@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['prodfloor.com',
                  'localhost',
-                 '192.168.137.1',
+                 '192.168.0.200',
                  '10.113.1.39',
                  'abrahamcacoulides.pythonanywhere.com']
 
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'prodfloor',
     'home',
     'it',
-    'stopscauses'
+    'stopscauses',
 ]
 
 MIDDLEWARE = [
@@ -135,5 +135,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 75*60 # set just 30 mins to test
+#SESSION_COOKIE_AGE = 80*60 # set just 80 mins to test
 SESSION_SAVE_EVERY_REQUEST = True

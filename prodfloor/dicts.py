@@ -49,7 +49,8 @@ dict_m2000_new = {
                ['Desconnecion de Arneces', [None,], [None,]],
                ['Carro a estacion final', [None,], [None,]]],
     'Complete': [['Fin de pruebas', [None,], [None,]]],
-    'Stopped': ['Detenido']}
+    'Stopped': ['Detenido'],
+    'Reassigned': ['Reasignado'],}
 dict_m4000_new = {
     'Beginning': [['Documentacion Inicial', [None], [None]],
                   ['Inspeccion Visual', [None], [None]],
@@ -117,7 +118,8 @@ dict_m4000_new = {
                ['Desconnecion de Arneces', [None], [None]],
                ['Carro a estacion final', [None], [None]], ],
     'Complete': [['Fin de pruebas', [None], [None]], ],
-    'Stopped': ['Detenido']}
+    'Stopped': ['Detenido'],
+    'Reassigned': ['Reasignado'],}
 dict_elem_new = {
     'Beginning': [['Configuracion Inicial de PC', [None], [None]],
                   ['Conseguir Software(Update) y Parametros(XML)', [None], [None]],
@@ -144,7 +146,8 @@ dict_elem_new = {
                ['Carro a Estacion Final', [None], [None]], ],
     'Logic': [['', [None], [None]], ],
     'Complete': [['Fin de pruebas', [None], [None]], ],
-    'Stopped': ['Detenido']}
+    'Stopped': ['Detenido'],
+    'Reassigned': ['Reasignado'],}
 times_m2000 = {'Beginning':60,
                          'Program':40,
                          'Logic':110,
@@ -186,7 +189,9 @@ status_dict = [('Beginning', 'Beginning'),
                ('Logic', 'Logic'),
                ('Ending', 'Ending'),
                ('Complete', 'Complete'),
-               ('Stopped', 'Stopped')]
+               ('Stopped', 'Stopped'),
+               ('Reassigned', 'Reassigned'),
+               ('Rework', 'Rework')]
 type_of_jobs = [('2000', 'M2000'),
                 ('4000', 'M4000'),
                 ('ELEM', 'Element')]
@@ -326,3 +331,17 @@ stops_headers = ['Job #',
                  'Technician']
 mureassign_headers_old=['Reassign?','Job #','Prod #','Current Tech','Current Station','New Tech','New Station','Reason']
 mureassign_headers=['Reassign?','Job #','Prod #','Tech','Station','Reason']
+times_dict = {'2000':{'Beginning':60,
+                         'Program':40,
+                         'Logic':110,
+                         'Ending':45},
+                  '4000':{'Beginning':240,
+                         'Program':205,
+                         'Logic':370,
+                         'Ending':30},
+                  'ELEM':{'Beginning':40,
+                         'Program':120,
+                         'Ending':60}}
+times_to_add_dict = {'2000':{'COP':25,'SHC':10,},
+              '4000':{'COP':10,'SHC':20},
+              'ELEM':{'HAPS':15,}}

@@ -1,4 +1,5 @@
-{% load staticfiles prodfloor_extras %}
+{% load staticfiles %}
+{% load prodfloor_extras %}
 <!doctype html>
 <meta http-equiv="refresh" content="60" >
 <html>
@@ -8,6 +9,7 @@
 <style type="text/css">
 </style>
 </head>
+
 <body><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +34,7 @@
       </div>
 <div class="container" style="width:100%">
 <div class="row">
-  <div class="col-sm-3 col-md-1">
+  <div class="col-sm-2">
     <h1><center>JOB #&nbsp;</center></h1>
       {% for job in job_list %}
           <hr>
@@ -40,7 +42,7 @@
 
       {% endfor %}
 </div>
-  <div class="col-sm-3 col-md-2">
+  <div class="col-sm-3">
     <h1><center>TECHNICIAN</center></h1>
     {% for job in job_list %}
           <hr>
@@ -48,7 +50,7 @@
 
       {% endfor %}
     </div>
-<div class="col-sm-2 col-md-2">
+<div class="col-sm-2">
   <h1><center>STAGE</center></h1>
   {% for job in job_list %}
           <hr>
@@ -56,7 +58,7 @@
 
       {% endfor %}
 </div>
-<div class="col-sm-2     col-md-5">
+<div class="col-sm-3">
   <h1><center>STATUS</center></h1>
     {% for job in job_list %}
         <hr>
@@ -66,14 +68,14 @@
              style="width:{% getpercentage job.current_index job.stage_len %}%"><span style="position: absolute;color: black">{% ETF job %}</span></div></div>
     {% endfor %}
 </div>
-<div class="col-sm-1 col-md-1" >
+<div class="col-sm-1" >
   <h1><center>STATN</center></h1>
     {% for job in job_list %}
         <hr>
     <div class="text-center"><h2>{% getstation job.station %}</h2></div>
     {% endfor %}
 </div>
-<div class="col-sm-1 col-md-1" >
+<div class="col-sm-1" >
   <h1><center>TTC</center></h1>
     {% for job in job_list %}
         <hr>

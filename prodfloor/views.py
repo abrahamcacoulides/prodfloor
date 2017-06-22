@@ -16,24 +16,32 @@ from django.utils.translation import ugettext_lazy as _
 from xlsxwriter.workbook import Workbook
 
 def prodfloor_view(request):
-    job_list = Info.objects.exclude(status="Complete").order_by('job_num')
+    job_list = Info.objects.exclude(status="Complete").exclude(status="Reassigned").order_by('job_num')
     context = {'job_list': job_list}
-    return render(request, 'prodfloor/prodfloor.html', context)
+    if 'Android' in request.META['HTTP_USER_AGENT']:
+        return render(request, 'prodfloor/mobile.html', context)
+    else:
+        return render(request, 'prodfloor/prodfloor.html', context)
 
 def M2000View(request):
-    job_list = Info.objects.filter(job_type='2000').exclude(status='Complete').order_by('ship_date')
+    job_list = Info.objects.filter(job_type='2000').exclude(status='Complete').exclude(status="Reassigned").order_by('job_num')
     context = {'job_list': job_list}
     return render(request, 'prodfloor/prodfloor.html', context)
 
 def M4000View(request):
-    job_list = Info.objects.filter(job_type='4000').exclude(status='Complete').order_by('ship_date')
+    job_list = Info.objects.filter(job_type='4000').exclude(status='Complete').exclude(status="Reassigned").order_by('job_num')
     context = {'job_list': job_list}
     return render(request, 'prodfloor/prodfloor.html', context)
 
 def ELEMView(request):
-    job_list = Info.objects.filter(job_type='ELEM').exclude(status='Complete').order_by('ship_date')
+    job_list = Info.objects.filter(job_type='ELEM').exclude(status='Complete').exclude(status="Reassigned").order_by('job_num')
     context = {'job_list': job_list}
     return render(request, 'prodfloor/prodfloor.html', context)
+
+def m_prodfloor_view(request):
+    job_list = Info.objects.exclude(status="Complete").exclude(status="Reassigned").order_by('job_num')
+    context = {'job_list': job_list}
+    return render(request, 'prodfloor/mobile.html', context)
 
 @login_required()
 def detail(request):#reports view
@@ -419,7 +427,7 @@ def Continue(request,pk,po):
         current_step = job.current_index + 1
         if  job.Tech_name == request.user.first_name + ' ' + request.user.last_name:
             if job.status == 'Stopped':
-                active_jobs = Info.objects.filter(Tech_name=request.user.first_name + ' ' + request.user.last_name).exclude(status='Complete').exclude(status='Stopped')
+                active_jobs = Info.objects.filter(Tech_name=request.user.first_name + ' ' + request.user.last_name).exclude(status='Complete').exclude(status='Stopped').exclude(status="Reassigned")
                 c = 0
                 for object in active_jobs:
                     c += 1
@@ -535,11 +543,15 @@ def Continue(request,pk,po):
                         index_num = 0
                         current_step = index_num + 1
                         status = 'Stopped'
+                        reason_for_stop = _('Reason for the stop: ')
+                        stop_show = stop.exclude(reason='Job reassignment').exclude(reason='Shift ended')
+                        for stop_to_show in stop_show:
+                            reason_for_stop += str(stop_to_show.reason) + ' // ' + str(stop_to_show.reason_description)
                         list_of_steps = dict_of_steps[status]
                         steps_length = len(list_of_steps)
                         return render(request, 'prodfloor/newjob.html',
                                       {'job_num': job_num, 'job': job, 'steps': steps_length,
-                                       'current_step_text': list_of_steps[index_num],
+                                       'current_step_text': reason_for_stop,
                                        'current_step': current_step})
             else:
                 return render(request, 'prodfloor/newjob.html', {'job_num': job_num, 'job': job, 'steps': steps_length,
@@ -556,7 +568,7 @@ def EndShift(request):
     tech_name = request.user.first_name + ' ' + request.user.last_name
     jobs = Info.objects.filter(Tech_name= tech_name).exclude(status='Complete')
     for obj in jobs:
-        if obj.status != 'Stopped':
+        if obj.status != 'Stopped' and obj.status != 'Reassigned':
             obj.prev_stage = obj.status
         obj.status = 'Stopped'
         ID = obj.id
@@ -736,7 +748,7 @@ def Middle(request,action,current_index):
                     messages.warning(request, 'In order to get to previous stages contact your Administrator.')
                     return HttpResponseRedirect("/prodfloor/continue/" + str(pk) + "/" + po)
                 elif action == 'stop':
-                    if job.status != 'Stopped':
+                    if job.status != 'Stopped' and job.status != 'Reassigned':
                         request.session['temp_pk'] = pk
                         request.session['temp_job_num'] = job.job_num
                         request.session['temp_po'] = po
@@ -782,18 +794,20 @@ class Reassign(SessionWizardView):
 
     def done(self, form_list, **kwargs):
         self.get_all_cleaned_data()
+        SU = self.request.user.username
         po = kwargs.get('po', None)
         pk = kwargs.get('pk', None)
         times = Times.objects.get(info__pk=pk)
+        features = Features.objects.filter(info__pk=pk)
         time = timezone.now()
         job_num_info = Info.objects.get(pk = pk)
         reason = 'Job reassignment'
         new_tech_obj = self.cleaned_data['new_tech']
         new_tech = new_tech_obj.first_name + ' ' + new_tech_obj.last_name
         station = self.cleaned_data['station']
-        description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech + 'reason: ' + str(self.cleaned_data['reason_description'])
+        description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech + 'reason: ' + str(self.cleaned_data['reason_description']) + ' by: ' + SU
         previous_stops = {}
-        if job_num_info.status != 'Stopped':
+        if job_num_info.status != 'Stopped' and job_num_info.status != 'Reassigned':
             job_num_info.prev_stage = job_num_info.status
         else:
             stops = Stops.objects.filter(info_id=job_num_info.id,solution="Not available yet")
@@ -817,7 +831,7 @@ class Reassign(SessionWizardView):
             times.end_time_3 = time
         elif job_num_info.prev_stage == 'Ending':
             times.end_time_4 = time
-        job_num_info.status = 'Complete'
+        job_num_info.status = 'Reassigned'
         job_num_info.save()
         times.save()
         job_info_new_row = Info(job_num=job_num_info.job_num, prev_stage=job_num_info.prev_stage, Tech_name=new_tech,
@@ -827,6 +841,12 @@ class Reassign(SessionWizardView):
                                 station=station)
         job_info_new_row.save()
         ID = job_info_new_row.id
+        if any(feature == 'None' for feature in features):
+            pass
+        else:
+            for feature in features:
+                job_features_new_row = Features(info_id=ID, features=feature.features)
+                job_features_new_row.save()
         start_time = Times(info_id=ID, start_time_1=time, end_time_1=time, start_time_2=time,
                            end_time_2=time, start_time_3=time, end_time_3=time,
                            start_time_4=time, end_time_4=time)
@@ -836,13 +856,12 @@ class Reassign(SessionWizardView):
         for stop in previous_stops:
             new_stop = Stops(info_id=ID,reason=previous_stops[stop][0],extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=previous_stops[stop][1], po=po)
             new_stop.save()
-            pass
         messages.success(self.request,'The Job ' + job_num_info.job_num + ' has been properly reassigned.')
         return HttpResponseRedirect("/admin/prodfloor/myjob/"+str(job_num_info.id)+"/change/")
 
 def first(request):
     job = Info.objects.filter(Tech_name=request.user.first_name + ' ' + request.user.last_name).exclude(
-        status='Complete').exclude(status='Stopped')
+        status='Complete').exclude(status='Stopped').exclude(status="Reassigned")
     c=0
     for object in job:
         c+=1
@@ -953,12 +972,56 @@ class Stop(SessionWizardView):
             description = self.cleaned_data['reason_description']
             time = timezone.now()
             stop = Stops(info_id=ID,reason=stop_reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
-            if job.status != 'Stopped':
+            if job.status != 'Stopped' and job.status != 'Reassigned':
                 job.prev_stage = job.status
             job.status = 'Stopped'
             job.save()
             stop.save()
             return HttpResponseRedirect("/prodfloor/continue/"+str(pk)+"/" + po)
+
+class DirectSuperUserStop(SessionWizardView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    form_list=[StopReason]
+
+    def get_template_names(self):
+        return ["prodfloor/wizard_form_stop.html"]
+
+    def get_all_cleaned_data(self):
+        self.cleaned_data = {}
+        for form_key in self.get_form_list():
+            form_obj = self.get_form(
+                step=form_key,
+                data=self.storage.get_step_data(form_key),
+                files=self.storage.get_step_files(form_key)
+            )
+            if form_obj.is_valid():
+                if isinstance(form_obj.cleaned_data, (tuple, list)):
+                    self.cleaned_data.update({
+                        'formset-%s' % form_key: form_obj.cleaned_data
+                    })
+                else:
+                    self.cleaned_data.update(form_obj.cleaned_data)
+
+    def done(self, form_list, **kwargs):
+        if self.request.user.is_authenticated() and self.request.user.is_active:
+            SU = self.request.user.username
+            po = kwargs.get('po', None)
+            pk = kwargs.get('pk', None)
+            job = Info.objects.exclude(status = 'Complete').get(pk=pk)
+            ID = job.id
+            self.get_all_cleaned_data()
+            stop_reason=self.cleaned_data['reason_for_stop']
+            description = self.cleaned_data['reason_description'] + '//stop created by: ' + SU
+            time = timezone.now()
+            stop = Stops(info_id=ID,reason=stop_reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
+            if job.status != 'Stopped' and job.status != 'Reassigned':
+                job.prev_stage = job.status
+            job.status = 'Stopped'
+            job.save()
+            stop.save()
+            messages.warning(self.request, _('The Stop has been properly registered.'))
+            return HttpResponseRedirect('/admin/')
 
 class SuperUserStop(SessionWizardView):
     login_url = '/login/'
@@ -995,7 +1058,7 @@ class SuperUserStop(SessionWizardView):
             description = self.cleaned_data['reason_description']
             time = timezone.now()
             stop = Stops(info_id=ID,reason=stop_reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
-            if job.status != 'Stopped':
+            if job.status != 'Stopped' and job.status != 'Reassigned':
                 job.prev_stage = job.status
             job.status = 'Stopped'
             job.save()
@@ -1128,6 +1191,7 @@ def createStop(request):
         form = SUStop
         return render(request, 'prodfloor/su_report_stop.html', {'form': form})
 
+@login_required()
 def multiplereassigns(request):
     QuestionFormSet = formset_factory(MultipleReassign,extra=0)
     if request.method == "POST":
@@ -1136,32 +1200,22 @@ def multiplereassigns(request):
             for form in formset:
                 update = form.cleaned_data['tobeupdated']
                 if update:
+                    SU = request.user.username
                     job_num = form.cleaned_data['job_num']
                     po = form.cleaned_data['po']
-                    pk = Info.objects.exclude(status="Complete").get(po=po).pk
+                    pk = Info.objects.exclude(status="Complete").exclude(status="Reassigned").get(po=po).pk
                     tech = form.cleaned_data['new_tech']
                     station = form.cleaned_data['station']
                     reason = form.cleaned_data['reason_description']
-                    new_values_dict = {"new_tech":tech,"station":station,"reason":reason,"job_num":job_num}
+                    new_values_dict = {"new_tech":tech,"station":station,"reason":reason,"job_num":job_num,"SU":SU}
                     multireassignfunct(pk,new_values_dict)
             messages.success(request, 'The Jobs selected have been succesfully reassigned.')
             return HttpResponseRedirect('/prodfloor/su/multiple_reassign')
-            #for form in formset:
-            #    print("Cool")
         else:
-            print("NOT Cool")
             new_formset = []
-            for form in formset:
-                print(form.cleaned_data)
-                #job_num = form.cleaned_data['job_num']
-                #po = form.cleaned_data['po']
-                #tech = form.cleaned_data['new_tech']
-                #station = form.cleaned_data['station']
-                #reason = form.cleaned_data['reason_description']
-                #new_formset.append({"job_num": job_num, "po": po, "new_tech": tech, "station": station,"reason_description":reason})
             return render(request, 'prodfloor/MUreassign.html', {'formset': formset,'headers':mureassign_headers})
     else:
-        jobs = Info.objects.exclude(status="Complete")
+        jobs = Info.objects.exclude(status="Complete").exclude(status="Reassigned")
         initial = []
         for job in jobs:
             full_name = job.Tech_name.split(' ',)

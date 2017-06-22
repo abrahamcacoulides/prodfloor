@@ -5136,8 +5136,8 @@ a.thumbnail.active {
   float: left;
   width: 0;
   height: 100%;
-  font-size: 12px;
-  line-height: 20px;
+  font-size: 30px;
+  line-height: 30px;
   color: #fff;
   text-align: center;
   background-color: #337ab7;
@@ -5179,6 +5179,7 @@ a.thumbnail.active {
 }
 .progress-bar-delayed {
   background-color: yellow;
+  color: black;
 }
 .progress-striped .progress-bar-delayed {
   background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);

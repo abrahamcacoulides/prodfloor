@@ -26,13 +26,16 @@
     <a href="/prodfloor/back/{{ current_step }}/"><button style="padding: 10px 20px;font-size: 20px;border:none;background-color: #79aec8;color: white">{%  trans "Back" %}</button></a>
     <a href="/prodfloor/next/{{ current_step }}/"><button id="next", onclick="clicked(event)" style="padding: 10px 20px;font-size: 20px;border:none;background-color: #79aec8;color: white">{%  trans "Next" %}</button></a>
     <a href="/prodfloor/stop/{{ current_step }}/"><button style="padding: 10px 20px;font-size: 20px;border:none;background-color: #79aec8;color: white">{%  trans "Stop" %}</button></a>
+    <a href="/prodfloor/endshift/{{ current_step }}/"><button style="padding: 10px 20px;font-size: 20px;border:none;background-color:red;color: white">{%  trans "End Shift" %}</button></a>
         {% else %}
     <a href="/prodfloor/back/{{ current_step }}/"><button style="padding: 10px 20px;font-size: 20px;border:none;background-color: #79aec8;color: white">{%  trans "Back" %}</button></a>
     <a href="/prodfloor/next/{{ current_step }}/"><button id="next" style="padding: 10px 20px;font-size: 20px;border:none;background-color: #79aec8;color: white">{%  trans "Next" %}</button></a>
     <a href="/prodfloor/stop/{{ current_step }}/"><button style="padding: 10px 20px;font-size: 20px;border:none;background-color: #79aec8;color: white">{%  trans "Stop" %}</button></a>
+    <a href="/prodfloor/endshift/{{ current_step }}/"><button style="padding: 10px 20px;font-size: 20px;border:none;background-color:red;color: white">{%  trans "End Shift" %}</button></a>
             {% endif %}
     {% else %}
     <a href="/prodfloor/resume/"><button style="padding: 10px 20px;font-size: 20px;border:none;background-color: #79aec8;color: white">{%  trans "Resume" %}</button></a>
+    <a href="/prodfloor/endshift/{{ current_step }}/"><button style="padding: 10px 20px;font-size: 20px;border:none;background-color:red;color: white">{%  trans "End Shift" %}</button></a>
     {% endif %}
     </center>
     <div class="copyright" style="margin-top: 50px"><center>&copy;2017 - <strong>MCE info</strong></center></div>

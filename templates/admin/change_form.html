@@ -32,17 +32,30 @@
         {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
         <a href="{% add_preserved_filters history_url %}" class="historylink">{% trans "History" %}</a>
     </li>
-        {% if original.status != 'Complete' and original.job_num != null%}
+        {% if original.status != 'Complete' and original.status != 'Reassigned' %}
+            {% if original.job_num != null %}
             {% if request.user.is_superuser %}
                 <li>
-                <a href="/prodfloor/reassignjob/{{ original.pk }}/{{ original.po }}" class="historylink">{% trans "Reassign Job" %}</a>
+                <a href="/prodfloor/reassignjob/{{ original.pk }}/{{ original.po }}" class="historylink" style="background: orange">{% trans "Reassign Job" %}</a>
+            </li>
+                <li>
+                <a href="/prodfloor/su/direct/stop/{{ original.pk }}/{{ original.po }}" class="historylink" style="background: red">{% trans "Stop Job" %}</a>
+            </li>
+            <li>
+                <a href="#" class="historylink" style="background: black">{% trans "Rework required" %}</a>
             </li>
             {% else %}
                 <li>
                 <a href="/prodfloor/continue/{{ original.pk }}/{{ original.po }}" class="historylink">{% trans "Continue With Job" %}</a>
             </li>
             {% endif %}
-        {% elif original.job_num != null %}
+            {% else %}
+            {% endif %}
+        {% elif original.status == 'Reassigned' and original.job_num != null %}
+            <li>
+                <a href="#" class="historylink" style="background: orange">{% trans "Job Reassigned" %}</a>
+            </li>
+        {% elif original.status == 'Complete' and original.job_num != null %}
             <li>
                 <a href="#" class="historylink" style="background: green">{% trans "Job Complete" %}</a>
             </li>

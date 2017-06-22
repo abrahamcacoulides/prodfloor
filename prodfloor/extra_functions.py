@@ -103,6 +103,9 @@ def spentTime(pk,number):
     start = 0
     time_on_shift_end = timezone.timedelta(0)
     times = Times.objects.get(info_id=pk)
+    job = Info.objects.get(pk=pk)
+    status = job.status
+    status_list = ['','Beginning','Program','Logic','Ending']
     stops_shift_end = Stops.objects.filter(info_id=pk,reason='Shift ended')
     if number == 1:
         start = times.start_time_1
@@ -129,7 +132,7 @@ def spentTime(pk,number):
     if end>start:#means that the stop_time has been set
         elapsed_time = str((end-start)-time_on_shift_end).split('.', 2)[0]
         return elapsed_time
-    elif end == start:#means that it has not being started
+    elif end == start and status != status_list[number]:#means that it has not being started
         elapsed_time = '-'
         return elapsed_time
     else:#job is being worked on
@@ -195,7 +198,7 @@ def totaltime(pk):
         number+=1
     return str(elapsed_time).split('.', 2)[0]
 
-def effectivetime(pk):
+def effectivetime(pk):#effective time spent on job
     now = timezone.now()
     stops = Stops.objects.filter(info_id=pk)
     timeinstop = timezone.timedelta(0)
@@ -225,11 +228,10 @@ def effectivetime(pk):
             elapsed_time += (now - start)
         number += 1
     for stop in stops:
-        if stop.stop_start_time > start and stop.stop_end_time < end:
-            if stop.stop_end_time > stop.stop_start_time:
-                timeinstop += stop.stop_end_time - stop.stop_start_time
-            else:
-                timeinstop += now - stop.stop_start_time
+        if stop.stop_end_time > stop.stop_start_time:
+            timeinstop += stop.stop_end_time - stop.stop_start_time
+        else:
+            timeinstop += now - stop.stop_start_time
     eff_time = str(elapsed_time - timeinstop).split('.', 2)[0]
     return (eff_time)
 
@@ -282,15 +284,17 @@ def categories(pk,*args, **kwargs):
 
 def multireassignfunct(pk,newvalues, *args, **kwargs):
     times = Times.objects.get(info__pk=pk)
+    features = Features.objects.filter(info__pk=pk)
     time = timezone.now()
     job_num_info = Info.objects.get(pk = pk)
     reason = 'Job reassignment'
     po = job_num_info.po
     new_tech_obj = newvalues['new_tech']
+    SU = newvalues['SU']
     new_tech = new_tech_obj.first_name + ' ' + new_tech_obj.last_name
     station = newvalues['station']
-    description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech + ';reason: ' + str(newvalues['reason'])
-    if job_num_info.status != 'Stopped':
+    description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech + ';reason: ' + str(newvalues['reason']) + ' by: ' + SU
+    if job_num_info.status != 'Stopped' and job_num_info.status != 'Reassigned':
         job_num_info.prev_stage = job_num_info.status
     else:
         pass
@@ -304,7 +308,7 @@ def multireassignfunct(pk,newvalues, *args, **kwargs):
         times.end_time_4 = time
     else:
         pass
-    job_num_info.status = 'Complete'
+    job_num_info.status = 'Reassigned'
     job_num_info.save()
     times.save()
     job_info_new_row = Info(job_num=job_num_info.job_num, prev_stage=job_num_info.prev_stage, Tech_name=new_tech,
@@ -314,6 +318,12 @@ def multireassignfunct(pk,newvalues, *args, **kwargs):
                             station=station)
     job_info_new_row.save()
     ID = job_info_new_row.id
+    if any(feature == 'None' for feature in features):
+        pass
+    else:
+        for feature in features:
+            job_features_new_row = Features(info_id=ID, features=feature.features)
+            job_features_new_row.save()
     start_time = Times(info_id=ID, start_time_1=time, end_time_1=time, start_time_2=time,
                        end_time_2=time, start_time_3=time, end_time_3=time,
                        start_time_4=time, end_time_4=time)
