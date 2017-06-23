@@ -32,7 +32,7 @@
       </div>
 <div class="container" style="width:100%">
 <div class="row">
-  <div class="col-sm-3 col-md-1">
+  <div class="col-md-1">
     <h1><center>JOB #&nbsp;</center></h1>
       {% for job in job_list %}
           <hr>
@@ -40,7 +40,7 @@
 
       {% endfor %}
 </div>
-  <div class="col-sm-3 col-md-2">
+  <div class="col-md-2">
     <h1><center>TECHNICIAN</center></h1>
     {% for job in job_list %}
           <hr>
@@ -48,7 +48,7 @@
 
       {% endfor %}
     </div>
-<div class="col-sm-2 col-md-2">
+<div class="col-md-1">
   <h1><center>STAGE</center></h1>
   {% for job in job_list %}
           <hr>
@@ -56,7 +56,7 @@
 
       {% endfor %}
 </div>
-<div class="col-sm-2     col-md-5">
+<div class="col-md-5">
   <h1><center>STATUS</center></h1>
     {% for job in job_list %}
         <hr>
@@ -66,14 +66,21 @@
              style="width:{% getpercentage job.current_index job.stage_len %}%"><span style="position: absolute;color: black">{% ETF job %}</span></div></div>
     {% endfor %}
 </div>
-<div class="col-sm-1 col-md-1" >
+<div class="col-md-1" >
+  <h1><center>CAT</center></h1>
+    {% for job in job_list %}
+        <hr>
+    <div class="text-center"><h2>{% categories job.pk %}</h2></div>
+    {% endfor %}
+</div>
+<div class="col-md-1" >
   <h1><center>STATN</center></h1>
     {% for job in job_list %}
         <hr>
     <div class="text-center"><h2>{% getstation job.station %}</h2></div>
     {% endfor %}
 </div>
-<div class="col-sm-1 col-md-1" >
+<div class="col-md-1" >
   <h1><center>TTC</center></h1>
     {% for job in job_list %}
         <hr>

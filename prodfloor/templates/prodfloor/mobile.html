@@ -58,7 +58,7 @@
 
       {% endfor %}
 </div>
-<div class="col-sm-3">
+<div class="col-sm-2">
   <h1><center>STATUS</center></h1>
     {% for job in job_list %}
         <hr>
@@ -69,7 +69,14 @@
     {% endfor %}
 </div>
 <div class="col-sm-1" >
-  <h1><center>STATN</center></h1>
+  <h1><center>CAT</center></h1>
+    {% for job in job_list %}
+        <hr>
+    <div class="text-center"><h2>{% categories job.pk %}</h2></div>
+    {% endfor %}
+</div>
+<div class="col-sm-1" >
+  <h1><center>ST</center></h1>
     {% for job in job_list %}
         <hr>
     <div class="text-center"><h2>{% getstation job.station %}</h2></div>

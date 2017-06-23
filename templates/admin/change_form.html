@@ -42,6 +42,9 @@
                 <a href="/prodfloor/su/direct/stop/{{ original.pk }}/{{ original.po }}" class="historylink" style="background: red">{% trans "Stop Job" %}</a>
             </li>
             <li>
+                <a href="/prodfloor/su/changestage/{{ original.pk }}/{{ original.po }}" class="historylink">{% trans "Change Stage" %}</a>
+            </li>
+            <li>
                 <a href="#" class="historylink" style="background: black">{% trans "Rework required" %}</a>
             </li>
             {% else %}

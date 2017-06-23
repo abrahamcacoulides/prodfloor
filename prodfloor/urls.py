@@ -1,7 +1,6 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
-from prodfloor.views import JobInfo, Stop, ResumeView,Reassign,SuperUserStop,DirectSuperUserStop
-
+from prodfloor.views import JobInfo, Stop, ResumeView,Reassign,SuperUserStop,DirectSuperUserStop,StageChange
 from . import views
 
 urlpatterns = [
@@ -11,6 +10,7 @@ urlpatterns = [
     url(r'^su/multiple_reassign/', views.multiplereassigns, name='multipleReassign'),
     url(r'^su/create_stop/', views.createStop, name='createStop'),
     url(r'^su/direct/stop/(?P<pk>[0-9]{1,10})/(?P<po>[0-9]{7})', DirectSuperUserStop.as_view(DirectSuperUserStop.form_list), name='DSUStop'),
+    url(r'^su/changestage/(?P<pk>[0-9]{1,10})/(?P<po>[0-9]{7})', StageChange.as_view(StageChange.form_list), name='SUstagechange'),
     url(r'^su/stop/', SuperUserStop.as_view(SuperUserStop.form_list), name='SUStop'),
     url(r'^live/', views.prodfloor_view, name='prodfloor'),
     url(r'^reports/', views.detail, name='detail'),

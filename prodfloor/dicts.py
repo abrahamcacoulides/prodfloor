@@ -148,17 +148,49 @@ dict_elem_new = {
     'Complete': [['Fin de pruebas', [None], [None]], ],
     'Stopped': ['Detenido'],
     'Reassigned': ['Reasignado'],}
-times_m2000 = {'Beginning':60,
-                         'Program':40,
-                         'Logic':110,
-                         'Ending':45}
-times_m4000 = {'Beginning':240,
-                         'Program':205,
-                         'Logic':370,
-                         'Ending':30}
-times_elem = {'Beginning':40,
-                         'Program':120,
-                         'Ending':60}
+# !times_ dicts used to be used by function oldgetcolor in prodfloor_extras, the function has been depracted but this
+#  has been left for future reference
+#times_m2000 = {'Beginning':60,
+#                         'Program':40,
+#                         'Logic':110,
+#                         'Ending':45}#deprecated
+#times_m4000 = {'Beginning':240,
+#                         'Program':205,
+#                         'Logic':370,
+#                         'Ending':30}#deprecated
+#times_elem = {'Beginning':40,
+#                         'Program':120,
+#                         'Ending':60}#deprecated#
+percentage_of_time = {
+    '2000':{'Beginning':0.23,
+                         'Program':0.15,
+                         'Logic':0.45,
+                         'Ending':0.17},
+    '4000':{'Beginning':0.28,
+                         'Program':0.24,
+                         'Logic':0.43,
+                         'Ending':0.05},
+    'ELEM':{'Beginning':0.18,
+                         'Program':0.55,
+                         'Ending':0.27}}
+times_per_category = {
+    '2000':
+        {1:4*60,
+         2:4.5*60,
+         3:5*60,
+         4:6*60,
+         5:7*60,
+         6:8*60,},
+    '4000':
+        {1: 7*60,
+         2: 8*60,
+         3: 10*60,
+         4: 13*60,
+         5: 15*60,
+         6: 16*60, },
+    'ELEM':
+        {1:3*60,},
+}
 stop_reasons = [('Job reassignment', 'Job reassignment'),
                 ('Shift ended','Shift ended'),
                 ('Error Funcional', 'Error Funcional'),
@@ -301,7 +333,9 @@ status_dict_tupple = (('Beginning', 'Beginning'),
                       ('Logic', 'Logic'),
                       ('Ending', 'Ending'),
                       ('Complete', 'Complete'),
-                      ('Stopped', 'Stopped'))
+                      ('Stopped', 'Stopped'),
+                      ('Reassigned', 'Reassigned'),
+                      ('Rework', 'Rework'))
 headers = ['Job #',
            'PO',
            'Job Type',
@@ -329,19 +363,32 @@ stops_headers = ['Job #',
                  'Station',
                  'Time on Stop',
                  'Technician']
-mureassign_headers_old=['Reassign?','Job #','Prod #','Current Tech','Current Station','New Tech','New Station','Reason']
-mureassign_headers=['Reassign?','Job #','Prod #','Tech','Station','Reason']
-times_dict = {'2000':{'Beginning':60,
-                         'Program':40,
-                         'Logic':110,
-                         'Ending':45},
-                  '4000':{'Beginning':240,
-                         'Program':205,
-                         'Logic':370,
-                         'Ending':30},
-                  'ELEM':{'Beginning':40,
-                         'Program':120,
-                         'Ending':60}}
-times_to_add_dict = {'2000':{'COP':25,'SHC':10,},
-              '4000':{'COP':10,'SHC':20},
-              'ELEM':{'HAPS':15,}}
+mureassign_headers = [
+    'Reassign?',
+    'Job #',
+    'Prod #',
+    'Tech',
+    'Station',
+    'Reason']
+times_dict = {
+    '2000': {'Beginning': 60,
+             'Program': 40,
+             'Logic': 110,
+             'Ending': 45},
+    '4000': {'Beginning': 240,
+             'Program': 205,
+             'Logic': 370,
+             'Ending': 30},
+    'ELEM': {'Beginning': 40,
+             'Program': 120,
+             'Ending': 60}}
+times_to_add_dict = {
+    '2000': {'COP': 25, 'SHC': 10},
+    '4000': {'COP': 10, 'SHC': 20},
+    'ELEM': {'HAPS': 15, }}
+dict_of_stages = {
+    1: 'Beginning',
+    2: 'Program',
+    3: 'Logic',
+    4: 'Ending',
+    5: 'Complete'}

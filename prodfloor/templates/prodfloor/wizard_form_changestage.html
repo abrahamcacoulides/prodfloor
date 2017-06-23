@@ -1,0 +1,35 @@
+{% extends "base_site.html" %}
+{% load staticfiles %}
+{% load i18n %}
+{% load prodfloor_extras %}
+<head>
+    <title>{% block title %}{% trans "SU Change of Stage" %}{% endblock %}</title>
+</head>
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'prodfloor:prodfloor' %}">{{ site_header|default:_('Resume Job') }}</a></h1>
+{% endblock %}
+{% block content %}
+{{ wizard.steps.step1 }} {{wizard.step}}of {{ wizard.steps.count }}
+<form action="" method="post">{% csrf_token %}
+<table>
+{{ wizard.management_form }}
+{% if wizard.form.forms %}
+    {{ wizard.form.management_form }}
+    {% for form in wizard.form.forms %}
+        {{ form }}
+    {% endfor %}
+{% else %}
+    {{ wizard.form }}
+{% endif %}
+</table>
+{% if wizard.steps.prev %}
+<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
+{% endif %}
+<input type="submit" value="{% trans "submit" %}"/>
+</form>
+<script src="{% static 'prodfloor/jquery.min.js' %}"></script>
+<script src="{% static 'prodfloor/ajax.js' %}"></script>
+{% endblock %}

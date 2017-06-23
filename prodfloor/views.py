@@ -3,12 +3,12 @@ from django.forms import formset_factory
 from django.http import Http404, HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, redirect
 from formtools.wizard.views import SessionWizardView
-from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob, Records, StopRecord, SUStop, MultipleReassign
+from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob, Records, StopRecord, SUStop, MultipleReassign, ChangeStage
 from django.contrib.auth import logout
 from stopscauses.models import Tier3,Tier2,Tier1
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from prodfloor.dicts import stations_by_type,headers,stops_headers,dict_m2000_new,dict_elem_new,dict_m4000_new,mureassign_headers
+from prodfloor.dicts import stations_by_type,headers,stops_headers,dict_m2000_new,dict_elem_new,dict_m4000_new,mureassign_headers,dict_of_stages
 import json,io
 from .extra_functions import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -709,11 +709,6 @@ def Middle(request,action,current_index):
                         return HttpResponseRedirect("/prodfloor/resume/")
                     times = Times.objects.get(info_id=job.id)
                     if remaining_steps(1,job.current_index,dict_of_steps,status,features_objects):
-                        dict_of_stages = {1: 'Beginning',
-                                          2: 'Program',
-                                          3: 'Logic',
-                                          4: 'Ending',
-                                          5: 'Complete'}
                         for number, stage in dict_of_stages.items():
                             if stage == status:
                                 time = timezone.now()
@@ -1410,3 +1405,88 @@ def multiplereassigns(request):
             last_name = full_name[1]
             initial.append({"job_num":job.job_num,"po":job.po,"new_tech":User.objects.get(first_name=name,last_name=last_name).pk,"station":job.station})
         return render(request,'prodfloor/MUreassign.html',{'formset': QuestionFormSet(initial = initial),'headers':mureassign_headers})
+
+class StageChange(SessionWizardView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    form_list = [ChangeStage]
+
+    def get_template_names(self):
+        return ["prodfloor/wizard_form_changestage.html"]
+
+    def get_form_initial(self, step,**kwargs):
+        pk = self.kwargs.get('pk',None)
+        job = Info.objects.get(pk=pk)
+        initial = {'current_stage':job.status}
+        return self.initial_dict.get(step, initial)
+
+    def get_all_cleaned_data(self):
+        self.cleaned_data = {}
+        for form_key in self.get_form_list():
+            form_obj = self.get_form(
+                step=form_key,
+                data=self.storage.get_step_data(form_key),
+                files=self.storage.get_step_files(form_key)
+            )
+            if form_obj.is_valid():
+                if isinstance(form_obj.cleaned_data, (tuple, list)):
+                    self.cleaned_data.update({
+                        'formset-%s' % form_key: form_obj.cleaned_data
+                    })
+                else:
+                    self.cleaned_data.update(form_obj.cleaned_data)
+
+    def done(self, form_list, **kwargs):
+        if self.request.user.is_authenticated() and self.request.user.is_active:
+            self.get_all_cleaned_data()
+            pk = kwargs.get('pk',None)
+            job = Info.objects.get(pk=pk)
+            current_stage = job.status
+            new_stage = self.cleaned_data.get('new_stage')
+            times = Times.objects.get(info_id=pk)
+            stages_change = list(dict_of_stages.keys())[list(dict_of_stages.values()).index(current_stage)]-list(dict_of_stages.keys())[list(dict_of_stages.values()).index(new_stage)]
+            if current_stage == 4:
+                if stages_change == 1:
+                    times.start_time_4=times.start_time_1
+                    times.end_time_3=times.start_time_1
+                elif stages_change == 2:
+                    times.start_time_4 = times.start_time_1
+                    times.end_time_3 = times.start_time_1
+                    times.start_time_3 = times.start_time_1
+                    times.end_time_2 = times.start_time_1
+                elif stages_change == 1:
+                    times.start_time_4 = times.start_time_1
+                    times.end_time_3 = times.start_time_1
+                    times.start_time_3 = times.start_time_1
+                    times.end_time_2 = times.start_time_1
+                    times.start_time_2 = times.start_time_1
+                    times.end_time_1 = times.start_time_1
+            elif current_stage == 3:
+                if stages_change == 1:
+                    times.start_time_3 = times.start_time_1
+                    times.end_time_2 = times.start_time_1
+                elif stages_change == 2:
+                    times.start_time_3 = times.start_time_1
+                    times.end_time_2 = times.start_time_1
+                    times.start_time_2 = times.start_time_1
+                    times.end_time_1 = times.start_time_1
+            elif current_stage == 2:
+                if stages_change == 1:
+                    times.start_time_2 = times.start_time_1
+                    times.end_time_1 = times.start_time_1
+            times.save()
+            job.status = new_stage
+            job.current_index = 0
+            job.save()
+            ct = ContentType.objects.get_for_model(job)
+            l = LogEntry.objects.log_action(
+                user_id=self.request.user.pk,
+                content_type_id=ct.pk,
+                object_id=job.pk,
+                object_repr=str(job.po),
+                action_flag=CHANGE,
+                change_message='The stage of this job was changed from '+ current_stage + ' to: '+ new_stage + ' by: ' + self.request.user.get_full_name()
+            )
+            l.save()
+            messages.success(self.request, _('The Stage has been properly changed.'))
+            return HttpResponseRedirect('/admin/')

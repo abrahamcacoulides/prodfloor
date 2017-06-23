@@ -7,7 +7,7 @@ from .models import Info
 from django.forms import ModelChoiceField,ModelMultipleChoiceField
 from prodfloor.dicts import features,stations_tupple
 from django.utils.translation import ugettext_lazy as _
-from .dicts import label,job_type_tupple,status_dict_tupple
+from .dicts import label,job_type_tupple,status_dict_tupple,dict_of_stages
 
 class Maininfo(forms.Form):
     initial = timezone.datetime.today
@@ -171,3 +171,34 @@ class MultipleReassign(forms.Form):
             if job.Tech_name != new_tech.first_name + ' ' + new_tech.last_name or job.station != station:
                 raise forms.ValidationError(
                     {'tobeupdated': _("Select the checkbox.")})
+
+class ChangeStage(forms.Form):
+    current_stage = forms.CharField(label=_('Current Stage'), widget=forms.TextInput(attrs={'readonly':True}))
+    new_stage = forms.ChoiceField(label=_('New Stage'), choices=status_dict_tupple)
+    def clean(self):
+        cleaned_data = super(ChangeStage, self).clean()
+        current = cleaned_data.get('current_stage')
+        new = cleaned_data.get('new_stage')
+        if current == 'Complete':
+            raise forms.ValidationError(
+                {'current_stage': _("The job is marked as complete. If job needs to be worked on please use the Rework function.")})
+        elif current == 'Reassigned':
+            raise forms.ValidationError(
+                {'current_stage': _("The job is marked as reassigned therefore it's no longer available to change state.")})
+        elif current == 'Stopped':
+            raise forms.ValidationError(
+                {'current_stage': _("The job is marked as Stopped; The job must be active in order to have a change of stage.")})
+        elif new == 'Reassigned':
+            raise forms.ValidationError(
+                {'new_stage': _("If you'd like to reassign this job please use the specific function for this.")})
+        elif new == 'Rework':
+            raise forms.ValidationError(
+                {'new_stage': _(
+                    "If you'd like to log a rework for this job please use the specific function for this.")})
+        elif list(dict_of_stages.keys())[list(dict_of_stages.values()).index(current)]<list(dict_of_stages.keys())[list(dict_of_stages.values()).index(new)]:
+            raise forms.ValidationError(
+                {'new_stage': _("This function is not supposed to be used to skip stages.")})
+        else:
+            if current == new:
+                raise forms.ValidationError(
+                    {'new_stage': _("The current and new stage are the same.")})

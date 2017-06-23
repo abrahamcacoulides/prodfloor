@@ -141,14 +141,12 @@ def spentTime(pk,number):
         elapsed_time = str((now - start)-time_on_shift_end).split('.', 2)[0]
         return elapsed_time
 
-
 def stopsnumber(pk):
     stops = Stops.objects.filter(info_id=pk)
     numer_of_stops = 0
     for stop in stops:
         numer_of_stops+=1
     return numer_of_stops
-
 
 def timeonstop(pk):
     now = timezone.now()
