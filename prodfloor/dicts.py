@@ -172,6 +172,7 @@ percentage_of_time = {
                          'Ending':0.05},
     'ELEM':{'Beginning':0.18,
                          'Program':0.55,
+                         'Logic':0,
                          'Ending':0.27}}
 times_per_category = {
     '2000':
@@ -381,6 +382,7 @@ times_dict = {
              'Ending': 30},
     'ELEM': {'Beginning': 40,
              'Program': 120,
+             'Logic':0,
              'Ending': 60}}
 times_to_add_dict = {
     '2000': {'COP': 25, 'SHC': 10},
