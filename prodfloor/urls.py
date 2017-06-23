@@ -13,7 +13,6 @@ urlpatterns = [
     url(r'^su/direct/stop/(?P<pk>[0-9]{1,10})/(?P<po>[0-9]{7})', DirectSuperUserStop.as_view(DirectSuperUserStop.form_list), name='DSUStop'),
     url(r'^su/stop/', SuperUserStop.as_view(SuperUserStop.form_list), name='SUStop'),
     url(r'^live/', views.prodfloor_view, name='prodfloor'),
-    url(r'^live/mobile/', views.m_prodfloor_view, name='mprodfloor'),
     url(r'^reports/', views.detail, name='detail'),
     url(r'^stops_reports/', views.stops_reports, name='stopsreports'),
     url(r'^generate_report_xml/$', views.generatexml, name='xml'),

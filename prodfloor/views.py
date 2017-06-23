@@ -14,6 +14,8 @@ from .extra_functions import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import ugettext_lazy as _
 from xlsxwriter.workbook import Workbook
+from django.contrib.admin.models import LogEntry, ADDITION,CHANGE,DELETION
+from django.contrib.contenttypes.models import ContentType
 
 def prodfloor_view(request):
     job_list = Info.objects.exclude(status="Complete").exclude(status="Reassigned").order_by('job_num')
@@ -24,24 +26,28 @@ def prodfloor_view(request):
         return render(request, 'prodfloor/prodfloor.html', context)
 
 def M2000View(request):
-    job_list = Info.objects.filter(job_type='2000').exclude(status='Complete').exclude(status="Reassigned").order_by('job_num')
+    job_list = Info.objects.filter(job_type='2000').exclude(status="Complete").exclude(status="Reassigned").order_by('job_num')
     context = {'job_list': job_list}
-    return render(request, 'prodfloor/prodfloor.html', context)
+    if 'Android' in request.META['HTTP_USER_AGENT']:
+        return render(request, 'prodfloor/mobile.html', context)
+    else:
+        return render(request, 'prodfloor/prodfloor.html', context)
 
 def M4000View(request):
     job_list = Info.objects.filter(job_type='4000').exclude(status='Complete').exclude(status="Reassigned").order_by('job_num')
     context = {'job_list': job_list}
-    return render(request, 'prodfloor/prodfloor.html', context)
+    if 'Android' in request.META['HTTP_USER_AGENT']:
+        return render(request, 'prodfloor/mobile.html', context)
+    else:
+        return render(request, 'prodfloor/prodfloor.html', context)
 
 def ELEMView(request):
     job_list = Info.objects.filter(job_type='ELEM').exclude(status='Complete').exclude(status="Reassigned").order_by('job_num')
     context = {'job_list': job_list}
-    return render(request, 'prodfloor/prodfloor.html', context)
-
-def m_prodfloor_view(request):
-    job_list = Info.objects.exclude(status="Complete").exclude(status="Reassigned").order_by('job_num')
-    context = {'job_list': job_list}
-    return render(request, 'prodfloor/mobile.html', context)
+    if 'Android' in request.META['HTTP_USER_AGENT']:
+        return render(request, 'prodfloor/mobile.html', context)
+    else:
+        return render(request, 'prodfloor/prodfloor.html', context)
 
 @login_required()
 def detail(request):#reports view
@@ -457,9 +463,24 @@ def Continue(request,pk,po):
                                     status = 'Stopped'
                                     list_of_steps = dict_of_steps[status]
                                     steps_length = len(list_of_steps)
+                                    reason_for_stop = _('Reason for the stop: ')
+                                    stop_show = stop.exclude(reason='Job reassignment').exclude(reason='Shift ended')
+                                    for stop_to_show in stop_show:
+                                        reason_for_stop += str(stop_to_show.reason) + ' // ' + str(
+                                            stop_to_show.reason_description)
+                                    ct = ContentType.objects.get_for_model(job)
+                                    l = LogEntry.objects.log_action(
+                                        user_id=request.user.pk,
+                                        content_type_id=ct.pk,
+                                        object_id=job.pk,
+                                        object_repr=str(job.po),
+                                        action_flag=CHANGE,
+                                        change_message='Job has been reactivated after a job reassingment and shift end but still on stop due to: ' + reason_for_stop + '.'
+                                    )
+                                    l.save()
                                     return render(request, 'prodfloor/newjob.html',
                                                   {'job_num': job_num, 'job': job, 'steps': steps_length,
-                                                   'current_step_text': list_of_steps[index_num],
+                                                   'current_step_text': reason_for_stop,
                                                    'current_step': current_step})
                                 else:
                                     job.status = job.prev_stage
@@ -477,6 +498,16 @@ def Continue(request,pk,po):
                                            job.current_index +=1
                                            job.save()
                                     current_step = job.current_index + 1
+                                    ct = ContentType.objects.get_for_model(job)
+                                    l = LogEntry.objects.log_action(
+                                        user_id=request.user.pk,
+                                        content_type_id=ct.pk,
+                                        object_id=job.pk,
+                                        object_repr=str(job.po),
+                                        action_flag=CHANGE,
+                                        change_message='Job was restarted after a reassign and a shift end.'
+                                    )
+                                    l.save()
                                     return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': text, 'current_step': current_step})
                             else:
                                 index_num = 0
@@ -484,9 +515,24 @@ def Continue(request,pk,po):
                                 status = 'Stopped'
                                 list_of_steps = dict_of_steps[status]
                                 steps_length = len(list_of_steps)
+                                reason_for_stop = _('Reason for the stop: ')
+                                stop_show = stop.exclude(reason='Job reassignment').exclude(reason='Shift ended')
+                                for stop_to_show in stop_show:
+                                    reason_for_stop += str(stop_to_show.reason) + ' // ' + str(
+                                        stop_to_show.reason_description)
+                                ct = ContentType.objects.get_for_model(job)
+                                l = LogEntry.objects.log_action(
+                                    user_id=request.user.pk,
+                                    content_type_id=ct.pk,
+                                    object_id=job.pk,
+                                    object_repr=str(job.po),
+                                    action_flag=CHANGE,
+                                    change_message='Job has been reactivated after a job reassingment but still on stop due to: ' + reason_for_stop + '.'
+                                )
+                                l.save()
                                 return render(request, 'prodfloor/newjob.html',
                                               {'job_num': job_num, 'job': job, 'steps': steps_length,
-                                               'current_step_text': list_of_steps[index_num],
+                                               'current_step_text': reason_for_stop,
                                                'current_step': current_step})
                         else:
                             job.status = job.prev_stage
@@ -504,6 +550,16 @@ def Continue(request,pk,po):
                                     job.current_index += 1
                                     job.save()
                             current_step = job.current_index+1
+                            ct = ContentType.objects.get_for_model(job)
+                            l = LogEntry.objects.log_action(
+                                user_id=request.user.pk,
+                                content_type_id=ct.pk,
+                                object_id=job.pk,
+                                object_repr=str(job.po),
+                                action_flag=CHANGE,
+                                change_message='Job was restarted after a reassign.'
+                            )
+                            l.save()
                             return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,
                                            'current_step_text': text, 'current_step': current_step})
                     elif any(object.reason == 'Shift ended' for object in stop):
@@ -518,9 +574,24 @@ def Continue(request,pk,po):
                             status= 'Stopped'
                             list_of_steps = dict_of_steps[status]
                             steps_length = len(list_of_steps)
+                            reason_for_stop = _('Reason for the stop: ')
+                            stop_show = stop.exclude(reason='Job reassignment').exclude(reason='Shift ended')
+                            for stop_to_show in stop_show:
+                                reason_for_stop += str(stop_to_show.reason) + ' // ' + str(
+                                    stop_to_show.reason_description)
+                            ct = ContentType.objects.get_for_model(job)
+                            l = LogEntry.objects.log_action(
+                                user_id=request.user.pk,
+                                content_type_id=ct.pk,
+                                object_id=job.pk,
+                                object_repr=str(job.po),
+                                action_flag=CHANGE,
+                                change_message='Job has been reactivated after a shift end but still on stop due to: ' + reason_for_stop + '.'
+                            )
+                            l.save()
                             return render(request, 'prodfloor/newjob.html',
                                           {'job_num': job_num, 'job': job, 'steps': steps_length,
-                                           'current_step_text': list_of_steps[index_num],
+                                           'current_step_text': reason_for_stop,
                                            'current_step': current_step})
                         else:
                             job.status = job.prev_stage
@@ -538,6 +609,16 @@ def Continue(request,pk,po):
                                     job.current_index += 1
                                     job.save()
                             current_step = job.current_index+1
+                            ct = ContentType.objects.get_for_model(job)
+                            l = LogEntry.objects.log_action(
+                                user_id=request.user.pk,
+                                content_type_id=ct.pk,
+                                object_id=job.pk,
+                                object_repr=str(job.po),
+                                action_flag=CHANGE,
+                                change_message='Job has been reactivated after a job reassingment.'
+                            )
+                            l.save()
                             return render(request, 'prodfloor/newjob.html',{'job_num': job_num, 'job': job, 'steps': steps_length,'current_step_text': text,'current_step': current_step})
                     else:
                         index_num = 0
@@ -566,19 +647,36 @@ def Continue(request,pk,po):
 @login_required()
 def EndShift(request):
     tech_name = request.user.first_name + ' ' + request.user.last_name
-    jobs = Info.objects.filter(Tech_name= tech_name).exclude(status='Complete')
+    jobs = Info.objects.filter(Tech_name= tech_name).exclude(status='Complete').exclude(status='Reassigned')
     for obj in jobs:
-        if obj.status != 'Stopped' and obj.status != 'Reassigned':
-            obj.prev_stage = obj.status
         obj.status = 'Stopped'
         ID = obj.id
         po = obj.po
         stop_reason = 'Shift ended'
         time = timezone.now()
         description = 'The user ' + tech_name + ' ended his shift'
-        stop =  Stops(info_id=ID,reason=stop_reason,solution='Not available yet',extra_cause_1='N/A',extra_cause_2='N/A',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
-        stop.save()
-        obj.save()
+        if obj.status != 'Stopped' and obj.status != 'Reassigned':
+            obj.prev_stage = obj.status
+        if obj.status == 'Stopped':
+            stops = Stops.objects.filter(info_id=obj.id)
+            if any('Shift ended' in stop.reason for stop in stops):
+                pass
+            else:
+                stop = Stops(info_id=ID, reason=stop_reason, solution='Not available yet', extra_cause_1='N/A',
+                             extra_cause_2='N/A', stop_start_time=time, stop_end_time=time,
+                             reason_description=description, po=po)
+                stop.save()
+                obj.save()
+                ct = ContentType.objects.get_for_model(obj)
+                l = LogEntry.objects.log_action(
+                    user_id=request.user.pk,
+                    content_type_id=ct.pk,
+                    object_id=obj.pk,
+                    object_repr=str(obj.po),
+                    action_flag=CHANGE,
+                    change_message='Job was stopped due to a shift end'
+                )
+                l.save()
     logout(request)
     messages.success(request, 'You succesfully ended your shift.')
     return HttpResponseRedirect('/admin/')
@@ -657,6 +755,16 @@ def Middle(request,action,current_index):
                                     job.prev_stage = 'Complete'
                                     job.save()
                                     return redirect("/admin/")
+                        ct = ContentType.objects.get_for_model(job)
+                        l = LogEntry.objects.log_action(
+                            user_id=request.user.pk,
+                            content_type_id=ct.pk,
+                            object_id=job.pk,
+                            object_repr=str(job.po),
+                            action_flag=CHANGE,
+                            change_message='Stage end: ' + job.prev_stage + ' was completed.'
+                        )
+                        l.save()
                         status = job.status
                         list_of_steps = dict_of_steps[status]
                         job.stage_len = len(list_of_steps)
@@ -805,7 +913,7 @@ class Reassign(SessionWizardView):
         new_tech_obj = self.cleaned_data['new_tech']
         new_tech = new_tech_obj.first_name + ' ' + new_tech_obj.last_name
         station = self.cleaned_data['station']
-        description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech + 'reason: ' + str(self.cleaned_data['reason_description']) + ' by: ' + SU
+        description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech + '; reason: ' + str(self.cleaned_data['reason_description']) + ' by: ' + SU
         previous_stops = {}
         if job_num_info.status != 'Stopped' and job_num_info.status != 'Reassigned':
             job_num_info.prev_stage = job_num_info.status
@@ -841,12 +949,6 @@ class Reassign(SessionWizardView):
                                 station=station)
         job_info_new_row.save()
         ID = job_info_new_row.id
-        if any(feature == 'None' for feature in features):
-            pass
-        else:
-            for feature in features:
-                job_features_new_row = Features(info_id=ID, features=feature.features)
-                job_features_new_row.save()
         start_time = Times(info_id=ID, start_time_1=time, end_time_1=time, start_time_2=time,
                            end_time_2=time, start_time_3=time, end_time_3=time,
                            start_time_4=time, end_time_4=time)
@@ -856,6 +958,32 @@ class Reassign(SessionWizardView):
         for stop in previous_stops:
             new_stop = Stops(info_id=ID,reason=previous_stops[stop][0],extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=previous_stops[stop][1], po=po)
             new_stop.save()
+        if any(feature == 'None' for feature in features):
+            pass
+        else:
+            for feature in features:
+                job_features_new_row = Features(info_id=ID, features=feature.features)
+                job_features_new_row.save()
+        ct = ContentType.objects.get_for_model(job_num_info)
+        old_job_log = LogEntry.objects.log_action(
+            user_id=self.request.user.pk,
+            content_type_id=ct.pk,
+            object_id=job_num_info.pk,
+            object_repr=str(job_num_info.po),
+            action_flag=CHANGE,
+            change_message='Reassigned to ' + new_tech
+        )
+        old_job_log.save()
+        ct = ContentType.objects.get_for_model(job_info_new_row)
+        new_job_log = LogEntry.objects.log_action(
+            user_id=self.request.user.pk,
+            content_type_id=ct.pk,
+            object_id=job_info_new_row.pk,
+            object_repr=str(job_info_new_row.po),
+            action_flag=ADDITION,
+            change_message='Reassig reason: ' + description
+        )
+        new_job_log.save()
         messages.success(self.request,'The Job ' + job_num_info.job_num + ' has been properly reassigned.')
         return HttpResponseRedirect("/admin/prodfloor/myjob/"+str(job_num_info.id)+"/change/")
 
@@ -934,6 +1062,16 @@ class JobInfo(SessionWizardView):
         creation_time = timezone.now()
         start_time=Times(info_id=ID,start_time_1=creation_time,end_time_1=creation_time,start_time_2=creation_time,end_time_2=creation_time,start_time_3=creation_time,end_time_3=creation_time,start_time_4=creation_time,end_time_4=creation_time)
         start_time.save()
+        ct = ContentType.objects.get_for_model(job_info_new_row)
+        l = LogEntry.objects.log_action(
+            user_id=self.request.user.pk,
+            content_type_id= ct.pk,
+            object_id=job_info_new_row.pk,
+            object_repr=str(job_info_new_row.po),
+            action_flag=CHANGE,
+            change_message= 'Job was created'
+        )
+        l.save()
         return HttpResponseRedirect("/prodfloor/start/")
 
 class Stop(SessionWizardView):
@@ -966,6 +1104,9 @@ class Stop(SessionWizardView):
             po = self.request.session['temp_po']
             pk = self.request.session['temp_pk']
             job = Info.objects.get(pk=pk)
+            if job.status == 'Stopped':
+                messages.error(self.request, _('The Job is already stopped.'))
+                return HttpResponseRedirect('/admin/')
             ID = job.id
             self.get_all_cleaned_data()
             stop_reason=self.cleaned_data['reason_for_stop']
@@ -977,6 +1118,16 @@ class Stop(SessionWizardView):
             job.status = 'Stopped'
             job.save()
             stop.save()
+            ct = ContentType.objects.get_for_model(job)
+            l = LogEntry.objects.log_action(
+                user_id=self.request.user.pk,
+                content_type_id=ct.pk,
+                object_id=job.pk,
+                object_repr=str(job.po),
+                action_flag=CHANGE,
+                change_message='Job was stopped, reason: ' + stop_reason.tier_one_cause
+            )
+            l.save()
             return HttpResponseRedirect("/prodfloor/continue/"+str(pk)+"/" + po)
 
 class DirectSuperUserStop(SessionWizardView):
@@ -1009,6 +1160,9 @@ class DirectSuperUserStop(SessionWizardView):
             po = kwargs.get('po', None)
             pk = kwargs.get('pk', None)
             job = Info.objects.exclude(status = 'Complete').get(pk=pk)
+            if job.status == 'Stopped':
+                messages.error(self.request, _('The Job is already stopped.'))
+                return HttpResponseRedirect('/admin/')
             ID = job.id
             self.get_all_cleaned_data()
             stop_reason=self.cleaned_data['reason_for_stop']
@@ -1020,6 +1174,16 @@ class DirectSuperUserStop(SessionWizardView):
             job.status = 'Stopped'
             job.save()
             stop.save()
+            ct = ContentType.objects.get_for_model(job)
+            l = LogEntry.objects.log_action(
+                user_id=self.request.user.pk,
+                content_type_id=ct.pk,
+                object_id=job.pk,
+                object_repr=str(job.po),
+                action_flag=CHANGE,
+                change_message='Job was stopped, reason: ' + stop_reason
+            )
+            l.save()
             messages.warning(self.request, _('The Stop has been properly registered.'))
             return HttpResponseRedirect('/admin/')
 
@@ -1052,6 +1216,9 @@ class SuperUserStop(SessionWizardView):
             job_num = self.request.session['temp_job_num']
             po = self.request.session['temp_po']
             job = Info.objects.exclude(status = 'Complete').get(job_num=job_num,po=po)
+            if job.status == 'Stopped':
+                messages.error(self.request, _('The Job is already stopped.'))
+                return HttpResponseRedirect('/admin/')
             ID = job.id
             self.get_all_cleaned_data()
             stop_reason=self.cleaned_data['reason_for_stop']
@@ -1063,6 +1230,16 @@ class SuperUserStop(SessionWizardView):
             job.status = 'Stopped'
             job.save()
             stop.save()
+            ct = ContentType.objects.get_for_model(job)
+            l = LogEntry.objects.log_action(
+                user_id=self.request.user.pk,
+                content_type_id=ct.pk,
+                object_id=job.pk,
+                object_repr=str(job.po),
+                action_flag=CHANGE,
+                change_message='Job was stopped, reason: ' + stop_reason
+            )
+            l.save()
             messages.warning(self.request, _('The Stop has been properly registered.'))
             return HttpResponseRedirect('/admin/')
 
@@ -1123,6 +1300,16 @@ class ResumeView(SessionWizardView):
             stop.stop_end_time = timezone.now()
             job.save()
             stop.save()
+            ct = ContentType.objects.get_for_model(job)
+            l = LogEntry.objects.log_action(
+                user_id=self.request.user.pk,
+                content_type_id=ct.pk,
+                object_id=job.pk,
+                object_repr=str(job.po),
+                action_flag=CHANGE,
+                change_message='Job was resumed, solution: ' + solution
+            )
+            l.save()
             return HttpResponseRedirect("/prodfloor/continue/" + str(pk) + "/" + po)
 
 def get_tier_2(request):
@@ -1208,7 +1395,7 @@ def multiplereassigns(request):
                     station = form.cleaned_data['station']
                     reason = form.cleaned_data['reason_description']
                     new_values_dict = {"new_tech":tech,"station":station,"reason":reason,"job_num":job_num,"SU":SU}
-                    multireassignfunct(pk,new_values_dict)
+                    multireassignfunct(request,pk,new_values_dict)
             messages.success(request, 'The Jobs selected have been succesfully reassigned.')
             return HttpResponseRedirect('/prodfloor/su/multiple_reassign')
         else:

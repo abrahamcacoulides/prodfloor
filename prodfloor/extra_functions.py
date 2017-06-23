@@ -1,3 +1,5 @@
+from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
+from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from prodfloor.models import Stops, Times, Features, Info
 import datetime,copy
@@ -282,7 +284,7 @@ def categories(pk,*args, **kwargs):
         category = 1
     return category
 
-def multireassignfunct(pk,newvalues, *args, **kwargs):
+def multireassignfunct(request,pk,newvalues, *args, **kwargs):
     times = Times.objects.get(info__pk=pk)
     features = Features.objects.filter(info__pk=pk)
     time = timezone.now()
@@ -293,7 +295,7 @@ def multireassignfunct(pk,newvalues, *args, **kwargs):
     SU = newvalues['SU']
     new_tech = new_tech_obj.first_name + ' ' + new_tech_obj.last_name
     station = newvalues['station']
-    description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech + ';reason: ' + str(newvalues['reason']) + ' by: ' + SU
+    description = 'Job # '+ job_num_info.job_num + ' reassigned to ' + new_tech + '; reason: ' + str(newvalues['reason']) + ' by: ' + SU
     if job_num_info.status != 'Stopped' and job_num_info.status != 'Reassigned':
         job_num_info.prev_stage = job_num_info.status
     else:
@@ -318,15 +320,35 @@ def multireassignfunct(pk,newvalues, *args, **kwargs):
                             station=station)
     job_info_new_row.save()
     ID = job_info_new_row.id
-    if any(feature == 'None' for feature in features):
-        pass
-    else:
-        for feature in features:
-            job_features_new_row = Features(info_id=ID, features=feature.features)
-            job_features_new_row.save()
     start_time = Times(info_id=ID, start_time_1=time, end_time_1=time, start_time_2=time,
                        end_time_2=time, start_time_3=time, end_time_3=time,
                        start_time_4=time, end_time_4=time)
     start_time.save()
     job_num_stop = Stops(info_id=ID,reason=reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description, po=po)
     job_num_stop.save()
+    if any(feature == 'None' for feature in features):
+        pass
+    else:
+        for feature in features:
+            job_features_new_row = Features(info_id=ID, features=feature.features)
+            job_features_new_row.save()
+    ct = ContentType.objects.get_for_model(job_num_info)
+    old_job_log = LogEntry.objects.log_action(
+        user_id=request.user.pk,
+        content_type_id=ct.pk,
+        object_id=job_num_info.pk,
+        object_repr=str(job_num_info.po),
+        action_flag=CHANGE,
+        change_message='Reassigned to ' + new_tech
+    )
+    old_job_log.save()
+    ct = ContentType.objects.get_for_model(job_info_new_row)
+    new_job_log = LogEntry.objects.log_action(
+        user_id=request.user.pk,
+        content_type_id=ct.pk,
+        object_id=job_info_new_row.pk,
+        object_repr=str(job_info_new_row.po),
+        action_flag=ADDITION,
+        change_message='Reassig reason: ' + description
+    )
+    new_job_log.save()
