@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-23 11:43-0600\n"
+"POT-Creation-Date: 2017-06-26 15:21-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,13 +38,16 @@ msgstr "Documentacion del Problema del Servidor"
 #: .\prodfloor\templates\formtools\wizard\reassign.html:4
 #: .\prodfloor\templates\prodfloor\wizard_form_reassign.html:6
 #: .\prodfloor\templates\prodfloor\wizard_form_reassign.html:12
-#: .\templates\admin\change_form.html:38
+#: .\templates\admin\change_form.html:39
 msgid "Reassign Job"
 msgstr "Reassignar Job"
 
 #: .\it\templates\it\wizard_form_it.html:28
 #: .\prodfloor\templates\formtools\wizard\reassign.html:26
 #: .\prodfloor\templates\formtools\wizard\wizard_form.html:29
+#: .\prodfloor\templates\prodfloor\wizard_form.html:20
+#: .\prodfloor\templates\prodfloor\wizard_form_changestage.html:29
+#: .\prodfloor\templates\prodfloor\wizard_form_generic.html:29
 #: .\prodfloor\templates\prodfloor\wizard_form_reassign.html:29
 #: .\prodfloor\templates\prodfloor\wizard_form_resume.html:29
 #: .\prodfloor\templates\prodfloor\wizard_form_stop.html:29
@@ -54,116 +57,254 @@ msgstr "paso anterior"
 #: .\it\templates\it\wizard_form_it.html:30
 #: .\prodfloor\templates\formtools\wizard\reassign.html:28
 #: .\prodfloor\templates\formtools\wizard\wizard_form.html:31
+#: .\prodfloor\templates\prodfloor\su_report_stop.html:25
+#: .\prodfloor\templates\prodfloor\wizard_form.html:22
+#: .\prodfloor\templates\prodfloor\wizard_form_changestage.html:31
+#: .\prodfloor\templates\prodfloor\wizard_form_generic.html:31
 #: .\prodfloor\templates\prodfloor\wizard_form_reassign.html:31
 #: .\prodfloor\templates\prodfloor\wizard_form_resume.html:31
 #: .\prodfloor\templates\prodfloor\wizard_form_stop.html:31
 msgid "submit"
 msgstr "enviar"
 
-#: .\prodfloor\admin.py:8
+#: .\prodfloor\admin.py:19
 msgid "Features"
 msgstr "Caracteristicas"
 
-#: .\prodfloor\admin.py:9
+#: .\prodfloor\admin.py:20
 msgid "Feature"
 msgstr "Caracteristica"
 
-#: .\prodfloor\admin.py:14
+#: .\prodfloor\admin.py:25
 msgid "Times"
 msgstr "Tiempos"
 
-#: .\prodfloor\admin.py:15
+#: .\prodfloor\admin.py:26
 msgid "Time"
 msgstr "Tiempo"
 
-#: .\prodfloor\admin.py:23
+#: .\prodfloor\admin.py:33
 #, fuzzy
 #| msgid "My Jobs"
 msgid "All Jobs"
 msgstr "Mis Jobs"
 
-#: .\prodfloor\admin.py:28
+#: .\prodfloor\admin.py:38
 #, fuzzy
 #| msgid "Stop"
 msgid "All Stops"
 msgstr "Detener"
 
-#: .\prodfloor\dicts.py:166 .\prodfloor\dicts.py:171
+#: .\prodfloor\admin.py:92
+#, fuzzy, python-format
+#| msgid "Change password"
+msgid "Change history: %s"
+msgstr "Cambiar contraseña"
+
+#: .\prodfloor\dicts.py:239 .\prodfloor\dicts.py:258
 msgid "Door Control in Cartop"
 msgstr "Door Control en Cartop"
 
-#: .\prodfloor\dicts.py:167 .\prodfloor\dicts.py:172
+#: .\prodfloor\dicts.py:240 .\prodfloor\dicts.py:259
 msgid "CPI Board Included"
 msgstr "Tarjeta CPI incluida"
 
-#: .\prodfloor\dicts.py:177
+#: .\prodfloor\dicts.py:278
 msgid "None"
 msgstr "Ninguno"
 
-#: .\prodfloor\forms.py:18
+#: .\prodfloor\forms.py:14 .\prodfloor\forms.py:90 .\prodfloor\forms.py:102
+#: .\prodfloor\forms.py:113 .\prodfloor\forms.py:143
 msgid "Job #"
 msgstr "Job #"
 
-#: .\prodfloor\forms.py:19
+#: .\prodfloor\forms.py:15 .\prodfloor\forms.py:91 .\prodfloor\forms.py:103
+#: .\prodfloor\forms.py:114 .\prodfloor\forms.py:144
 msgid "Prod #"
 msgstr "Prod #"
 
-#: .\prodfloor\forms.py:20
+#: .\prodfloor\forms.py:16
 msgid "Job label"
 msgstr "Job label"
 
-#: .\prodfloor\forms.py:21
+#: .\prodfloor\forms.py:17 .\prodfloor\forms.py:93 .\prodfloor\forms.py:105
 msgid "Job type"
 msgstr "Tipo de Job"
 
-#: .\prodfloor\forms.py:22 .\prodfloor\forms.py:81
+#: .\prodfloor\forms.py:18 .\prodfloor\forms.py:86 .\prodfloor\forms.py:94
+#: .\prodfloor\forms.py:106 .\prodfloor\forms.py:146
 msgid "Station"
 msgstr "Estacion"
 
-#: .\prodfloor\forms.py:23
+#: .\prodfloor\forms.py:19
 msgid "Shipping date"
 msgstr "Fecha de envio"
 
-#: .\prodfloor\forms.py:37
+#: .\prodfloor\forms.py:34 .\prodfloor\forms.py:127
 msgid "Please validate the 'Job #' input."
 msgstr "Revise el 'Job #'"
 
-#: .\prodfloor\forms.py:42
+#: .\prodfloor\forms.py:37
 msgid ""
 "The production order number captured is already assigned to someone else."
 msgstr "El numero de produccion capturado ya esta asignado a alguien mas."
 
-#: .\prodfloor\forms.py:48
+#: .\prodfloor\forms.py:41 .\prodfloor\forms.py:139
 msgid "Please validate the 'Prod #' input."
 msgstr "Revise el 'Prod #'"
 
-#: .\prodfloor\forms.py:53
+#: .\prodfloor\forms.py:43
+#, fuzzy
+#| msgid "Please validate the 'Job #' input."
+msgid "Please validate the 'Job type' input."
+msgstr "Revise el 'Job #'"
+
+#: .\prodfloor\forms.py:45
+#, fuzzy
+#| msgid "Please validate the 'Job #' input."
+msgid "Please validate the 'Station' input."
+msgstr "Revise el 'Job #'"
+
+#: .\prodfloor\forms.py:48
 msgid "Select all the features that apply\n"
 msgstr "Seleccione todas las caracteristicas que apliquen \n"
 
-#: .\prodfloor\forms.py:57
+#: .\prodfloor\forms.py:55
+msgid ""
+"You selected 'None' but also another feature, please confirm your selections."
+msgstr "Selecciono 'None' pero tambien otro caracteristica, por favor confirme sus selecciones."
+
+#: .\prodfloor\forms.py:59
 msgid "Select the reason that fits"
 msgstr "Elija la razon"
 
-#: .\prodfloor\forms.py:70
+#: .\prodfloor\forms.py:71
 msgid "Cause"
 msgstr "Causa"
 
-#: .\prodfloor\forms.py:71
+#: .\prodfloor\forms.py:72
 msgid "First reason"
 msgstr "Causa Nivel Uno"
 
-#: .\prodfloor\forms.py:72
+#: .\prodfloor\forms.py:73
 msgid "Second reason"
 msgstr "Causa Nivel Dos"
 
-#: .\prodfloor\forms.py:80
+#: .\prodfloor\forms.py:85
 msgid "Would be assigned to:"
 msgstr "Se asignara a:"
 
-#: .\prodfloor\forms.py:82
+#: .\prodfloor\forms.py:87 .\prodfloor\forms.py:104 .\prodfloor\forms.py:147
 msgid "Reason"
 msgstr "Razon"
+
+#: .\prodfloor\forms.py:92
+#, fuzzy
+#| msgid "Station"
+msgid "Status"
+msgstr "Estacion"
+
+#: .\prodfloor\forms.py:95 .\prodfloor\forms.py:107
+msgid "Min Start Date"
+msgstr "Fecha minima de inicio"
+
+#: .\prodfloor\forms.py:96 .\prodfloor\forms.py:108
+msgid "Max Start Date"
+msgstr "Fecha maxima de inicio"
+
+#: .\prodfloor\forms.py:97 .\prodfloor\forms.py:109
+msgid "Min Completion Date"
+msgstr "Fecha maxima de fin"
+
+#: .\prodfloor\forms.py:98 .\prodfloor\forms.py:110
+msgid "Max Completion Date"
+msgstr "Fecha minima de fin"
+
+#: .\prodfloor\forms.py:99
+#, fuzzy
+#| msgid "Would be assigned to:"
+msgid "Was assigned to:"
+msgstr "Se asignara a:"
+
+#: .\prodfloor\forms.py:133
+msgid "This job is not active. Please confirm the status of this job."
+msgstr "Este Job no esta activo. Por favor confirme el status del job."
+
+#: .\prodfloor\forms.py:135
+msgid "The job number doesn't match the one for that po in the system."
+msgstr "El numero del job no coincide con el del PO, por favor confirme en el sistema."
+
+#: .\prodfloor\forms.py:137
+#, fuzzy
+#| msgid ""
+#| "The production order number captured is already assigned to someone else."
+msgid "The production order number captured is not in the system."
+msgstr "El numero de produccion capturado ya esta asignado a alguien mas."
+
+#: .\prodfloor\forms.py:145
+#, fuzzy
+#| msgid "Would be assigned to:"
+msgid "Would be assigned to"
+msgstr "Se asignara a:"
+
+
+msgid "This field is required."
+msgstr "Este campo es requerido"
+
+#: .\prodfloor\forms.py:169
+#, fuzzy
+#| msgid "Change"
+msgid "No change."
+msgstr "Cambiar"
+
+
+msgid "Select the checkbox."
+msgstr "Seleccione la casilla"
+
+
+msgid "Current Stage"
+msgstr "Etapa actual"
+
+
+msgid "New Stage"
+msgstr "Nueva Etapa"
+
+#: .\prodfloor\forms.py:184
+msgid ""
+"The job is marked as complete. If job needs to be worked on please use the "
+"Rework function."
+msgstr "El job esta marcado como completo. Si se necesita trabajar en un equipo que ya se habia finalizado use la funcion 'Rework'."
+
+#: .\prodfloor\forms.py:187
+msgid ""
+"The job is marked as reassigned therefore it's no longer available to change "
+"state."
+msgstr "El job esta marcado como 'Reassigned' por lo cual ya no se le pueden hacer modificaciones."
+
+#: .\prodfloor\forms.py:190
+msgid ""
+"The job is marked as Stopped; The job must be active in order to have a "
+"change of stage."
+msgstr "El job esta marcado como 'Stopped' para cambiar la etapa el job debe estar activo."
+
+#: .\prodfloor\forms.py:193
+msgid ""
+"If you'd like to reassign this job please use the specific function for this."
+msgstr "Si desea reassignar el job use la funcion de 'Reassign'"
+
+#: .\prodfloor\forms.py:197
+msgid ""
+"If you'd like to log a rework for this job please use the specific function "
+"for this."
+msgstr "Si desea retrabajar el job use la funcion de 'Rework'"
+
+#: .\prodfloor\forms.py:200
+msgid "This function is not supposed to be used to skip stages."
+msgstr "Esta funcion no es para saltarse etapas."
+
+#: .\prodfloor\forms.py:204
+msgid "The current and new stage are the same."
+msgstr "La etapa actual y la nueva son la misma."
 
 #: .\prodfloor\models.py:26
 msgid "Job"
@@ -182,36 +323,89 @@ msgid "Job Reassignment"
 msgstr "Reassignar Job"
 
 #: .\prodfloor\templates\formtools\wizard\wizard_form.html:6
+#: .\prodfloor\templates\prodfloor\wizard_form.html:6
 msgid "New Job Info"
 msgstr "Informacion de Job Nuevo"
 
 #: .\prodfloor\templates\formtools\wizard\wizard_form.html:12
+#: .\prodfloor\templates\prodfloor\su_report_stop.html:12
+#: .\prodfloor\templates\prodfloor\wizard_form.html:12
 msgid "Job Information"
 msgstr "Informacion de Job"
+
+#: .\prodfloor\templates\prodfloor\MUreassign.html:6
+#: .\templates\admin\index.html:76
+msgid "Multiple Reassigns"
+msgstr "Multiples Reassignaciones"
+
+#: .\prodfloor\templates\prodfloor\change_list_results.html:17
+msgid "Remove from sorting"
+msgstr "Eliminar del filtro"
+
+#: .\prodfloor\templates\prodfloor\change_list_results.html:18
+#, python-format
+msgid "Sorting priority: %(priority_number)s"
+msgstr "Prioridad de filtrado %(priority_number)s"
+
+#: .\prodfloor\templates\prodfloor\change_list_results.html:19
+msgid "Toggle sorting"
+msgstr "Cambiar filtrado"
+
+#: .\prodfloor\templates\prodfloor\detail.html:47
+#: .\prodfloor\templates\prodfloor\stops_record.html:47
+#, fuzzy
+#| msgid "Filter"
+msgid "filter"
+msgstr "Filtrar"
+
+#: .\prodfloor\templates\prodfloor\detail.html:100
+#: .\prodfloor\templates\prodfloor\stops_record.html:95
+msgid "Excel"
+msgstr "Excel"
 
 #: .\prodfloor\templates\prodfloor\newjob.html:11
 msgid "Job Workflow"
 msgstr "Diagrama de Flujo del Job"
 
-#: .\prodfloor\templates\prodfloor\newjob.html:26
-#: .\prodfloor\templates\prodfloor\newjob.html:30
+#: .\prodfloor\templates\prodfloor\newjob.html:29
+#: .\prodfloor\templates\prodfloor\newjob.html:35
 msgid "Back"
 msgstr "Atras"
 
-#: .\prodfloor\templates\prodfloor\newjob.html:27
-#: .\prodfloor\templates\prodfloor\newjob.html:31
+#: .\prodfloor\templates\prodfloor\newjob.html:30
+#: .\prodfloor\templates\prodfloor\newjob.html:36
 msgid "Next"
 msgstr "Siguiente"
 
-#: .\prodfloor\templates\prodfloor\newjob.html:28
-#: .\prodfloor\templates\prodfloor\newjob.html:32
+#: .\prodfloor\templates\prodfloor\newjob.html:31
+#: .\prodfloor\templates\prodfloor\newjob.html:37
 msgid "Stop"
 msgstr "Detener"
 
-#: .\prodfloor\templates\prodfloor\newjob.html:35
+#: .\prodfloor\templates\prodfloor\newjob.html:33
+#: .\prodfloor\templates\prodfloor\newjob.html:39
+#: .\prodfloor\templates\prodfloor\newjob.html:44
+#: .\templates\admin\index.html:58
+msgid "End Shift"
+msgstr "Terminar Turno"
+
+#: .\prodfloor\templates\prodfloor\newjob.html:42
 msgid "Resume"
 msgstr "Resumir"
 
+#: .\prodfloor\templates\prodfloor\su_report_stop.html:6
+#, fuzzy
+#| msgid "Station"
+msgid "Stop Creation"
+msgstr "Estacion"
+
+#: .\prodfloor\templates\prodfloor\wizard_form_changestage.html:6
+msgid "SU Change of Stage"
+msgstr "Cambio de etapa de SU"
+
+#: .\prodfloor\templates\prodfloor\wizard_form_changestage.html:12
+#: .\prodfloor\templates\prodfloor\wizard_form_generic.html:6
+#: .\prodfloor\templates\prodfloor\wizard_form_generic.html:12
 #: .\prodfloor\templates\prodfloor\wizard_form_resume.html:6
 #: .\prodfloor\templates\prodfloor\wizard_form_resume.html:12
 msgid "Resume Job"
@@ -219,16 +413,35 @@ msgstr "Resumir Job"
 
 #: .\prodfloor\templates\prodfloor\wizard_form_stop.html:6
 #: .\prodfloor\templates\prodfloor\wizard_form_stop.html:12
+#: .\templates\admin\change_form.html:42
 msgid "Stop Job"
 msgstr "Detener Job"
 
-#: .\prodfloor\views.py:468
+#: .\prodfloor\views.py:466 .\prodfloor\views.py:518 .\prodfloor\views.py:577
+#: .\prodfloor\views.py:627
+msgid "Reason for the stop: "
+msgstr "Razon para el paro"
+
+#: .\prodfloor\views.py:813
 msgid ""
 "This was the last step for this stage, you wont be able to return to it once "
 "you click OK."
 msgstr ""
-"Este fue el ultimo paso para esta etapa, no podra regresar a ella "
-"una vez que presione OK."
+"Este fue el ultimo paso para esta etapa, no podra regresar a ella una vez "
+"que presione OK."
+
+#: .\prodfloor\views.py:1119 .\prodfloor\views.py:1175
+#: .\prodfloor\views.py:1231
+msgid "The Job is already stopped."
+msgstr "El job ya esta detenido."
+
+#: .\prodfloor\views.py:1198 .\prodfloor\views.py:1254
+msgid "The Stop has been properly registered."
+msgstr "El paro se registro correctamente."
+
+#: .\prodfloor\views.py:1507
+msgid "The Stage has been properly changed."
+msgstr "La etapa se cambio correctamente"
 
 #: .\stopscauses\models.py:12
 msgid "First Level Cause"
@@ -280,9 +493,9 @@ msgstr "Cerrar sesion"
 msgid "Home"
 msgstr "Inicio"
 
-#: .\templates\admin\base_site.html:6
-msgid "Django administration"
-msgstr "Django administracion"
+#: .\templates\admin\base_site.html:11 .\templates\base_site.html:11
+msgid "ProdFloor administration"
+msgstr "ProdFloor administration"
 
 #: .\templates\admin\change_form.html:21 .\templates\admin\change_list.html:56
 #, python-format
@@ -293,28 +506,44 @@ msgstr "Agregar %(name)s"
 msgid "History"
 msgstr "Historial"
 
-#: .\templates\admin\change_form.html:42
+#: .\templates\admin\change_form.html:45
+#, fuzzy
+#| msgid "Change"
+msgid "Change Stage"
+msgstr "Cambiar"
+
+#: .\templates\admin\change_form.html:48
+msgid "Rework required"
+msgstr "Retrabajo requerido"
+
+#: .\templates\admin\change_form.html:52
 msgid "Continue With Job"
 msgstr "Continuar con Job"
 
-#: .\templates\admin\change_form.html:48
+#: .\templates\admin\change_form.html:59
+#, fuzzy
+#| msgid "Job Reassignment"
+msgid "Job Reassigned"
+msgstr "Reassignar Job"
+
+#: .\templates\admin\change_form.html:63
 msgid "Job Complete"
 msgstr "Job Completo"
 
-#: .\templates\admin\change_form.html:52
+#: .\templates\admin\change_form.html:68
 msgid "Document Server Stop"
 msgstr "Documentacion Paro por Servidor"
 
-#: .\templates\admin\change_form.html:56
+#: .\templates\admin\change_form.html:72
 msgid "View on site"
 msgstr "Ver en el sitio"
 
-#: .\templates\admin\change_form.html:68 .\templates\admin\change_list.html:65
+#: .\templates\admin\change_form.html:84 .\templates\admin\change_list.html:65
 #: .\templates\admin\login.html:21 .\templates\registration\login.html:21
 msgid "Please correct the error below."
 msgstr "Por favor corrija el error."
 
-#: .\templates\admin\change_form.html:68 .\templates\admin\change_list.html:65
+#: .\templates\admin\change_form.html:84 .\templates\admin\change_list.html:65
 #: .\templates\admin\login.html:21 .\templates\registration\login.html:21
 msgid "Please correct the errors below."
 msgstr "Por favor corrija los errores."
@@ -348,43 +577,61 @@ msgstr "No tiene permisos para editar nada."
 msgid "Available actions"
 msgstr "Acciones disponibles"
 
-#: .\templates\admin\index.html:58
-msgid "End Shift"
-msgstr "Terminar Turno"
-
 #: .\templates\admin\index.html:61
+msgid "Reports Generation"
+msgstr "Generacion de Reportes"
+
+#: .\templates\admin\index.html:63
+msgid "Jobs Report"
+msgstr "Reportes de Jobs"
+
+#: .\templates\admin\index.html:64
+#, fuzzy
+#| msgid "Stops per Job"
+msgid "Stops Report"
+msgstr "Paros por Job"
+
+#: .\templates\admin\index.html:66
 msgid "Available views"
 msgstr "Vistas Disponibles"
 
-#: .\templates\admin\index.html:63
-msgid "M2000"
-msgstr "M2000"
-
-#: .\templates\admin\index.html:64
-msgid "M4000"
-msgstr "M4000"
-
-#: .\templates\admin\index.html:65
-msgid "ELEM"
-msgstr "Element"
-
-#: .\templates\admin\index.html:66
+#: .\templates\admin\index.html:68
 msgid "All"
 msgstr "Todos"
 
 #: .\templates\admin\index.html:69
+msgid "M2000"
+msgstr "M2000"
+
+#: .\templates\admin\index.html:70
+msgid "M4000"
+msgstr "M4000"
+
+#: .\templates\admin\index.html:71
+msgid "ELEM"
+msgstr "Element"
+
+#: .\templates\admin\index.html:73
+msgid "Super User Actions"
+msgstr "Acciones de Super User"
+
+#: .\templates\admin\index.html:75
+msgid "Report a Stop"
+msgstr "Reportar un Paro"
+
+#: .\templates\admin\index.html:79
 msgid "Recent actions"
 msgstr "Acciones recientes"
 
-#: .\templates\admin\index.html:70
+#: .\templates\admin\index.html:80
 msgid "My actions"
 msgstr "Mis acciones"
 
-#: .\templates\admin\index.html:74
+#: .\templates\admin\index.html:84
 msgid "None available"
 msgstr "No disponibles"
 
-#: .\templates\admin\index.html:88
+#: .\templates\admin\index.html:98
 msgid "Unknown content"
 msgstr "Contenido desconocido"
 
@@ -409,13 +656,11 @@ msgstr "Iniciar sesion"
 msgid "You're logged in as,"
 msgstr "Iniciaste sesion como,"
 
-#: .\templates\base_site.html:3
-msgid "ProdFloor site admin"
-msgstr "Prodfloor site admin"
+#~ msgid "Django administration"
+#~ msgstr "Django administracion"
 
-#: .\templates\base_site.html:6
-msgid "ProdFloor administration"
-msgstr "ProdFloor administration"
+#~ msgid "ProdFloor site admin"
+#~ msgstr "Prodfloor site admin"
 
 #~ msgid "Solution"
 #~ msgstr "Solucion"

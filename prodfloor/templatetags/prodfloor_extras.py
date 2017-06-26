@@ -137,6 +137,24 @@ def getstation(A,*args, **kwargs):
     return stations[A]
 
 @register.simple_tag()
+def mgetstation(A,*args, **kwargs):
+    stations = {'1': 'S1',
+                '2': 'S2',
+                '3': 'S3',
+                '4': 'S4',
+                '5': 'S5',
+                '6': 'S6',
+                '7': 'S7',
+                '8': 'S8',
+                '9': 'S9',
+                '10': 'S10',
+                '11': 'S11',
+                '12': 'S12',
+                '13': 'E1',
+                '14': 'E2'}
+    return stations[A]
+
+@register.simple_tag()
 def resultingtime(pk,number, *args, **kwargs):
     now = timezone.now()
     end = 0

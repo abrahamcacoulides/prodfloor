@@ -128,7 +128,7 @@ class SUStop(forms.Form):
             if (po.isdigit()) and len(po) == 7:
                 if any(po in obj.po for obj in previous_jobs):
                     try:
-                        job_with_po = Info.objects.exclude(status='Complete').exclude(status="Reassigned").get(po=po)
+                        job_with_po = Info.objects.exclude(status='Complete').exclude(status="Reassigned").exclude('Stopped').get(po=po)
                     except:
                         raise forms.ValidationError( {'po': _("This job is not active. Please confirm the status of this job.")})
                     if job_num != job_with_po.job_num:

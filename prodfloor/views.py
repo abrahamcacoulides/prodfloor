@@ -649,17 +649,14 @@ def EndShift(request):
     tech_name = request.user.first_name + ' ' + request.user.last_name
     jobs = Info.objects.filter(Tech_name= tech_name).exclude(status='Complete').exclude(status='Reassigned')
     for obj in jobs:
-        obj.status = 'Stopped'
         ID = obj.id
         po = obj.po
         stop_reason = 'Shift ended'
         time = timezone.now()
         description = 'The user ' + tech_name + ' ended his shift'
-        if obj.status != 'Stopped' and obj.status != 'Reassigned':
-            obj.prev_stage = obj.status
         if obj.status == 'Stopped':
             stops = Stops.objects.filter(info_id=obj.id)
-            if any('Shift ended' in stop.reason for stop in stops):
+            if any('Shift ended' in stop.reason and 'Not available yet' in stop.solution for stop in stops):
                 pass
             else:
                 stop = Stops(info_id=ID, reason=stop_reason, solution='Not available yet', extra_cause_1='N/A',
@@ -677,6 +674,26 @@ def EndShift(request):
                     change_message='Job was stopped due to a shift end'
                 )
                 l.save()
+        else:
+            if obj.status != 'Reassigned':
+                obj.prev_stage = obj.status
+                obj.save()
+            stop = Stops(info_id=ID, reason=stop_reason, solution='Not available yet', extra_cause_1='N/A',
+                         extra_cause_2='N/A', stop_start_time=time, stop_end_time=time,
+                         reason_description=description, po=po)
+            stop.save()
+            obj.status = 'Stopped'
+            obj.save()
+            ct = ContentType.objects.get_for_model(obj)
+            l = LogEntry.objects.log_action(
+                user_id=request.user.pk,
+                content_type_id=ct.pk,
+                object_id=obj.pk,
+                object_repr=str(obj.po),
+                action_flag=CHANGE,
+                change_message='Job was stopped due to a shift end'
+            )
+            l.save()
     logout(request)
     messages.success(request, 'You succesfully ended your shift.')
     return HttpResponseRedirect('/admin/')
@@ -925,7 +942,6 @@ class Reassign(SessionWizardView):
                         stop.solution = 'Job reassigned to ' + str(new_tech)
                         stop.stop_end_time = time
                         stop.save()
-            pass
         if job_num_info.prev_stage == 'Beginning':
             times.end_time_1 = time
         elif job_num_info.prev_stage == 'Program':
@@ -976,7 +992,7 @@ class Reassign(SessionWizardView):
             object_id=job_info_new_row.pk,
             object_repr=str(job_info_new_row.po),
             action_flag=ADDITION,
-            change_message='Reassig reason: ' + description
+            change_message='Reassign reason: ' + description
         )
         new_job_log.save()
         messages.success(self.request,'The Job ' + job_num_info.job_num + ' has been properly reassigned.')

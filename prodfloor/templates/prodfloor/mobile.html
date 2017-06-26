@@ -46,7 +46,7 @@
     <h1><center>TECHNICIAN</center></h1>
     {% for job in job_list %}
           <hr>
-          <div class="text-center"><h2>{{ job.Tech_name }}</h2></div>
+        <div class="text-center"><h2><span style="font-size: 25px">{{ job.Tech_name }}</span></h2></div>
 
       {% endfor %}
     </div>
@@ -62,7 +62,7 @@
   <h1><center>STATUS</center></h1>
     {% for job in job_list %}
         <hr>
-    <div class="progress" style="height: 32px">
+    <div class="progress" style="height: 33px">
         <div class="{% getcolor job %}" role="progressbar"
              aria-valuenow="{% getpercentage job.current_index job.stage_len %}" aria-valuemin="0" aria-valuemax="100"
              style="width:{% getpercentage job.current_index job.stage_len %}%"><span style="position: absolute;color: black">{% ETF job %}</span></div></div>
@@ -79,7 +79,7 @@
   <h1><center>ST</center></h1>
     {% for job in job_list %}
         <hr>
-    <div class="text-center"><h2>{% getstation job.station %}</h2></div>
+    <div class="text-center"><h2>{% mgetstation job.station %}</h2></div>
     {% endfor %}
 </div>
 <div class="col-sm-1" >
