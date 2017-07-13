@@ -46,6 +46,7 @@ class InfoAdmin(admin.ModelAdmin):
     inlines = [FeaturesInline]
     list_display = ('job_num','label','station','po','job_type','ship_date', 'status')
     list_filter = ['status']
+    search_fields = ['job_num', 'ship_date', 'po']
 
     def get_queryset(self, request):
         name=request.user.first_name + ' ' + request.user.last_name
@@ -59,7 +60,8 @@ class JobsInLine(admin.ModelAdmin):
     ]
     inlines = [FeaturesInline, TimesInline]
     list_display = ('Tech_name','job_num','label','station','po', 'job_type', 'ship_date', 'status')
-    search_fields = ['job_num','ship_date']
+    search_fields = ['job_num','ship_date','po']
+    list_filter = ['Tech_name','job_type','status']
 
     def history_view(self, request, object_id, extra_context=None):
         "The 'history' admin view for this model."
@@ -112,6 +114,8 @@ class StopsAdmin(admin.ModelAdmin):
         (None, {'fields': ['info','po','reason','extra_cause_1','extra_cause_2','reason_description','solution', 'stop_start_time', 'stop_end_time']}),
     ]
     list_display = ('info','po','reason','extra_cause_1','extra_cause_2','solution', 'stop_start_time', 'stop_end_time')
+    search_fields = ['po', 'reason']
+    list_filter = ['reason',]
 
 
 admin.site.register(MyJob,JobsInLine)

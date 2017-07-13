@@ -88,7 +88,7 @@ dict_m4000_new = {
               ['Fire Service Phase II (Pag CPI)', ['CPI'], [1]],  # if CPI
               ['Movement Indication (Pag CPI)', ['CPI'], [1]],  # if CPI
               ['Car Calls (Pag CPI)', ['CPI'], [1]],  # if CPI
-              ['Calls (Pag 16)', [None], [None]],
+              ['Calls (Pag 16)', ['CPI'], [0]],
               ['Serial Hall Calls (Pag SH)', ['SHC'], [1]],  # if serial hall calls
               ['Pruebas de entradas y salidas (Pag 15, 17, etc.)', [None], [None]],
               ['Calibracion EMCO Board', ['EMCO','COP'], [1, 1]],
@@ -342,7 +342,8 @@ headers = ['Job #',
            'Job Type',
            'Status',
            'Station',
-           'Shipping Date',
+           'Start Date',
+           'End Date',
            'Beginning',
            'Program',
            'Logic',
@@ -356,6 +357,8 @@ headers = ['Job #',
 stops_headers = ['Job #',
                  'PO',
                  'Job Type',
+                 'Start',
+                 'Stop',
                  'Reason',
                  'Cause',
                  'Add. Cause',

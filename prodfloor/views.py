@@ -14,7 +14,7 @@ from .extra_functions import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import ugettext_lazy as _
 from xlsxwriter.workbook import Workbook
-from django.contrib.admin.models import LogEntry, ADDITION,CHANGE,DELETION
+from django.contrib.admin.models import LogEntry, ADDITION,CHANGE
 from django.contrib.contenttypes.models import ContentType
 
 def prodfloor_view(request):
@@ -62,7 +62,10 @@ def detail(request):#reports view
             station = form.cleaned_data['station']
             before = form.cleaned_data['before']
             after = form.cleaned_data['after']
+            completed_before = form.cleaned_data['completed_before']
+            completed_after = form.cleaned_data['completed_after']
             tech = form.cleaned_data['tech']
+            #datetime.datetime.combine(form.cleaned_data['before'],datetime.datetime.min.time())
             if job_num != '':
                 job = job.filter(job_num__contains=job_num)
             if tech != None:
@@ -77,7 +80,9 @@ def detail(request):#reports view
             if station:
                 job = job.filter(station__in=station)
             if after:
+                after = datetime.datetime.combine(after,datetime.datetime.min.time())
                 if before:
+                    before = datetime.datetime.combine(before,datetime.datetime.max.time())
                     times = Times.objects.filter(start_time_1__gte=after,start_time_1__lte=before)
                     times_pks=[]
                     for i in times:
@@ -91,11 +96,35 @@ def detail(request):#reports view
                     job = job.filter(pk__in=times_pks)
             else:
                 if before:
+                    before = datetime.datetime.combine(before, datetime.datetime.max.time())
                     times = Times.objects.filter(start_time_1__lte=before)
                     times_pks = []
                     for i in times:
                         times_pks.append(i.info.pk)
                     job = job.filter(pk__in=times_pks)
+            if completed_after:
+                completed_after = datetime.datetime.combine(completed_after, datetime.datetime.min.time())
+                if completed_before:
+                    completed_before = datetime.datetime.combine(completed_before, datetime.datetime.max.time())
+                    times = Times.objects.filter(end_time_4__gte=completed_after,end_time_4__lte=completed_before)
+                    times_pks=[]
+                    for i in times:
+                        times_pks.append(i.info.pk)
+                    job = job.filter(pk__in=times_pks).exclude(status='Reassigned')
+                else:
+                    times = Times.objects.filter(end_time_4__gte=completed_after)
+                    times_pks = []
+                    for i in times:
+                        times_pks.append(i.info.pk)
+                    job = job.filter(pk__in=times_pks).exclude(status='Reassigned')
+            else:
+                if completed_before:
+                    completed_before = datetime.datetime.combine(completed_before, datetime.datetime.max.time())
+                    times = Times.objects.filter(end_time_4__lte=completed_before)
+                    times_pks = []
+                    for i in times:
+                        times_pks.append(i.info.pk)
+                    job = job.filter(pk__in=times_pks).exclude(status='Reassigned')
             request.session['report_objects'] = []
             for item in job:
                 request.session['report_objects'].append(item.pk)
@@ -178,20 +207,26 @@ def stops_reports(request):#reports for the stops view
                     jobs_lst.append(j.pk)
                 stops = stops.filter(info_id__in=jobs_lst)
             if after:
+                after = datetime.datetime.combine(after, datetime.datetime.min.time())
                 if before:
+                    before = datetime.datetime.combine(before, datetime.datetime.max.time())
                     stops = stops.filter(stop_start_time__gte=after,stop_start_time__lte=before)
                 else:
                     stops = stops.filter(stop_start_time__gte=after)
             else:
                 if before:
+                    before = datetime.datetime.combine(before, datetime.datetime.max.time())
                     stops = stops.filter(stop_start_time__lte=before)
             if completed_after:
+                completed_after = datetime.datetime.combine(completed_after, datetime.datetime.min.time())
                 if completed_before:
+                    completed_before = datetime.datetime.combine(completed_before, datetime.datetime.max.time())
                     stops = stops.filter(stop_end_time__gte=completed_after,stop_end_time__lte=completed_before)
                 else:
                     stops = stops.filter(stop_end_time__gte=completed_after)
             else:
                 if completed_before:
+                    completed_before = datetime.datetime.combine(completed_before, datetime.datetime.max.time())
                     stops = stops.filter(stop_end_time__lte=completed_before)
             request.session['stops_objects'] = []
             for item in stops:
@@ -231,6 +266,104 @@ def stops_reports(request):#reports for the stops view
             stop = paginator.page(paginator.num_pages)
         return render(request, 'prodfloor/stops_record.html', {'result_headers': stops_headers, 'jobs': stop,'form':form,'job':stops})
 
+@login_required()
+def stops_reports_techs(request):#reports for the stops view
+    job = Info.objects.all()
+    stops = Stops.objects.all()
+    if request.method == 'POST':#this if is for the filtering, the arguments to filter are received through it
+        form = StopRecord(request.POST)
+        if form.is_valid():
+            job_num = form.cleaned_data['job_num']
+            po = form.cleaned_data['po']
+            reason = form.cleaned_data['reason'].values_list('tier_one_cause',flat=True)
+            job_type = form.cleaned_data['job_type']
+            station = form.cleaned_data['station']
+            before = form.cleaned_data['before']
+            after = form.cleaned_data['after']
+            completed_after = form.cleaned_data['completed_after']
+            completed_before = form.cleaned_data['completed_before']
+            if job_num != '':
+                job=job.filter(job_num__contains=job_num)
+                jobs_lst = []
+                for j in job:
+                    jobs_lst.append(j.pk)
+                stops = stops.filter(info_id__in=jobs_lst)
+            if po != '':
+                stops = stops.filter(po__contains=po)
+            if reason:
+                stops = stops.filter(reason__in=reason)
+            if job_type:
+                job = job.filter(job_type__in=job_type)
+                jobs_lst = []
+                for j in job:
+                    jobs_lst.append(j.pk)
+                stops = stops.filter(info_id__in=jobs_lst)
+            if station:
+                job = job.filter(station__in=station)
+                jobs_lst = []
+                for j in job:
+                    jobs_lst.append(j.pk)
+                stops = stops.filter(info_id__in=jobs_lst)
+            if after:
+                after = datetime.datetime.combine(after, datetime.datetime.min.time())
+                if before:
+                    before = datetime.datetime.combine(before, datetime.datetime.max.time())
+                    stops = stops.filter(stop_start_time__gte=after,stop_start_time__lte=before)
+                else:
+                    stops = stops.filter(stop_start_time__gte=after)
+            else:
+                if before:
+                    before = datetime.datetime.combine(before, datetime.datetime.max.time())
+                    stops = stops.filter(stop_start_time__lte=before)
+            if completed_after:
+                completed_after = datetime.datetime.combine(completed_after, datetime.datetime.min.time())
+                if completed_before:
+                    completed_before = datetime.datetime.combine(completed_before, datetime.datetime.max.time())
+                    stops = stops.filter(stop_end_time__gte=completed_after,stop_end_time__lte=completed_before)
+                else:
+                    stops = stops.filter(stop_end_time__gte=completed_after)
+            else:
+                if completed_before:
+                    completed_before = datetime.datetime.combine(completed_before, datetime.datetime.max.time())
+                    stops = stops.filter(stop_end_time__lte=completed_before)
+            request.session['stops_objects'] = []
+            for item in stops:
+                request.session['stops_objects'].append(item.pk)
+            paginator = Paginator(stops, 25)
+            stop = paginator.page(1)
+            return render(request, 'prodfloor/stops_record_techs.html', {'result_headers': stops_headers,'jobs':stop,'form':form,'job':stops})
+        else:
+            request.session['stops_objects'] = []
+            paginator = Paginator(stops, 25)
+            stop = paginator.page(1)
+            for item in stops:
+                request.session['stops_objects'].append(item.pk)
+            return render(request, 'prodfloor/stops_record_techs.html', {'result_headers': stops_headers,'jobs':stop,'form':form,'job':stops})
+    else:#this else refers to when the page is been requested, usually on the first access and when pagination is clicked ('next' or 'previous')
+        try:
+            if request.session['stops_objects']:
+                stops = []
+                pks = request.session['stops_objects']
+                for pk in pks:
+                    stops.append(Stops.objects.get(pk=pk))
+        except KeyError:
+            pass
+        form = StopRecord
+        paginator = Paginator(stops, 25)
+        request.session['stops_objects'] = []
+        for item in stops:
+            request.session['stops_objects'].append(item.pk)
+        page = request.GET.get('page')
+        try:
+            stop = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            stop = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            stop = paginator.page(paginator.num_pages)
+        return render(request, 'prodfloor/stops_record_techs.html', {'result_headers': stops_headers, 'jobs': stop,'form':form,'job':stops})
+
 def generatexml(request):
     stations_dict = {'0':'-----',
                    '1':'S1',
@@ -264,6 +397,8 @@ def generatexml(request):
     while c < len(jobs)+1:
         for pk in jobs:
             job = Info.objects.get(pk=pk)
+            start = gettimes(pk,'start')
+            end = gettimes(pk,'start')
             beginning_time = spentTime(pk,1)
             program_time = spentTime(pk, 2)
             logic_time = spentTime(pk, 3)
@@ -279,17 +414,18 @@ def generatexml(request):
             sheet.write(c, 2, job_type_dict[job.job_type],other_format)
             sheet.write(c, 3, job.status,other_format)
             sheet.write(c, 4, stations_dict[job.station],other_format)
-            sheet.write(c, 5, str(job.ship_date).split('.', 2)[0], other_format)
-            sheet.write(c, 6, beginning_time, other_format)
-            sheet.write(c, 7, program_time, other_format)
-            sheet.write(c, 8, logic_time, other_format)
-            sheet.write(c, 9, ending_time, other_format)
-            sheet.write(c, 10, elapsed_time, other_format)
-            sheet.write(c, 11, number_of_stops, other_format)
-            sheet.write(c, 12, time_on_stop, other_format)
-            sheet.write(c, 13, eff_time, other_format)
-            sheet.write(c, 14, category, other_format)
-            sheet.write(c, 15, tech, other_format)
+            sheet.write(c, 5, str(start), other_format)
+            sheet.write(c, 6, str(end), other_format)
+            sheet.write(c, 7, beginning_time, other_format)
+            sheet.write(c, 8, program_time, other_format)
+            sheet.write(c, 9, logic_time, other_format)
+            sheet.write(c, 10, ending_time, other_format)
+            sheet.write(c, 11, elapsed_time, other_format)
+            sheet.write(c, 12, number_of_stops, other_format)
+            sheet.write(c, 13, time_on_stop, other_format)
+            sheet.write(c, 14, eff_time, other_format)
+            sheet.write(c, 15, category, other_format)
+            sheet.write(c, 16, tech, other_format)
             c+=1
     sheet.set_column(0,0,10.29)
     sheet.set_column(3,3,13.14)
@@ -339,14 +475,16 @@ def generatestopsxml(request):
             sheet.write(c, 0, job.job_num,other_format)
             sheet.write(c, 1, stop.po,other_format)
             sheet.write(c, 2, job_type_dict[job.job_type],other_format)
-            sheet.write(c, 3, stop.reason,other_format)
-            sheet.write(c, 4, stop.extra_cause_1, other_format)
-            sheet.write(c, 5, stop.extra_cause_2, other_format)
-            sheet.write(c, 6, stop.reason_description, other_format)
-            sheet.write(c, 7, stop.solution, other_format)
-            sheet.write(c, 8, stations_dict[job.station],other_format)
-            sheet.write(c, 9, time_on_stop, other_format)
-            sheet.write(c, 10, gettech(pk), other_format)
+            sheet.write(c, 3, str(stop.stop_start_time).split('.', 2)[0],other_format)
+            sheet.write(c, 4, str(stop.stop_end_time).split('.', 2)[0],other_format)
+            sheet.write(c, 5, stop.reason,other_format)
+            sheet.write(c, 6, stop.extra_cause_1, other_format)
+            sheet.write(c, 7, stop.extra_cause_2, other_format)
+            sheet.write(c, 8, stop.reason_description, other_format)
+            sheet.write(c, 9, stop.solution, other_format)
+            sheet.write(c, 10, stations_dict[job.station],other_format)
+            sheet.write(c, 11, time_on_stop, other_format)
+            sheet.write(c, 12, gettech(job.pk), other_format)
             c+=1
     sheet.set_column(0,0,10.29)
     sheet.set_column(3,3,13.14)
@@ -1177,7 +1315,7 @@ class DirectSuperUserStop(SessionWizardView):
             ID = job.id
             self.get_all_cleaned_data()
             stop_reason=self.cleaned_data['reason_for_stop']
-            description = self.cleaned_data['reason_description'] + '//stop created by: ' + SU
+            description = self.cleaned_data['reason_description'] + '// stop created by: ' + SU
             time = timezone.now()
             stop = Stops(info_id=ID,reason=stop_reason,extra_cause_1='N/A',extra_cause_2='N/A',solution='Not available yet',stop_start_time=time,stop_end_time= time,reason_description=description,po=po)
             if job.status != 'Stopped' and job.status != 'Reassigned':
@@ -1192,7 +1330,7 @@ class DirectSuperUserStop(SessionWizardView):
                 object_id=job.pk,
                 object_repr=str(job.po),
                 action_flag=CHANGE,
-                change_message='Job was stopped, reason: ' + stop_reason
+                change_message='Job was stopped, reason: ' + stop_reason.tier_one_cause
             )
             l.save()
             messages.warning(self.request, _('The Stop has been properly registered.'))
@@ -1458,18 +1596,21 @@ class StageChange(SessionWizardView):
             pk = kwargs.get('pk',None)
             job = Info.objects.get(pk=pk)
             current_stage = job.status
+            current_stage_index = list(dict_of_stages.keys())[list(dict_of_stages.values()).index(current_stage)]
             new_stage = self.cleaned_data.get('new_stage')
             times = Times.objects.get(info_id=pk)
             stages_change = list(dict_of_stages.keys())[list(dict_of_stages.values()).index(current_stage)]-list(dict_of_stages.keys())[list(dict_of_stages.values()).index(new_stage)]
-            if current_stage == 4:
+            if current_stage_index == 4:
                 if stages_change == 1:
                     times.start_time_4=times.start_time_1
                     times.end_time_3=times.start_time_1
+                    times.save()
                 elif stages_change == 2:
                     times.start_time_4 = times.start_time_1
                     times.end_time_3 = times.start_time_1
                     times.start_time_3 = times.start_time_1
                     times.end_time_2 = times.start_time_1
+                    times.save()
                 elif stages_change == 1:
                     times.start_time_4 = times.start_time_1
                     times.end_time_3 = times.start_time_1
@@ -1477,19 +1618,23 @@ class StageChange(SessionWizardView):
                     times.end_time_2 = times.start_time_1
                     times.start_time_2 = times.start_time_1
                     times.end_time_1 = times.start_time_1
-            elif current_stage == 3:
+                    times.save()
+            elif current_stage_index == 3:
                 if stages_change == 1:
                     times.start_time_3 = times.start_time_1
                     times.end_time_2 = times.start_time_1
+                    times.save()
                 elif stages_change == 2:
                     times.start_time_3 = times.start_time_1
                     times.end_time_2 = times.start_time_1
                     times.start_time_2 = times.start_time_1
                     times.end_time_1 = times.start_time_1
-            elif current_stage == 2:
+                    times.save()
+            elif current_stage_index == 2:
                 if stages_change == 1:
                     times.start_time_2 = times.start_time_1
                     times.end_time_1 = times.start_time_1
+                    times.save()
             times.save()
             job.status = new_stage
             job.current_index = 0
@@ -1506,3 +1651,8 @@ class StageChange(SessionWizardView):
             l.save()
             messages.success(self.request, _('The Stage has been properly changed.'))
             return HttpResponseRedirect('/admin/')
+
+@login_required()
+def stopdetail(request,pk):
+    stop = Stops.objects.get(pk=pk)
+    return render(request, 'prodfloor/stopdetails.html', {'stop': stop})

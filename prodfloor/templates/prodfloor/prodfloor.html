@@ -17,6 +17,7 @@
 <meta name="viewport" content="width=device-width, initial-scal e=1">
 <!-- Bootstrap -->
 <link rel="stylesheet" type="text/css" href="{% static 'prodfloor/bootstrap.css' %}"/>
+<link rel="stylesheet" href="{% static 'prodfloor/w3s.css' %}"/>
 
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -60,10 +61,11 @@
   <h1><center>STATUS</center></h1>
     {% for job in job_list %}
         <hr>
-    <div class="progress" style="height: 32px">
-        <div class="{% getcolor job %}" role="progressbar"
-             aria-valuenow="{% getpercentage job.current_index job.stage_len %}" aria-valuemin="0" aria-valuemax="100"
-             style="width:{% getpercentage job.current_index job.stage_len %}%"><span style="position: absolute;color: black">{% ETF job %}</span></div></div>
+    <div class="w3-container" style="height: 32px">
+    <div class="w3-light-grey w3-xlarge w3-round">
+        <div class="{% getcolor job %}" style="width:{% getpercentage job.pk job.current_index job.stage_len %}%">{% ETF job %}</div>
+    </div>
+    </div>
     {% endfor %}
 </div>
 <div class="col-md-1" >

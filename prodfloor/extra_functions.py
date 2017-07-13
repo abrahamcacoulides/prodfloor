@@ -107,6 +107,8 @@ def spentTime(pk,number):
     times = Times.objects.get(info_id=pk)
     job = Info.objects.get(pk=pk)
     status = job.status
+    if status == 'Stoppped':
+        status = job.prev_stage
     status_list = ['','Beginning','Program','Logic','Ending']
     stops_shift_end = Stops.objects.filter(info_id=pk,reason='Shift ended')
     if number == 1:
@@ -126,11 +128,9 @@ def spentTime(pk,number):
     for stop in stops_shift_end:
         if stop.stop_start_time > start and stop.stop_end_time<end:#el inicio del stop debe de ser mayor quue el inicio del stage y el
             if stop.stop_start_time == stop.stop_end_time: #job is in shift end stop
-                if stop.stop_start_time > start:
-                    time_on_shift_end += now - stop.stop_start_time
+                time_on_shift_end += now - stop.stop_start_time
             else:
-                if stop.stop_start_time > start and stop.stop_end_time < end:
-                    time_on_shift_end += stop.stop_end_time - stop.stop_start_time
+                time_on_shift_end += stop.stop_end_time - stop.stop_start_time
     if end>start:#means that the stop_time has been set
         elapsed_time = str((end-start)-time_on_shift_end).split('.', 2)[0]
         return elapsed_time
@@ -350,3 +350,15 @@ def multireassignfunct(request,pk,newvalues, *args, **kwargs):
         change_message='Reassig reason: ' + description
     )
     new_job_log.save()
+
+def gettimes(pk,B,*args, **kwargs):
+    times = Times.objects.get(info_id=pk)
+    if B == 'start':
+        return times.start_time_1.date()
+    elif B == 'end':
+        if times.start_time_1 == times.end_time_4:
+            return '-'
+        else:
+            return times.end_time_4.date()
+    else:
+        return 'N/A'

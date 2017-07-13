@@ -1,0 +1,36 @@
+{% extends "base_site.html" %}
+{% load staticfiles %}
+{% load i18n %}
+{% load prodfloor_extras %}
+<head>
+    <title>{% block title %}{% trans "Stop Details" %}{% endblock %}</title>
+</head>
+{% block content %}
+<div class="results">
+<table id="result_list" style="font-size: 20px">
+<caption>{% trans "Details for stop on Job#" %}{{ stop.info }}</caption>
+    <tr>
+        <th>{% trans "Reason for the stop:" %}</th>
+        <td>{{ stop.reason }}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Extra Cause 1:" %}</th>
+        <td>{{ stop.extra_cause_1 }}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Extra Cause 2:" %}</th>
+        <td>{{ stop.extra_cause_2 }}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Reason Description:" %}</th>
+        <td>{{ stop.reason_description }}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Solution:" %}</th>
+        <td>{{ stop.solution }}</td>
+    </tr>
+</table>
+<br>
+<a href="/prodfloor/stops_techs/" ><button style="padding: 10px 20px;font-size: 20px;border:none;background-color:gray;color: white">{% trans "Return to all stops" %}</button></a>
+</div>
+{% endblock %}

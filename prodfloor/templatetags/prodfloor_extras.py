@@ -7,8 +7,12 @@ import datetime,copy
 register = template.Library()
 
 @register.simple_tag()
-def getpercentage(A, B, *args, **kwargs):
-    return ((A+1) / B)*100
+def getpercentage(pk, A, B, *args, **kwargs):
+    job = Info.objects.get(pk=pk)
+    if job.status == 'Stopped':
+        return 100
+    else:
+        return ((A+1) / B)*100
 
 @register.simple_tag()
 def getfivedigits(A, *args, **kwargs):
@@ -388,7 +392,11 @@ def ETF(A,*args, **kwargs):#function to return the expected time remaining
     if status == 'Complete': #esto no deberia pasar ya que si el status del trabajo es "Complete" ya no seria mostrado en la pantalla de trabajos
         return "99%"
     elif status == 'Stopped':
-        return ""
+        active_stops = stop.filter(solution='Not available yet')
+        reason = 'Stopped, reason(s): '
+        for stop_obj in active_stops:
+            reason += stop_obj.reason + ' // '
+        return reason
     else:
         if status == 'Beginning':
             start = times.start_time_1
@@ -437,8 +445,6 @@ def ETF(A,*args, **kwargs):#function to return the expected time remaining
         elapsed_time = now - start
         elapsed_time_minutes = (elapsed_time.total_seconds() / 60)
         PTC = TSPS + elapsed_time_minutes + TRS + additional_time_for_features - time_elapsed_shift_end
-        print(A.job_num + ' should be ended in ' + str(ETC) + ' currently its projected to be finished in ' + str(
-            PTC) + ' from the start')
         if (ETC/PTC)*100 > 100:
             return '99%'
         else:
@@ -514,6 +520,86 @@ def getcolor(A,*args, **kwargs):
             time_minutes = ((ea.stop_end_time - ea.stop_start_time).total_seconds() / 60)
             time_elapsed_shift_end += time_minutes
     if status == 'Complete':
+        return 'w3-green w3-center w3-round-xlarge'
+    elif status == 'Stopped':
+        if any(obj.reason == 'Shift ended' and obj.solution=='Not available yet' for obj in stop):
+            return 'w3-gray w3-center w3-round-xlarge'
+        else:
+            return 'w3-red w3-center w3-round-xlarge'
+    elif status == 'Rework':
+        return 'w3-black w3-center w3-round-xlarge'
+    else:
+        if status == 'Beginning':
+            start = times.start_time_1
+            TSPS = 0
+            TRS = totaltime - percentage_of_time[type]['Beginning']*totaltime
+        elif status == 'Program':
+            start = times.start_time_2
+            if times.end_time_1>times.start_time_1:
+                TSPS1 = ((times.end_time_1 - times.start_time_1).total_seconds()) / 60
+            else:
+                TSPS1 = percentage_of_time[type]['Beginning']*totaltime
+            TSPS = TSPS1
+            TRS = totaltime - percentage_of_time[type]['Program']*totaltime
+        elif status == 'Logic':
+            start = times.start_time_3
+            if times.end_time_2>times.start_time_2:
+                TSPS1 = ((times.end_time_1 - times.start_time_1).total_seconds()) / 60
+                TSPS2 = ((times.end_time_2 - times.start_time_2).total_seconds()) / 60
+            else:
+                TSPS1 = percentage_of_time[type]['Beginning']*totaltime
+                TSPS2 = percentage_of_time[type]['Program']*totaltime
+            TSPS = TSPS1 + TSPS2
+            TRS = totaltime - percentage_of_time[type]['Logic']*totaltime
+        elif status == 'Ending':
+            start = times.start_time_4
+            if times.end_time_3>times.start_time_3:
+                TSPS1 = ((times.end_time_1 - times.start_time_1).total_seconds()) / 60
+                TSPS2 = ((times.end_time_2 - times.start_time_2).total_seconds()) / 60
+                TSPS3 = ((times.end_time_3 - times.start_time_3).total_seconds()) / 60
+            else:
+                TSPS1 = percentage_of_time[type]['Beginning'] * totaltime
+                TSPS2 = percentage_of_time[type]['Program'] * totaltime
+                TSPS3 = percentage_of_time[type]['Logic']*totaltime
+            TSPS = TSPS1 + TSPS2 + TSPS3
+            TRS = totaltime - percentage_of_time[type]['Ending']*totaltime
+        else:
+            TSPS = 0
+            TRS = 0
+            start = timezone.now()
+        ETC = totaltime
+        additional_time_for_features = 0
+        for feature in features_objects:
+            if feature.features in times_to_add_dict[type]:
+                additional_time_for_features += times_to_add_dict[type][feature.features]
+        ETC += additional_time_for_features
+        now = timezone.now()
+        elapsed_time = now - start
+        elapsed_time_minutes = (elapsed_time.total_seconds()/60)
+        PTC = TSPS + elapsed_time_minutes + TRS + additional_time_for_features - time_elapsed_shift_end
+        if PTC < (ETC*1.2):
+            return 'w3-blue w3-center w3-round-xlarge'
+        elif PTC < (ETC*1.43):
+            return 'w3-yellow w3-center w3-round-xlarge'
+        else:
+            return 'w3-orange w3-center w3-round-xlarge'
+
+@register.simple_tag()
+def getcolorold(A,*args, **kwargs):
+    status = A.status
+    ID = A.id
+    po = A.po
+    stop = Stops.objects.filter(info_id=ID,po=po)
+    times = Times.objects.get(info_id=ID,info__po=po)
+    features_objects = Features.objects.filter(info_id=ID,info__po=po)
+    time_elapsed_shift_end = 0
+    type = A.job_type
+    totaltime = times_per_category[A.job_type][(categories(A.pk))]
+    if any(obj.reason == 'Shift ended' for obj in stop):
+        for ea in stop.filter(reason='Shift ended'):
+            time_minutes = ((ea.stop_end_time - ea.stop_start_time).total_seconds() / 60)
+            time_elapsed_shift_end += time_minutes
+    if status == 'Complete':
         return 'progress-bar progress-bar-complete'
     elif status == 'Stopped':
         if any(obj.reason == 'Shift ended' and obj.solution=='Not available yet' for obj in stop):
@@ -571,10 +657,22 @@ def getcolor(A,*args, **kwargs):
         elapsed_time = now - start
         elapsed_time_minutes = (elapsed_time.total_seconds()/60)
         PTC = TSPS + elapsed_time_minutes + TRS + additional_time_for_features - time_elapsed_shift_end
-        print(A.job_num + ' should be ended in ' + str(ETC) + ' currently its projected to be finished in ' + str(PTC) + ' from the start')
         if PTC < (ETC*1.2):
             return 'progress-bar progress-bar-working'
         elif PTC < (ETC*1.43):
             return 'progress-bar progress-bar-delayed'
         else:
             return 'progress-bar progress-bar-vdelayed'
+
+@register.simple_tag()
+def gettimes(pk,B,*args, **kwargs):
+    times = Times.objects.get(info_id=pk)
+    if B == 'start':
+        return times.start_time_1.date()
+    elif B == 'end':
+        if times.start_time_1 == times.end_time_4:
+            return '-'
+        else:
+            return times.end_time_4.date()
+    else:
+        return 'N/A'

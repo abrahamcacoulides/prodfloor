@@ -63,15 +63,16 @@
 <tr>
 <td>{{ job.job_num }}</td>
 <td>{{ job.po }}</td>
-<td>{{ job.job_type }}</td>
+<td><center>{{ job.job_type }}</center></td>
 <td>{{ job.status }}</td>
 <td><center>{% getstation job.station%}</center></td>
-<td>{{ job.ship_date }}</td>
-<td>{% resultingtime job.pk 1 %}</td>
-<td>{% resultingtime job.pk 2 %}</td>
-<td>{% resultingtime job.pk 3 %}</td>
-<td>{% resultingtime job.pk 4 %}</td>
-<td>{% totaltime job.pk %}</td>
+<td><center>{% gettimes job.pk 'start' %}</center></td>
+<td><center>{% gettimes job.pk 'end' %}</center></td>
+<td><center>{% resultingtime job.pk 1 %}</center></td>
+<td><center>{% resultingtime job.pk 2 %}</center></td>
+<td><center>{% resultingtime job.pk 3 %}</center></td>
+<td><center>{% resultingtime job.pk 4 %}</center></td>
+<td><center>{% totaltime job.pk %}</center></td>
 <td><center>{% stopsnumber job.pk %}</center></td>
 <td>{% timeonstop job.pk %}</td>
 <td>{% effectivetime job.pk %}</td>

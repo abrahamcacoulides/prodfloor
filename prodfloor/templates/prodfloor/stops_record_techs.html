@@ -61,7 +61,7 @@
 <tbody>
 {% for job in jobs %}
 <tr>
-<td>{% getinfo job.info_id 'job_num'%}</td>
+<td><a href='/prodfloor/stopdetails/stop/{{ job.pk }}'>{% getinfo job.info_id 'job_num'%}</a></td>
 <td>{{ job.po }}</td>
 <td>{% getinfo job.info_id 'job_type' %}</td>
 <td>{{ job.stop_start_time }}</td>
@@ -93,8 +93,6 @@
         {% endif %}
     </span>
 </div>
-<br>
-<a href="/prodfloor/generate_stop_report_xml/" class="button" style="background-color: #3e8e41">{%  trans "Excel" %}</a>
 </div>
 <script src="{% static 'prodfloor/reportsfunctions.js' %}"></script>
 {% endblock %}
