@@ -240,7 +240,7 @@ def stopsnumber(pk,*args, **kwargs):
 @register.simple_tag()
 def timeonstop(pk,*args, **kwargs):
     now = timezone.now()
-    stops = Stops.objects.filter(info_id=pk)
+    stops = Stops.objects.filter(info_id=pk).exclude(reason='Shift ended')
     timeinstop = timezone.timedelta(0)
     for stop in stops:
         if stop.stop_end_time>stop.stop_start_time:
@@ -285,7 +285,8 @@ def timeonstop_1(pk,*args, **kwargs):
 @register.simple_tag()
 def effectivetime(pk,*args, **kwargs):
     now = timezone.now()
-    stops = Stops.objects.filter(info_id=pk)
+    stops_end_shift = Stops.objects.filter(info_id=pk,reason='Shift ended')
+    stops = Stops.objects.filter(info_id=pk).exclude(reason='Shift ended')
     timeinstop = timezone.timedelta(0)
     end = 0
     start = 0
@@ -317,6 +318,21 @@ def effectivetime(pk,*args, **kwargs):
             timeinstop += stop.stop_end_time - stop.stop_start_time
         else:
             timeinstop += now - stop.stop_start_time
+    for es_stop in stops_end_shift:
+        inside_another_stop = False
+        if es_stop.stop_end_time > es_stop.stop_start_time:
+            for stop in stops:
+                if es_stop.stop_start_time > stop.stop_start_time and es_stop.stop_end_time < stop.stop_end_time:
+                    inside_another_stop = True
+        else:
+            for stop in stops:
+                if not(stop.stop_end_time > stop.stop_start_time):
+                    inside_another_stop = True
+        if not inside_another_stop:
+            if es_stop.stop_end_time > es_stop.stop_start_time:
+                timeinstop += es_stop.stop_end_time - es_stop.stop_start_time
+            else:
+                timeinstop += now - es_stop.stop_start_time
     eff_time = str(elapsed_time - timeinstop).split('.', 2)[0]
     return (eff_time)
 

@@ -81,6 +81,14 @@ class Tier1ChoiceField(ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         return obj.tier_one_cause
 
+class Tier2ChoiceField(ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return obj.tier_two_cause
+
+class Tier3ChoiceField(ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return obj.tier_three_cause
+
 class ReassignJob(forms.Form):
     new_tech = UserModelChoiceField(queryset=User.objects.filter(groups__name='Technicians'),label=_('Would be assigned to:'))
     station = forms.ChoiceField(label=_('Station'), choices=stations_tupple)
@@ -102,6 +110,12 @@ class StopRecord(forms.Form):
     job_num = forms.CharField(label=_('Job #'), max_length=10, required=False,help_text='filter by numbers in the Job#',widget=forms.TextInput(attrs={'style': 'width:75px'}))
     po = forms.CharField(label=_('Prod #'), max_length=7, required=False, help_text='filter by numbers in the PO#',widget=forms.TextInput(attrs={'style': 'width:55px'}))
     reason = Tier1ChoiceField(label=_('Reason'),queryset=Tier1.objects.all(),widget=forms.SelectMultiple(attrs={'style': 'width:180px'}), required=False,help_text='filter by Stop Reason',to_field_name="tier_one_cause")
+    cause = Tier2ChoiceField(label=_('Cause'), queryset=Tier2.objects.exclude(tier_two_cause='N/A'),
+                              widget=forms.SelectMultiple(attrs={'style': 'width:300px'}), required=False,
+                              help_text='filter by Stop Cause', to_field_name="tier_two_cause")
+    additional_cause = Tier3ChoiceField(label=_('Additional Cause'), queryset=Tier3.objects.exclude(tier_three_cause='N/A'),
+                              widget=forms.SelectMultiple(attrs={'style': 'width:300px'}), required=False,
+                              help_text='filter by Stop Additional Cause', to_field_name="tier_three_cause")
     job_type = forms.MultipleChoiceField(label=_('Job type'), choices=job_type_tupple,widget=forms.SelectMultiple(attrs={'style': 'width:80px'}), required=False,help_text='filter by Type')
     station = forms.MultipleChoiceField(label=_('Station'), choices=stations_tupple,widget=forms.SelectMultiple(attrs={'style': 'width:80px'}), required=False,help_text='filter by Station')
     after = forms.DateField(label=_('Min Start Date'), help_text='filter by the start date', widget=AdminDateWidget,required=False)

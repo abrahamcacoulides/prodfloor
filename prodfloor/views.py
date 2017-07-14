@@ -178,6 +178,8 @@ def stops_reports(request):#reports for the stops view
             job_num = form.cleaned_data['job_num']
             po = form.cleaned_data['po']
             reason = form.cleaned_data['reason'].values_list('tier_one_cause',flat=True)
+            cause = form.cleaned_data['cause'].values_list('tier_two_cause', flat=True)
+            add_cause = form.cleaned_data['additional_cause'].values_list('tier_three_cause', flat=True)
             job_type = form.cleaned_data['job_type']
             station = form.cleaned_data['station']
             before = form.cleaned_data['before']
@@ -194,6 +196,10 @@ def stops_reports(request):#reports for the stops view
                 stops = stops.filter(po__contains=po)
             if reason:
                 stops = stops.filter(reason__in=reason)
+            if cause:
+                stops = stops.filter(extra_cause_1__in=cause)
+            if add_cause:
+                stops = stops.filter(extra_cause_2__in=add_cause)
             if job_type:
                 job = job.filter(job_type__in=job_type)
                 jobs_lst = []
@@ -276,6 +282,8 @@ def stops_reports_techs(request):#reports for the stops view
             job_num = form.cleaned_data['job_num']
             po = form.cleaned_data['po']
             reason = form.cleaned_data['reason'].values_list('tier_one_cause',flat=True)
+            cause = form.cleaned_data['cause'].values_list('tier_two_cause', flat=True)
+            add_cause = form.cleaned_data['additional_cause'].values_list('tier_three_cause', flat=True)
             job_type = form.cleaned_data['job_type']
             station = form.cleaned_data['station']
             before = form.cleaned_data['before']
@@ -292,6 +300,10 @@ def stops_reports_techs(request):#reports for the stops view
                 stops = stops.filter(po__contains=po)
             if reason:
                 stops = stops.filter(reason__in=reason)
+            if cause:
+                stops = stops.filter(extra_cause_1__in=cause)
+            if add_cause:
+                stops = stops.filter(extra_cause_2__in=add_cause)
             if job_type:
                 job = job.filter(job_type__in=job_type)
                 jobs_lst = []

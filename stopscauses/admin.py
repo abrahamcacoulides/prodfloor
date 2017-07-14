@@ -8,6 +8,8 @@ class Tier1Causes(admin.ModelAdmin):
          {'fields': ['tier_one_cause']}),
     ]
     list_display = ('tier_one_cause',)
+    search_fields = ['tier_one_cause']
+    list_filter = ['tier_one_cause', ]
 
 class Tier2Causes(admin.ModelAdmin):
     fieldsets = [
@@ -15,6 +17,8 @@ class Tier2Causes(admin.ModelAdmin):
          {'fields': ['tier_one','tier_two_cause']}),
     ]
     list_display = ('tier_one','tier_two_cause')
+    search_fields = ['tier_two_cause']
+    list_filter = ['tier_two_cause', ]
 
     def get_queryset(self, request):
         return self.model.objects.exclude(tier_two_cause='N/A')
@@ -25,6 +29,8 @@ class Tier3Causes(admin.ModelAdmin):
          {'fields': ['tier_two', 'tier_three_cause']}),
     ]
     list_display = ('get_info','tier_two', 'tier_three_cause')
+    search_fields = ['tier_three_cause']
+    list_filter = ['tier_three_cause', ]
 
     def get_info(self, obj):
         return obj.tier_two.tier_one

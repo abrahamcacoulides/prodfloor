@@ -150,7 +150,7 @@ def stopsnumber(pk):
 
 def timeonstop(pk):
     now = timezone.now()
-    stops = Stops.objects.filter(info_id=pk)
+    stops = Stops.objects.filter(info_id=pk).exclude(reason='Shift ended')
     timeinstop = timezone.timedelta(0)
     for stop in stops:
         if stop.stop_end_time>stop.stop_start_time:
@@ -200,7 +200,8 @@ def totaltime(pk):
 
 def effectivetime(pk):#effective time spent on job
     now = timezone.now()
-    stops = Stops.objects.filter(info_id=pk)
+    stops_end_shift = Stops.objects.filter(info_id=pk, reason='Shift ended')
+    stops = Stops.objects.filter(info_id=pk).exclude(reason='Shift ended')
     timeinstop = timezone.timedelta(0)
     end = 0
     start = 0
@@ -222,7 +223,7 @@ def effectivetime(pk):#effective time spent on job
             end = times.end_time_4
         if end > start:  # means that the stop_time has been set
             elapsed_time += (end - start)
-        elif end == start and number != 1:  # means that it has not being started and is not in beginning stage
+        elif end == start:  # means that it has not being started and is not in beginning stage
             elapsed_time += datetime.timedelta(0)
         else:  # job is being worked on
             elapsed_time += (now - start)
@@ -232,6 +233,21 @@ def effectivetime(pk):#effective time spent on job
             timeinstop += stop.stop_end_time - stop.stop_start_time
         else:
             timeinstop += now - stop.stop_start_time
+    for es_stop in stops_end_shift:
+        inside_another_stop = False
+        if es_stop.stop_end_time > es_stop.stop_start_time:
+            for stop in stops:
+                if es_stop.stop_start_time > stop.stop_start_time and es_stop.stop_end_time < stop.stop_end_time:
+                    inside_another_stop = True
+        else:
+            for stop in stops:
+                if not (stop.stop_end_time > stop.stop_start_time):
+                    inside_another_stop = True
+        if not inside_another_stop:
+            if es_stop.stop_end_time > es_stop.stop_start_time:
+                timeinstop += es_stop.stop_end_time - es_stop.stop_start_time
+            else:
+                timeinstop += now - es_stop.stop_start_time
     eff_time = str(elapsed_time - timeinstop).split('.', 2)[0]
     return (eff_time)
 
