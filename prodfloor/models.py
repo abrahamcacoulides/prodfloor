@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from prodfloor.dicts import stop_reasons, stations_dict,status_dict,type_of_jobs,features_list,label_admin
+from prodfloor.dicts import stations_dict,status_dict,type_of_jobs,features_list,label_admin
 
 class Info(models.Model):
     Tech_name = models.CharField(max_length=50)

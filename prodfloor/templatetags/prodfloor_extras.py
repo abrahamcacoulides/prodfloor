@@ -1,5 +1,6 @@
 from django import template
 from prodfloor.models import Stops, Times, Features,Info
+from django.contrib.auth.models import User
 from django.utils import timezone
 from prodfloor.dicts import times_dict,times_to_add_dict,times_per_category,percentage_of_time
 import datetime,copy
@@ -340,7 +341,10 @@ def effectivetime(pk,*args, **kwargs):
 def gettech(pk,*args, **kwargs):
     info = Info.objects.get(pk=pk)
     tech = info.Tech_name
-    return tech
+    tech_name = tech.split()[0]
+    tech_lastname = tech.split()[1]
+    user = User.objects.get(first_name=tech_name,last_name=tech_lastname)
+    return user.first_name
 
 @register.simple_tag()
 def categories(pk,*args, **kwargs):
@@ -536,14 +540,14 @@ def getcolor(A,*args, **kwargs):
             time_minutes = ((ea.stop_end_time - ea.stop_start_time).total_seconds() / 60)
             time_elapsed_shift_end += time_minutes
     if status == 'Complete':
-        return 'w3-green w3-center w3-round-xlarge'
+        return 'w3-green w3-center w3-round-large'
     elif status == 'Stopped':
         if any(obj.reason == 'Shift ended' and obj.solution=='Not available yet' for obj in stop):
-            return 'w3-gray w3-center w3-round-xlarge'
+            return 'w3-gray w3-center w3-round-large'
         else:
-            return 'w3-red w3-center w3-round-xlarge'
+            return 'w3-red w3-center w3-round-large'
     elif status == 'Rework':
-        return 'w3-black w3-center w3-round-xlarge'
+        return 'w3-black w3-center w3-round-large'
     else:
         if status == 'Beginning':
             start = times.start_time_1
@@ -594,11 +598,11 @@ def getcolor(A,*args, **kwargs):
         elapsed_time_minutes = (elapsed_time.total_seconds()/60)
         PTC = TSPS + elapsed_time_minutes + TRS + additional_time_for_features - time_elapsed_shift_end
         if PTC < (ETC*1.2):
-            return 'w3-blue w3-center w3-round-xlarge'
+            return 'w3-blue w3-center w3-round-large'
         elif PTC < (ETC*1.43):
-            return 'w3-yellow w3-center w3-round-xlarge'
+            return 'w3-yellow w3-center w3-round-large'
         else:
-            return 'w3-orange w3-center w3-round-xlarge'
+            return 'w3-orange w3-center w3-round-large'
 
 @register.simple_tag()
 def getcolorold(A,*args, **kwargs):
@@ -692,3 +696,19 @@ def gettimes(pk,B,*args, **kwargs):
             return times.end_time_4.date()
     else:
         return 'N/A'
+
+@register.simple_tag()
+def getlines(pk, *args, **kwargs):
+    job = Info.objects.get(pk=pk)
+    if job.status == 'Stopped':
+        return 25
+    else:
+        return 65
+
+@register.simple_tag()
+def getsize(pk, *args, **kwargs):
+    job = Info.objects.get(pk=pk)
+    if job.status == 'Stopped':
+        return 30
+    else:
+        return 40

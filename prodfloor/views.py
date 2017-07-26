@@ -18,7 +18,7 @@ from django.contrib.admin.models import LogEntry, ADDITION,CHANGE
 from django.contrib.contenttypes.models import ContentType
 
 def prodfloor_view(request):
-    job_list = Info.objects.exclude(status="Complete").exclude(status="Reassigned").order_by('job_num')
+    job_list = Info.objects.exclude(status="Complete").exclude(status="Reassigned").order_by('status','job_num')
     context = {'job_list': job_list}
     if 'Android' in request.META['HTTP_USER_AGENT']:
         return render(request, 'prodfloor/mobile.html', context)
@@ -26,7 +26,7 @@ def prodfloor_view(request):
         return render(request, 'prodfloor/prodfloor.html', context)
 
 def M2000View(request):
-    job_list = Info.objects.filter(job_type='2000').exclude(status="Complete").exclude(status="Reassigned").order_by('job_num')
+    job_list = Info.objects.exclude(job_type='4000').exclude(status="Complete").exclude(status="Reassigned").order_by('status','job_num')
     context = {'job_list': job_list}
     if 'Android' in request.META['HTTP_USER_AGENT']:
         return render(request, 'prodfloor/mobile.html', context)
@@ -34,7 +34,7 @@ def M2000View(request):
         return render(request, 'prodfloor/prodfloor.html', context)
 
 def M4000View(request):
-    job_list = Info.objects.filter(job_type='4000').exclude(status='Complete').exclude(status="Reassigned").order_by('job_num')
+    job_list = Info.objects.filter(job_type='4000').exclude(status='Complete').exclude(status="Reassigned").order_by('status','job_num')
     context = {'job_list': job_list}
     if 'Android' in request.META['HTTP_USER_AGENT']:
         return render(request, 'prodfloor/mobile.html', context)
@@ -110,13 +110,13 @@ def detail(request):#reports view
                     times_pks=[]
                     for i in times:
                         times_pks.append(i.info.pk)
-                    job = job.filter(pk__in=times_pks).exclude(status='Reassigned')
+                    job = job.filter(pk__in=times_pks).filter(status='Complete')
                 else:
                     times = Times.objects.filter(end_time_4__gte=completed_after)
                     times_pks = []
                     for i in times:
                         times_pks.append(i.info.pk)
-                    job = job.filter(pk__in=times_pks).exclude(status='Reassigned')
+                    job = job.filter(pk__in=times_pks).filter(status='Complete')
             else:
                 if completed_before:
                     completed_before = datetime.datetime.combine(completed_before, datetime.datetime.max.time())
@@ -124,7 +124,7 @@ def detail(request):#reports view
                     times_pks = []
                     for i in times:
                         times_pks.append(i.info.pk)
-                    job = job.filter(pk__in=times_pks).exclude(status='Reassigned')
+                    job = job.filter(pk__in=times_pks).filter(status='Complete')
             request.session['report_objects'] = []
             for item in job:
                 request.session['report_objects'].append(item.pk)
@@ -410,7 +410,7 @@ def generatexml(request):
         for pk in jobs:
             job = Info.objects.get(pk=pk)
             start = gettimes(pk,'start')
-            end = gettimes(pk,'start')
+            end = gettimes(pk,'end')
             beginning_time = spentTime(pk,1)
             program_time = spentTime(pk, 2)
             logic_time = spentTime(pk, 3)

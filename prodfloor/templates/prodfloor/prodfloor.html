@@ -27,66 +27,70 @@
     <![endif]-->
 </head>
 <body>
-<div class="text-center" style="font-size: 60px">
+<div class="text-center" style="font-size: 70px">
         <center>Production Floor (Test)</center>
-        <hr>
+        <hr style="margin-top: 0px;margin-bottom: 0px">
       </div>
 <div class="container" style="width:100%">
 <div class="row">
-  <div class="col-md-1">
-    <h1><center>JOB #&nbsp;</center></h1>
+  <div class="col-lg-3">
+    <h1 style="font-size: 60px"><center>JOB #&nbsp;</center></h1>
+       <hr style="margin-bottom: 0px">
       {% for job in job_list %}
-          <hr>
-          <div class="text-center"><h2>{% getfivedigits job.job_num %}<span style="font-size:25px">({{ job.label }})</span></h2></div>
-
+          <div class="text-center"><h1 style="font-size: 50px">{% getfivedigits job.job_num %}<span style="font-size:50px">({{ job.label }})</span></h1></div>
+          <hr style="margin-top: 0px;margin-bottom: 0px">
       {% endfor %}
 </div>
-  <div class="col-md-2">
-    <h1><center>TECHNICIAN</center></h1>
+  <div class="col-lg-3">
+    <h1 style="font-size: 60px"><center>TECH</center></h1>
+    <hr style="margin-bottom: 0px">
     {% for job in job_list %}
-          <hr>
-          <div class="text-center"><h2>{{ job.Tech_name }}</h2></div>
-
+          <div class="text-center"><h1 style="font-size: 50px">{% gettech job.pk %}</h1></div>
+          <hr style="margin-top: 0px;margin-bottom: 0px">
       {% endfor %}
     </div>
-<div class="col-md-1">
-  <h1><center>STAGE</center></h1>
+<div class="col-lg-3">
+  <h1 style="font-size: 60px"><center>STAGE</center></h1>
+  <hr style="margin-bottom: 0px">
   {% for job in job_list %}
-          <hr>
-          <div class="text-center"><h2>{% stage job %}</h2></div>
-
+          <div class="text-center"><h1 style="font-size: 50px"><span style="font-size: 50px;">{% stage job %}</span></h1></div>
+          <hr style="margin-top: 0px;margin-bottom: 0px">
       {% endfor %}
 </div>
-<div class="col-md-5">
-  <h1><center>STATUS</center></h1>
+<div class="col-lg-9">
+  <h1 style="font-size: 60px"><center>STATUS</center></h1>
+  <hr style="margin-bottom: 3px">
     {% for job in job_list %}
-        <hr>
-    <div class="w3-container" style="height: 32px">
-    <div class="w3-light-grey w3-xlarge w3-round">
-        <div class="{% getcolor job %}" style="width:{% getpercentage job.pk job.current_index job.stage_len %}%">{% ETF job %}</div>
+    <div class="w3-container">
+    <div class="w3-white w3-xxxlarge w3-round">
+        <div class="{% getcolor job %}" style="width:{% getpercentage job.pk job.current_index job.stage_len %}%;line-height: {% getlines job.pk%}px;height: 68.8px"><span style="font-size: {% getsize job.pk%}px;padding-top: 0px;padding-bottom: 0px;">{% ETF job %}</span></div>
     </div>
     </div>
+    <hr style="margin-top: 3px;margin-bottom: 3px">
     {% endfor %}
 </div>
-<div class="col-md-1" >
-  <h1><center>CAT</center></h1>
+<div class="col-lg-2" >
+  <h1 style="font-size: 60px"><center>CAT</center></h1>
+    <hr style="margin-bottom: 0px">
     {% for job in job_list %}
-        <hr>
-    <div class="text-center"><h2>{% categories job.pk %}</h2></div>
+    <div class="text-center"><h1 style="font-size: 50px">{% categories job.pk %}</h1></div>
+    <hr style="margin-top: 0px;margin-bottom: 0px">
     {% endfor %}
 </div>
-<div class="col-md-1" >
-  <h1><center>STATN</center></h1>
+<div class="col-lg-2" >
+  <h1 style="font-size: 60px"><center>ST</center></h1>
+    <hr style="margin-bottom: 0px">
     {% for job in job_list %}
-        <hr>
-    <div class="text-center"><h2>{% getstation job.station %}</h2></div>
+    <div class="text-center"><h1 style="font-size: 50px">{% getstation job.station %}</h1></div>
+    <hr style="margin-top: 0px;margin-bottom: 0px">
     {% endfor %}
 </div>
-<div class="col-md-1" >
-  <h1><center>TTC</center></h1>
+<div class="col-lg-2" >
+  <h1 style="font-size: 60px"><center>TTC</center></h1>
+    <hr style="margin-bottom: 0px">
     {% for job in job_list %}
-        <hr>
-    <div class="text-center"><h2>{% time_to_finish job %}</h2></div>
+    <div class="text-center"><h1 style="font-size: 50px">{% time_to_finish job %}</h1></div>
+    <hr style="margin-top: 0px;margin-bottom: 0px">
     {% endfor %}
 </div>
 </div>

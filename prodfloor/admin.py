@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.contrib.admin.options import get_content_type_for_model
 from django.core.exceptions import PermissionDenied
 from django.template.defaultfilters import capfirst
 from django.template.response import TemplateResponse
