@@ -2,6 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 
 dict_m2000_new = {
     'Beginning': [['Documentacion Inicial', [None,], [None,]],
+                  ['Traer Material Externo Del Controlador', [None,], [None,]],
                   ['Inspeccion Visual', [None,], [None,]],
                   ['Preparacion de Labview', [None,], [None,]],
                   ['Conectar Lineas Principales de Poder', [None,], [None,]],
@@ -33,7 +34,10 @@ dict_m2000_new = {
               ['Calls (Pag 16)', ['CPI'], [0]],
               ['Serial Hall Calls (Pag SH)', ['SHC'], [1]],
               ['Pruebas de entradas y salidas (Pag 15, 17, etc.)', [None,], [None,]],
+              ['Pruebas con OVL del Job o Switches para OVL', ['OVL',], [1,]],
               ['Calibracion EMCO Board', ['EMCO','CPI'], [1, 1]],
+              ['Pruebas de entradas y salidas CARTOP (Pag CT1, CT2, etc.)', ['CPI'], [1]],
+              ['Pruebas con MGROUP del Job o MGROUP de Prueba', ['LOC'], [1]],
               ['Pruebas de Compliance', ['CTL2'], [1]],
               ['Pruebas de Factory Test Report', ['CTL2','TSSA'], [1, 1]],
               ['Flasheo de Puerto CHP y/o MPU', ['mView','iMon'], [1, 1]],
@@ -57,6 +61,7 @@ dict_m2000_new = {
     'Reassigned': ['Reasignado'],}
 dict_m4000_new = {
     'Beginning': [['Documentacion Inicial', [None], [None]],
+                  ['Traer Material Externo Del Controlador', [None,], [None,]],
                   ['Inspeccion Visual', [None], [None]],
                   ['Preparacion de Labview', [None], [None]],
                   ['Conectar Lineas Principales de Poder', [None,], [None,]],
@@ -95,8 +100,10 @@ dict_m4000_new = {
               ['Calls (Pag 16)', ['CPI'], [0]],
               ['Serial Hall Calls (Pag SH)', ['SHC'], [1]],  # if serial hall calls
               ['Pruebas de entradas y salidas (Pag 15, 17, etc.)', [None], [None]],
+              ['Pruebas con OVL del Job o Switches para OVL', ['OVL',], [1,]],
               ['Calibracion EMCO Board', ['EMCO','CPI'], [1, 1]],
               ['Pruebas de entradas y salidas CARTOP (Pag CT1, CT2, etc.)', ['CPI'], [1]],
+              ['Pruebas con MGROUP del Job o MGROUP de Prueba', ['LOC'], [1]],
               ['Pruebas de Compliance', ['CTL2'], [1]],
               ['Pruebas de Factory Test Report', ['CTL2','TSSA'], [1, 1]],
               ['Flasheo de Puerto CHP y/o MPU', ['mView','iMon'], [1, 1]],

@@ -13,7 +13,10 @@ def getpercentage(pk, A, B, *args, **kwargs):
     if job.status == 'Stopped':
         return 100
     else:
-        return ((A+1) / B)*100
+        if ((A+1) / B)*100 > 30: # with this change the minimum width is set to 30%
+            return ((A+1) / B)*100
+        else:
+            return 30
 
 @register.simple_tag()
 def getfivedigits(A, *args, **kwargs):
