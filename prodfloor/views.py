@@ -239,14 +239,19 @@ def stops_reports(request):#reports for the stops view
                 request.session['stops_objects'].append(item.pk)
             paginator = Paginator(stops, 25)
             stop = paginator.page(1)
-            return render(request, 'prodfloor/stops_record.html', {'result_headers': stops_headers,'jobs':stop,'form':form,'job':stops})
+            headers = copy.deepcopy(stops_headers)
+            del headers[11]
+            print(headers)
+            return render(request, 'prodfloor/stops_record.html', {'result_headers': headers,'jobs':stop,'form':form,'job':stops})
         else:
             request.session['stops_objects'] = []
             paginator = Paginator(stops, 25)
             stop = paginator.page(1)
             for item in stops:
                 request.session['stops_objects'].append(item.pk)
-            return render(request, 'prodfloor/stops_record.html', {'result_headers': stops_headers,'jobs':stop,'form':form,'job':stops})
+            headers = copy.deepcopy(stops_headers)
+            del headers[11]
+            return render(request, 'prodfloor/stops_record.html', {'result_headers': headers,'jobs':stop,'form':form,'job':stops})
     else:#this else refers to when the page is been requested, usually on the first access and when pagination is clicked ('next' or 'previous')
         try:
             if request.session['stops_objects']:
@@ -270,7 +275,9 @@ def stops_reports(request):#reports for the stops view
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
             stop = paginator.page(paginator.num_pages)
-        return render(request, 'prodfloor/stops_record.html', {'result_headers': stops_headers, 'jobs': stop,'form':form,'job':stops})
+        headers = copy.deepcopy(stops_headers)
+        del headers[11]
+        return render(request, 'prodfloor/stops_record.html', {'result_headers': headers, 'jobs': stop,'form':form,'job':stops})
 
 @login_required()
 def stops_reports_techs(request):#reports for the stops view
@@ -473,6 +480,7 @@ def generatestopsxml(request):
     book = Workbook(output)
     title_format = book.add_format({'bold':True,'border':True,'bg_color':'#d8d8d8','align':'center'})
     other_format = book.add_format({'border':True})
+    time_format = book.add_format({'border':True,'num_format': 'hh:mm:ss'})
     sheet = book.add_worksheet('Report')
     i = 0
     for header in stops_headers:
@@ -484,6 +492,7 @@ def generatestopsxml(request):
             stop = Stops.objects.get(pk=pk)
             job = Info.objects.get(pk=stop.info_id)
             time_on_stop = timeonstop_1(pk)
+            days_on_stop = timeonstop_2(pk)
             sheet.write(c, 0, job.job_num,other_format)
             sheet.write(c, 1, stop.po,other_format)
             sheet.write(c, 2, job_type_dict[job.job_type],other_format)
@@ -495,12 +504,13 @@ def generatestopsxml(request):
             sheet.write(c, 8, stop.reason_description, other_format)
             sheet.write(c, 9, stop.solution, other_format)
             sheet.write(c, 10, stations_dict[job.station],other_format)
-            sheet.write(c, 11, time_on_stop, other_format)
-            sheet.write(c, 12, gettech(job.pk), other_format)
+            sheet.write(c, 11, days_on_stop, other_format)
+            sheet.write(c, 12, time_on_stop, time_format)
+            sheet.write(c, 13, gettech(job.pk), other_format)
             c+=1
     sheet.set_column(0,0,10.29)
     sheet.set_column(3,3,13.14)
-    sheet.autofilter('A1:J1')
+    sheet.autofilter('A1:N1')
     book.close()
     output.seek(0)
     response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -1100,6 +1110,7 @@ class Reassign(SessionWizardView):
             times.end_time_3 = time
         elif job_num_info.prev_stage == 'Ending':
             times.end_time_4 = time
+        times.end_time_1 += datetime.timedelta(0,1)
         job_num_info.status = 'Reassigned'
         job_num_info.save()
         times.save()
@@ -1267,6 +1278,9 @@ class Stop(SessionWizardView):
             job = Info.objects.get(pk=pk)
             if job.status == 'Stopped':
                 messages.error(self.request, _('The Job is already stopped.'))
+                return HttpResponseRedirect('/admin/')
+            elif job.status == 'Reassigned':
+                messages.error(self.request, _('This Job has been reassigned. Please contact your Admin.'))
                 return HttpResponseRedirect('/admin/')
             ID = job.id
             self.get_all_cleaned_data()

@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['prodfloor.com',
                  'localhost',
                  '192.168.0.200',
-                 '10.113.1.39',
+                 '10.113.1.25',
                  'abrahamcacoulides.pythonanywhere.com']
 
 

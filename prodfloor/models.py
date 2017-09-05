@@ -49,7 +49,7 @@ class Stops(models.Model):
     extra_cause_1 = models.CharField(max_length=200)
     extra_cause_2 = models.CharField(max_length=200)
     reason_description = models.CharField(max_length=200)
-    solution = models.CharField(max_length=200)
+    solution = models.CharField(max_length=500)
     stop_start_time = models.DateTimeField('"Stop" start date')
     stop_end_time = models.DateTimeField('"Stop" finish date')
 

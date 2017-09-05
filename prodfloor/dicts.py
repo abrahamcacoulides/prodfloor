@@ -378,6 +378,7 @@ stops_headers = ['Job #',
                  'Description',
                  'Solution',
                  'Station',
+                 'Day(s) on Stop',
                  'Time on Stop',
                  'Technician']
 mureassign_headers = [

@@ -63,7 +63,7 @@
   <h1><center>STATUS</center></h1>
     {% for job in job_list %}
         <hr>
-    <div class="w3-container" style="height: 32px">
+    <div class="w3-container" style="height: 33px">
     <div class="w3-light-grey w3-small w3-round">
         <div class="{% getcolor job %}" style="width:{% getpercentage job.pk job.current_index job.stage_len %}%">{% ETF job %}</div>
     </div>

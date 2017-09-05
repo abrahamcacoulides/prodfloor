@@ -1,9 +1,11 @@
+import pytz
 from django import template
 from prodfloor.models import Stops, Times, Features,Info
 from django.contrib.auth.models import User
 from django.utils import timezone
 from prodfloor.dicts import times_dict,times_to_add_dict,times_per_category,percentage_of_time
 import datetime,copy
+instance_time_zone = pytz.timezone('America/Monterrey')
 
 register = template.Library()
 
@@ -14,7 +16,10 @@ def getpercentage(pk, A, B, *args, **kwargs):
         return 100
     else:
         if ((A+1) / B)*100 > 30: # with this change the minimum width is set to 30%
-            return ((A+1) / B)*100
+            if ((A+1) / B)*100>100:
+                return 100
+            else:
+                return ((A + 1) / B) * 100
         else:
             return 30
 
@@ -289,8 +294,10 @@ def timeonstop_1(pk,*args, **kwargs):
 @register.simple_tag()
 def effectivetime(pk,*args, **kwargs):
     now = timezone.now()
-    stops_end_shift = Stops.objects.filter(info_id=pk,reason='Shift ended')
-    stops = Stops.objects.filter(info_id=pk).exclude(reason='Shift ended')
+    stops_end_shift = Stops.objects.filter(info_id=pk, reason='Shift ended')
+    reassign_stops = Stops.objects.filter(info_id=pk, reason='Job reassignment')
+    stops = Stops.objects.filter(info_id=pk).exclude(reason__in=['Shift ended', 'Job reassignment'])
+    stops_1 = Stops.objects.filter(info_id=pk).exclude(reason__in=['Shift ended', ])
     timeinstop = timezone.timedelta(0)
     end = 0
     start = 0
@@ -322,22 +329,41 @@ def effectivetime(pk,*args, **kwargs):
             timeinstop += stop.stop_end_time - stop.stop_start_time
         else:
             timeinstop += now - stop.stop_start_time
-    for es_stop in stops_end_shift:
+    for re_stop in reassign_stops:
         inside_another_stop = False
-        if es_stop.stop_end_time > es_stop.stop_start_time:
+        if re_stop.stop_end_time > re_stop.stop_start_time:
             for stop in stops:
-                if es_stop.stop_start_time > stop.stop_start_time and es_stop.stop_end_time < stop.stop_end_time:
+                if re_stop.stop_start_time >= stop.stop_start_time and re_stop.stop_end_time <= stop.stop_end_time:
                     inside_another_stop = True
         else:
             for stop in stops:
-                if not(stop.stop_end_time > stop.stop_start_time):
+                if not (stop.stop_end_time >= stop.stop_start_time):
+                    inside_another_stop = True
+        if not inside_another_stop:
+            if re_stop.stop_end_time > re_stop.stop_start_time:
+                timeinstop += re_stop.stop_end_time - re_stop.stop_start_time
+            else:
+                timeinstop += now - re_stop.stop_start_time
+    for es_stop in stops_end_shift:
+        inside_another_stop = False
+        if es_stop.stop_end_time > es_stop.stop_start_time:
+            for stop in stops_1:
+                if es_stop.stop_start_time > stop.stop_start_time and es_stop.stop_end_time <= stop.stop_end_time:
+                    inside_another_stop = True
+        else:
+            for stop in stops_1:
+                if not (stop.stop_end_time > stop.stop_start_time):
                     inside_another_stop = True
         if not inside_another_stop:
             if es_stop.stop_end_time > es_stop.stop_start_time:
                 timeinstop += es_stop.stop_end_time - es_stop.stop_start_time
             else:
                 timeinstop += now - es_stop.stop_start_time
-    eff_time = str(elapsed_time - timeinstop).split('.', 2)[0]
+    job = Info.objects.get(pk=pk)
+    if job.status == 'Stopped':
+        if any(stop.solution == 'Not available yet' for stop in reassign_stops):
+            return datetime.timedelta(0)
+    eff_time = elapsed_time - timeinstop
     return (eff_time)
 
 @register.simple_tag()
@@ -468,6 +494,8 @@ def ETF(A,*args, **kwargs):#function to return the expected time remaining
         elapsed_time = now - start
         elapsed_time_minutes = (elapsed_time.total_seconds() / 60)
         PTC = TSPS + elapsed_time_minutes + TRS + additional_time_for_features - time_elapsed_shift_end
+        if PTC < 0:
+            PTC = TSPS + TRS + additional_time_for_features
         if (ETC/PTC)*100 > 100:
             return '99%'
         else:
@@ -680,6 +708,8 @@ def getcolorold(A,*args, **kwargs):
         elapsed_time = now - start
         elapsed_time_minutes = (elapsed_time.total_seconds()/60)
         PTC = TSPS + elapsed_time_minutes + TRS + additional_time_for_features - time_elapsed_shift_end
+        if PTC < 0:
+            PTC = TSPS + TRS + additional_time_for_features
         if PTC < (ETC*1.2):
             return 'progress-bar progress-bar-working'
         elif PTC < (ETC*1.43):
@@ -691,12 +721,12 @@ def getcolorold(A,*args, **kwargs):
 def gettimes(pk,B,*args, **kwargs):
     times = Times.objects.get(info_id=pk)
     if B == 'start':
-        return times.start_time_1.date()
+        return times.start_time_1.astimezone(instance_time_zone).date()
     elif B == 'end':
         if times.start_time_1 == times.end_time_4:
             return '-'
         else:
-            return times.end_time_4.date()
+            return times.end_time_4.astimezone(instance_time_zone).date()
     else:
         return 'N/A'
 
