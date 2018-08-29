@@ -402,11 +402,11 @@ def multireassignfunct(request,pk,newvalues, *args, **kwargs):
 def gettimes(pk,B,*args, **kwargs):
     times = Times.objects.get(info_id=pk)
     if B == 'start':
-        return times.start_time_1.astimezone(instance_time_zone).date()
+        return datetime.datetime.__format__(times.start_time_1.astimezone(instance_time_zone),"%m/%d/%Y %H:%M:%S")
     elif B == 'end':
         if times.start_time_1 == times.end_time_4:
             return '-'
         else:
-            return times.end_time_4.astimezone(instance_time_zone).date()
+            return datetime.datetime.__format__(times.end_time_4.astimezone(instance_time_zone),"%m/%d/%Y %H:%M:%S")
     else:
         return 'N/A'

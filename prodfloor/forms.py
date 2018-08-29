@@ -106,6 +106,10 @@ class Records(forms.Form):
     completed_before = forms.DateField(label=_('Max Completion Date'),help_text='filter by the end date', widget=AdminDateWidget, required=False)
     tech = UserModelChoiceField(queryset=User.objects.filter(groups__name='Technicians'),help_text=_('Was assigned to:'), required=False)
 
+class Report(forms.Form):
+    after = forms.DateField(label=_('Start Date'),help_text='filter by the start date',widget=AdminDateWidget,required=False)
+    before = forms.DateField(label=_('End Date'),help_text='filter by the start date',widget=AdminDateWidget,required=False)
+
 class StopRecord(forms.Form):
     job_num = forms.CharField(label=_('Job #'), max_length=10, required=False,help_text='filter by numbers in the Job#',widget=forms.TextInput(attrs={'style': 'width:75px'}))
     po = forms.CharField(label=_('Prod #'), max_length=7, required=False, help_text='filter by numbers in the PO#',widget=forms.TextInput(attrs={'style': 'width:55px'}))

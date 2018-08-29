@@ -38,8 +38,8 @@ dict_m2000_new = {
               ['Calibracion EMCO Board', ['EMCO','CPI'], [1, 1]],
               ['Pruebas de entradas y salidas CARTOP (Pag CT1, CT2, etc.)', ['CPI'], [1]],
               ['Pruebas con MGROUP del Job o MGROUP de Prueba', ['LOC'], [1]],
-              ['Pruebas de Compliance', ['CTL2'], [1]],
-              ['Pruebas de Factory Test Report', ['CTL2','TSSA'], [1, 1]],
+              ['Pruebas de Compliance (Documento 42-CR-0001)', ['CTL2', 'CAN'], [1, 1]],
+              ['Pruebas de Factory Test Report 2010', ['CTL2','TSSA'], [1, 1]],
               ['Flasheo de Puerto CHP y/o MPU', ['mView','iMon'], [1, 1]],
               ['Flasheo de Puerto CHP y/o MPU', ['mView','iMon'], [0, 1]],
               ['Flasheo de Puerto CHP y/o MPU', ['mView','iMon'], [1, 0]],
@@ -145,12 +145,14 @@ dict_elem_new = {
     'Program': [['Flashear HAPS', ['SHC'], [1]],  # If HAPS
                 ['Cargar el Software(Update)', [None], [None]],
                 ['Conectar Arneces', [None], [None]],
-                ['Cargar Software en el LS-EDGE del Cliente', [None], [None]],
+                ['Cargar Software en el LS-EDGE del Cliente', ['EDGE'], [1]],
+                ['Cambiar parametro xml "Landing System Type" value="1" (Solo test)', ['EDGE'], [0]],
                 ['Verificar Tolerancias de AC por Medio de LabView', [None], [None]],
                 ['Cargar los Parametros(XML)', [None], [None]],
                 ['Agregar y Modificar Datos de Test', [None], [None]],
                 ['Prueba Automatizada de LabView', [None], [None]], ],
     'Ending': [['Respaldar Electronicamente el Reporte de Prueba Automatizada', [None], [None]],
+               ['Hacer pruebas de tolerancias de voltajes MOD Door Operator', ['MOD'], [1]],
                ['Devolver Parametros Originales de Cliente', [None], [None]],
                ['Extraer los Parametros(CCF)', [None], [None]],
                ['Introducir el Passcode', [None], [None]],
@@ -161,19 +163,45 @@ dict_elem_new = {
     'Complete': [['Carro a Estacion Final', [None], [None]],['Fin de pruebas', [None], [None]], ],
     'Stopped': ['Detenido'],
     'Reassigned': ['Reasignado'],}
-# !times_ dicts used to be used by function oldgetcolor in prodfloor_extras, the function has been depracted but this
-#  has been left for future reference
-#times_m2000 = {'Beginning':60,
-#                         'Program':40,
-#                         'Logic':110,
-#                         'Ending':45}#deprecated
-#times_m4000 = {'Beginning':240,
-#                         'Program':205,
-#                         'Logic':370,
-#                         'Ending':30}#deprecated
-#times_elem = {'Beginning':40,
-#                         'Program':120,
-#                         'Ending':60}#deprecated#
+dict_elemt_new = {
+    'Beginning': [['Configuracion Inicial de PC', [None], [None]],
+                  ['Conseguir Software(Update) y Parametros(XML)', [None], [None]],
+                  ['Crear Carpeta del Job y Crear Archivos de Documentacion:\nStarter REC, Board Information', [None], [None]],
+                  ['Escanear Codigos de Barras de Tarjetas y Dispositivos', [None], [None]],
+                  ['Crear Documentacion de Visual Inspection List, Tech Report y Passcode', [None], [None]],
+                  ['Inspeccionar Jumpers y Switches', [None], [None]],
+                  ['Checar Voltajes', [None], [None]], ],
+    'Program': [['Cargar el Software(Update)', [None], [None]],
+                ['Cargar los parametros(XML)', [None], [None]],
+                ['Resetear parametros del drive(U5)', [None], [None]],
+                ['Llenar parametros del drive(Version Test)', [None], [None]],
+                ['Conectar Arneces, cables del motor y cables del encoder', [None], [None]],
+                ['Cargar Software en el LS-EDGE del Cliente', [None], [None]],
+                ['Ajustar la resistencia RB(3 veces el coil resistance de cliente)', [None], [None]],
+                ['Ajustar los voltajes del freno del motor(Version Test)', [None], [None]],
+                ['Verificar corrientes y velocidades de inspecion(DO Display)', [None], [None]],
+                ['Calibracion Hoistway Learning', [None], [None]],
+                ['Calibracion terminal switches', [None], [None]],
+                ['Probar los "Speeds"(High, leveling y correction)', [None], [None]],
+                ['Probar los "Overspeeds"(Inspection, leveling y contract)', [None], [None]],
+                ['Probar el drive(Encoder loss, phase fault, DC bus voltage)', [None], [None]],
+                ['Probar los terminal switches(UETS/DETS overspeed)', [None], [None]],
+                ['Probar los terminal slowdoen(UNTS1/DNTS1 lower/upper overspeed)', [None], [None]],
+                ['Probar los contactores(High, leveling y correction)', [None], [None]],
+                ['Probar Señales logicas marcadas en print', [None], [None]], ],
+    'Ending': [['Ajustar parametros de cliente del XML', [None], [None]],
+               ['Ajustar los voltajes del freno del motor(Version Cliente), traer resistencia de carga', [None], [None]],
+               ['Llenar parametros del drive(Version Cliente)', [None], [None]],
+               ['Hacer pruebas de tolerancias de voltajes MOD Door Operator', ['MOD'], [1]],
+               ['Extraer los parametros de la CPU(CCF)', [None], [None]],
+               ['Introducir el Passcode(En caso de que aplique)', [None], [None]],
+               ['Poner el Controlador en Construction Mode', [None], [None]],
+               ['Imprimir Papeleria Final', [None], [None]],
+               ['Hacer Respaldo Electronico de Documentos al Servidor', [None], [None]],],
+    'Logic': [['', [None], [None]], ],
+    'Complete': [['Carro a Estacion Final', [None], [None]],['Fin de pruebas', [None], [None]], ],
+    'Stopped': ['Detenido'],
+    'Reassigned': ['Reasignado'],}
 percentage_of_time = {
     '2000':{'Beginning':0.23,
                          'Program':0.15,
@@ -203,6 +231,8 @@ times_per_category = {
          5: 15*60,
          6: 16*60, },
     'ELEM':
+        {1:3*60,},
+    'ELEMT':
         {1:3*60,},
 }
 stop_reasons = [('Job reassignment', 'Job reassignment'),
@@ -240,7 +270,8 @@ status_dict = [('Beginning', 'Beginning'),
                ('Rework', 'Rework')]
 type_of_jobs = [('2000', 'M2000'),
                 ('4000', 'M4000'),
-                ('ELEM', 'Element')]
+                ('ELEM', 'Element-Hydro'),
+                ('ELEMT', 'Element-Traction')]
 features_list = [
     ('SHC', 'Serial Hall Calls'),
     ('HAPS', 'HAPS battery'),
@@ -262,6 +293,9 @@ features_list = [
     ('LOC', 'Local'),
     ('SHORTF', 'Short Floors'),
     ('CUST', 'Custom'),
+    ('EDGE', 'EDGE-LS'),
+    ('RAIL', 'RAIL-LS'),
+    ('MOD', 'MOD Door Operator'),
     ('MRL', 'MRL'),
     ('CTL2', 'CTL2'),
     ('TSSA', 'TSSA'), ]
@@ -287,7 +321,11 @@ features = (('SHC', 'Serial Hall Calls'),
     ('CUST', 'Custom'),
     ('MRL', 'MRL'),
     ('CTL2', 'CTL2'),
-    ('TSSA', 'TSSA'),
+    ('CAN', 'Canada'),
+    ('EDGE', 'EDGE-LS'),
+    ('RAIL', 'RAIL-LS'),
+    ('MOD', 'MOD Door Operator'),
+    ('TSSA', 'TSSA(Ontario)'),
     ('None', _('None')))
 stations_tupple = (('1', 'S1'),
             ('2', 'S2'),
@@ -323,7 +361,8 @@ label = (('-', '-'),
          ('H', 'H'))
 job_type_tupple = (('2000', 'M2000'),
             ('4000', 'M4000'),
-            ('ELEM', 'Element'))
+            ('ELEM', 'Element-Hydro'),
+            ('ELEMT', 'Element-Traction'))
 stations_by_type = {
     '2000': {'0': '----',
              '1': 'S1',
@@ -340,6 +379,9 @@ stations_by_type = {
              '11': 'S11',
              '12': 'S12'},
     'ELEM': {'0': '----',
+             '13': 'ELEM1',
+             '14': 'ELEM2'},
+    'ELEMT': {'0': '----',
              '13': 'ELEM1',
              '14': 'ELEM2'}}
 status_dict_tupple = (('Beginning', 'Beginning'),
@@ -400,11 +442,16 @@ times_dict = {
     'ELEM': {'Beginning': 40,
              'Program': 120,
              'Logic':0,
-             'Ending': 60}}
+             'Ending': 60},
+    'ELEMT': {'Beginning': 80,
+             'Program': 240,
+             'Logic':0,
+             'Ending': 120}}
 times_to_add_dict = {
     '2000': {'CPI': 25, 'SHC': 10},
     '4000': {'CPI': 10, 'SHC': 20},
-    'ELEM': {'HAPS': 15, }}
+    'ELEM': {'HAPS': 15, },
+    'ELEMT': { }}
 dict_of_stages = {
     1: 'Beginning',
     2: 'Program',
