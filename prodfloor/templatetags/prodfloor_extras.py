@@ -25,6 +25,7 @@ def getpercentage(pk, A, B, *args, **kwargs):
 
 @register.simple_tag()
 def getfivedigits(A, *args, **kwargs):
+    """This function returns the last five digits of the job number"""
     return A[-5:]
 
 #!! function deprecated, this was due to an update on how the times are handled//left here for reference

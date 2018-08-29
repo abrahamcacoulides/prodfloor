@@ -3,54 +3,64 @@ from django.forms import formset_factory
 from django.http import Http404, HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, redirect
 from formtools.wizard.views import SessionWizardView
-from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob, Records, StopRecord, SUStop, MultipleReassign, ChangeStage
+from prodfloor.forms import Maininfo, FeaturesSelection, StopReason, ResumeSolution, ReassignJob, Records, StopRecord, SUStop, MultipleReassign, ChangeStage, Report
 from django.contrib.auth import logout
 from stopscauses.models import Tier3,Tier2,Tier1
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from prodfloor.dicts import stations_by_type,headers,stops_headers,dict_m2000_new,dict_elem_new,dict_m4000_new,mureassign_headers,dict_of_stages
+from prodfloor.dicts import stations_by_type,headers,stops_headers,dict_m2000_new,dict_elem_new,dict_elemt_new,dict_m4000_new,mureassign_headers,dict_of_stages
 import json,io
 from .extra_functions import *
+from .Functions import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import ugettext_lazy as _
 from xlsxwriter.workbook import Workbook
 from django.contrib.admin.models import LogEntry, ADDITION,CHANGE
 from django.contrib.contenttypes.models import ContentType
 
+
+# View for all jobs not done
 def prodfloor_view(request):
     job_list = Info.objects.exclude(status="Complete").exclude(status="Reassigned").order_by('status','job_num')
-    context = {'job_list': job_list}
+    context = {'job_list': job_list, 'job_type': "All"}
     if 'Android' in request.META['HTTP_USER_AGENT']:
         return render(request, 'prodfloor/mobile.html', context)
     else:
         return render(request, 'prodfloor/prodfloor.html', context)
 
+
+# View for all M2000's not done
 def M2000View(request):
-    job_list = Info.objects.exclude(job_type='4000').exclude(status="Complete").exclude(status="Reassigned").order_by('status','job_num')
-    context = {'job_list': job_list}
+    job_list = Info.objects.exclude(job_type='4000').exclude(job_type='ELEMT').exclude(status="Complete").exclude(status="Reassigned").order_by('status','job_num')
+    context = {'job_list': job_list, 'job_type': "Hydro"}
     if 'Android' in request.META['HTTP_USER_AGENT']:
         return render(request, 'prodfloor/mobile.html', context)
     else:
         return render(request, 'prodfloor/prodfloor.html', context)
 
+
+# View for all M4000's not done
 def M4000View(request):
-    job_list = Info.objects.filter(job_type='4000').exclude(status='Complete').exclude(status="Reassigned").order_by('status','job_num')
-    context = {'job_list': job_list}
+    job_list = Info.objects.exclude(job_type='2000').exclude(job_type='ELEM').exclude(status='Complete').exclude(status="Reassigned").order_by('status','job_num')
+    context = {'job_list': job_list, 'job_type': 'Traction'}
     if 'Android' in request.META['HTTP_USER_AGENT']:
         return render(request, 'prodfloor/mobile.html', context)
     else:
         return render(request, 'prodfloor/prodfloor.html', context)
 
+
+# View for all ELEM's not done
 def ELEMView(request):
     job_list = Info.objects.filter(job_type='ELEM').exclude(status='Complete').exclude(status="Reassigned").order_by('job_num')
-    context = {'job_list': job_list}
+    context = {'job_list': job_list, 'job_type': "Element"}
     if 'Android' in request.META['HTTP_USER_AGENT']:
         return render(request, 'prodfloor/mobile.html', context)
     else:
         return render(request, 'prodfloor/prodfloor.html', context)
 
+# reports view (might be a good idea to rename)
 @login_required()
-def detail(request):#reports view
+def detail(request):
     job = Info.objects.all()
     if request.method == 'POST':#this if is for the filtering, the arguments to filter are received through it
         form = Records(request.POST)
@@ -168,6 +178,8 @@ def detail(request):#reports view
             jobs = paginator.page(paginator.num_pages)
         return render(request, 'prodfloor/detail.html', {'result_headers': headers, 'jobs': jobs,'form':form,'job':job})
 
+
+# stops reports view SU
 @login_required()
 def stops_reports(request):#reports for the stops view
     job = Info.objects.all()
@@ -279,6 +291,8 @@ def stops_reports(request):#reports for the stops view
         del headers[11]
         return render(request, 'prodfloor/stops_record.html', {'result_headers': headers, 'jobs': stop,'form':form,'job':stops})
 
+
+# stops reports view Techs
 @login_required()
 def stops_reports_techs(request):#reports for the stops view
     job = Info.objects.all()
@@ -383,6 +397,8 @@ def stops_reports_techs(request):#reports for the stops view
             stop = paginator.page(paginator.num_pages)
         return render(request, 'prodfloor/stops_record_techs.html', {'result_headers': stops_headers, 'jobs': stop,'form':form,'job':stops})
 
+
+# function to generate xml for the records selected in reports view
 def generatexml(request):
     stations_dict = {'0':'-----',
                    '1':'S1',
@@ -401,7 +417,8 @@ def generatexml(request):
             '14':'ELEM2'}
     job_type_dict = {'2000':'M2000',
             '4000':'M4000',
-            'ELEM':'Element'}
+            'ELEM':'Element-Hydro',
+            'ELEMT':'Element-Traction'}
     jobs= request.session['report_objects']
     output = io.BytesIO()
     book = Workbook(output)
@@ -456,6 +473,8 @@ def generatexml(request):
 
     return response
 
+
+# function to generate xml for the records selected in stops reports view
 def generatestopsxml(request):
     stations_dict = {'0':'-----',
                    '1':'S1',
@@ -496,8 +515,8 @@ def generatestopsxml(request):
             sheet.write(c, 0, job.job_num,other_format)
             sheet.write(c, 1, stop.po,other_format)
             sheet.write(c, 2, job_type_dict[job.job_type],other_format)
-            sheet.write(c, 3, str(stop.stop_start_time).split('.', 2)[0],other_format)
-            sheet.write(c, 4, str(stop.stop_end_time).split('.', 2)[0],other_format)
+            sheet.write(c, 3, datetime.datetime.__format__(stop.stop_start_time.astimezone(instance_time_zone),"%m/%d/%Y %H:%M:%S"),other_format)
+            sheet.write(c, 4, datetime.datetime.__format__(stop.stop_end_time.astimezone(instance_time_zone),"%m/%d/%Y %H:%M:%S"),other_format)
             sheet.write(c, 5, stop.reason,other_format)
             sheet.write(c, 6, stop.extra_cause_1, other_format)
             sheet.write(c, 7, stop.extra_cause_2, other_format)
@@ -518,6 +537,7 @@ def generatestopsxml(request):
 
     return response
 
+
 @login_required()
 def Start(request):
     if 'pp_jobinfo' in request.session:
@@ -533,6 +553,8 @@ def Start(request):
             dict_of_steps = dict_m4000_new
         elif job.job_type == 'ELEM':
             dict_of_steps = dict_elem_new
+        elif job.job_type == 'ELEMT':
+            dict_of_steps = dict_elemt_new
         status = job.status
         list_of_steps = dict_of_steps[status]
         job.stage_len = len(list_of_steps)
@@ -556,6 +578,7 @@ def Start(request):
     else:
         raise Http404("This is not the droid you're looking for")
 
+
 @login_required()
 def Continue(request,pk,po):
     if request.user.is_authenticated() and request.user.is_active:
@@ -572,6 +595,8 @@ def Continue(request,pk,po):
             dict_of_steps = copy.deepcopy(dict_m4000_new)
         elif job.job_type == 'ELEM':
             dict_of_steps = copy.deepcopy(dict_elem_new)
+        elif job.job_type == 'ELEMT':
+            dict_of_steps = copy.deepcopy(dict_elemt_new)
         status = job.status
         list_of_steps = dict_of_steps[status]
         while True:
@@ -804,6 +829,7 @@ def Continue(request,pk,po):
     else:
         raise Http404("How you got here?")
 
+
 @login_required()
 def EndShift(request):
     tech_name = request.user.first_name + ' ' + request.user.last_name
@@ -858,6 +884,7 @@ def EndShift(request):
     messages.success(request, 'You succesfully ended your shift.')
     return HttpResponseRedirect('/admin/')
 
+
 @login_required()
 def Middle(request,action,current_index):
     dict_of_steps = {}
@@ -875,6 +902,8 @@ def Middle(request,action,current_index):
                     dict_of_steps = copy.deepcopy(dict_m4000_new)
                 elif job.job_type == 'ELEM':
                     dict_of_steps = copy.deepcopy(dict_elem_new)
+                elif job.job_type == 'ELEMT':
+                    dict_of_steps = copy.deepcopy(dict_elemt_new)
                 status = job.status
                 list_of_steps = dict_of_steps[status]
                 steps_length = job.stage_len
@@ -899,7 +928,7 @@ def Middle(request,action,current_index):
                                     job.save()
                                     times.save()
                                 elif number==2:
-                                    if job.job_type == 'ELEM':
+                                    if job.job_type == 'ELEM' or job.job_type == 'ELEMT':
                                         job.prev_stage = 'Program'
                                         job.status = dict_of_stages[number + 2]
                                         times.end_time_2 = time
@@ -1045,8 +1074,10 @@ def Middle(request,action,current_index):
         messages.warning(request, 'The Job you tried to reach is not available.')
         return HttpResponseRedirect('/admin/')
 
+
 def done(request):
     return render(request, 'prodfloor/newjob.html')
+
 
 class Reassign(SessionWizardView):
     login_url = '/login/'
@@ -1159,6 +1190,8 @@ class Reassign(SessionWizardView):
         messages.success(self.request,'The Job ' + job_num_info.job_num + ' has been properly reassigned.')
         return HttpResponseRedirect("/admin/prodfloor/myjob/"+str(job_num_info.id)+"/change/")
 
+
+# View to redirect user to the new job creation page in case user doesnt has an active job
 def first(request):
     job = Info.objects.filter(Tech_name=request.user.first_name + ' ' + request.user.last_name).exclude(
         status='Complete').exclude(status='Stopped').exclude(status="Reassigned")
@@ -1171,6 +1204,8 @@ def first(request):
     else:
         return HttpResponseRedirect("/prodfloor/job/")
 
+
+# View which provides a form for the new job creation
 class JobInfo(SessionWizardView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
@@ -1246,6 +1281,8 @@ class JobInfo(SessionWizardView):
         l.save()
         return HttpResponseRedirect("/prodfloor/start/")
 
+
+#View which provides the stop form
 class Stop(SessionWizardView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
@@ -1305,6 +1342,7 @@ class Stop(SessionWizardView):
             l.save()
             return HttpResponseRedirect("/prodfloor/continue/"+str(pk)+"/" + po)
 
+
 class DirectSuperUserStop(SessionWizardView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
@@ -1362,6 +1400,7 @@ class DirectSuperUserStop(SessionWizardView):
             messages.warning(self.request, _('The Stop has been properly registered.'))
             return HttpResponseRedirect('/admin/')
 
+
 class SuperUserStop(SessionWizardView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
@@ -1417,6 +1456,7 @@ class SuperUserStop(SessionWizardView):
             l.save()
             messages.warning(self.request, _('The Stop has been properly registered.'))
             return HttpResponseRedirect('/admin/')
+
 
 class ResumeView(SessionWizardView):
     login_url = '/login/'
@@ -1487,6 +1527,7 @@ class ResumeView(SessionWizardView):
             l.save()
             return HttpResponseRedirect("/prodfloor/continue/" + str(pk) + "/" + po)
 
+
 def get_tier_2(request):
     if request.method == 'POST':
         tier1 = request.POST.get('tier1')
@@ -1503,6 +1544,7 @@ def get_tier_2(request):
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
+
 
 def get_tier_3(request):
     if request.method == 'POST':
@@ -1524,6 +1566,7 @@ def get_tier_3(request):
             content_type="application/json"
         )
 
+
 def get_stations(request):
     if request.method == 'POST':
         job_type = request.POST.get('job_type')
@@ -1540,6 +1583,7 @@ def get_stations(request):
             content_type="application/json"
         )
 
+
 def createStop(request):
     if request.method == 'POST':#this if is for the filtering, the arguments to filter are received through it
         form = SUStop(request.POST)
@@ -1552,6 +1596,7 @@ def createStop(request):
     else:
         form = SUStop
         return render(request, 'prodfloor/su_report_stop.html', {'form': form})
+
 
 @login_required()
 def multiplereassigns(request):
@@ -1585,6 +1630,7 @@ def multiplereassigns(request):
             last_name = full_name[1]
             initial.append({"job_num":job.job_num,"po":job.po,"new_tech":User.objects.get(first_name=name,last_name=last_name).pk,"station":job.station})
         return render(request,'prodfloor/MUreassign.html',{'formset': QuestionFormSet(initial = initial),'headers':mureassign_headers})
+
 
 class StageChange(SessionWizardView):
     login_url = '/login/'
@@ -1677,6 +1723,7 @@ class StageChange(SessionWizardView):
             l.save()
             messages.success(self.request, _('The Stage has been properly changed.'))
             return HttpResponseRedirect('/admin/')
+
 
 @login_required()
 def stopdetail(request,pk):

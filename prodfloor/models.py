@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from prodfloor.dicts import stations_dict,status_dict,type_of_jobs,features_list,label_admin
 
+
 class Info(models.Model):
     Tech_name = models.CharField(max_length=50)
     job_num = models.CharField(max_length=10)
@@ -28,8 +29,9 @@ class Info(models.Model):
 
 
 class Features(models.Model):
-    info=models.ForeignKey(Info, related_name='features')
+    info = models.ForeignKey(Info, related_name='features')
     features = models.CharField(max_length=200, choices=features_list)
+
 
 class Times(models.Model):
     info = models.ForeignKey(Info, related_name='times')
@@ -41,6 +43,7 @@ class Times(models.Model):
     end_time_3 = models.DateTimeField('"Pruebas logicas" finish date')
     start_time_4 = models.DateTimeField('"Fin de Test" start date')
     end_time_4 = models.DateTimeField('"Fin de Test" finish date')
+
 
 class Stops(models.Model):
     info = models.ForeignKey(Info, related_name='stops')
