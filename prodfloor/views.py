@@ -11,6 +11,7 @@ from django.contrib import messages
 from prodfloor.dicts import stations_by_type,headers,stops_headers,dict_m2000_new,dict_elem_new,dict_elemt_new,dict_m4000_new,mureassign_headers,dict_of_stages
 import json,io
 from .extra_functions import *
+from .Functions import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import ugettext_lazy as _
 from xlsxwriter.workbook import Workbook
